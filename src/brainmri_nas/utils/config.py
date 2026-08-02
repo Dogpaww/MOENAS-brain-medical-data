@@ -79,12 +79,37 @@ class AugmentationConfig:
 
 
 @dataclasses.dataclass
+class TrainingConfig:
+    """Final training settings (handoff §26-29, §34).
+
+    `device` defaults to "auto" here (unlike the search stages' "cpu"
+    default) because a real multi-epoch training run should actually use
+    available accelerator hardware; `precision="amp"` only actually engages
+    autocast/GradScaler when the resolved device is CUDA (handoff §27, §30
+    item 17 -- never claim AMP is on while quietly training FP32).
+    """
+
+    physical_batch_size: int = 32
+    gradient_accumulation_steps: int = 1
+    final_epochs: int = 200
+    learning_rate: float = 0.025
+    momentum: float = 0.9
+    weight_decay: float = 3e-4
+    grad_clip_norm: float = 5.0
+    precision: str = "amp"  # "amp" or "fp32"
+    checkpoint_metric: str = "macro_auc"  # key into evaluate_model()'s returned dict
+    seed: int = 1
+    device: str = "auto"
+
+
+@dataclasses.dataclass
 class Config:
     dataset: DatasetConfig
     search_space: SearchSpaceConfig = dataclasses.field(default_factory=SearchSpaceConfig)
     proxies: ProxyConfig = dataclasses.field(default_factory=ProxyConfig)
     nsga2: NSGA2Config = dataclasses.field(default_factory=NSGA2Config)
     augmentation: AugmentationConfig = dataclasses.field(default_factory=AugmentationConfig)
+    training: TrainingConfig = dataclasses.field(default_factory=TrainingConfig)
 
 
 def _dataclass_from_dict(cls, data: dict):
@@ -116,9 +141,15 @@ def load_config(path: str | Path) -> Config:
     proxies = _dataclass_from_dict(ProxyConfig, raw.get("proxies", {}) or {})
     nsga2 = _dataclass_from_dict(NSGA2Config, raw.get("nsga2", {}) or {})
     augmentation = _dataclass_from_dict(AugmentationConfig, raw.get("augmentation", {}) or {})
+    training = _dataclass_from_dict(TrainingConfig, raw.get("training", {}) or {})
 
     return Config(
-        dataset=dataset, search_space=search_space, proxies=proxies, nsga2=nsga2, augmentation=augmentation
+        dataset=dataset,
+        search_space=search_space,
+        proxies=proxies,
+        nsga2=nsga2,
+        augmentation=augmentation,
+        training=training,
     )
 
 
@@ -131,6 +162,7 @@ def save_config(config: Config, path: str | Path) -> None:
         "proxies": dataclasses.asdict(config.proxies),
         "nsga2": dataclasses.asdict(config.nsga2),
         "augmentation": dataclasses.asdict(config.augmentation),
+        "training": dataclasses.asdict(config.training),
     }
     with open(path, "w") as f:
         yaml.safe_dump(raw, f, sort_keys=False)
