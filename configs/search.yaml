@@ -1,0 +1,20 @@
+# Dataset root must contain Training/ and Testing/ subfolders, each with the
+# four class folders (glioma_tumor, meningioma_tumor, no_tumor, pituitary_tumor).
+# Point this at the extracted Kaggle brain-tumor-classification-mri v2 dataset.
+dataset:
+  data_root: data/brain_tumor_mri
+  image_size: 64
+  input_channels: 3
+  num_classes: 4
+  validation_fraction: 0.15
+  split_seed: 42
+  batch_size: 32
+  num_workers: 4
+
+search_space:
+  num_intermediate_nodes: 4
+  edges_per_node: 2
+  initial_channels: 16
+  number_of_cells: 7
+  drop_path_probability: 0.2
+  stem_type: cifar
