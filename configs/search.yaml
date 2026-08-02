@@ -30,7 +30,7 @@ nsga2:
   seed: 1
   crossover_prob: 0.9
   mutation_prob: null
-  device: cpu
+  device: cuda
   topsis_weights: [0.4, 0.4, 0.2]
 
 augmentation:
@@ -41,7 +41,7 @@ augmentation:
   weight_decay: 0.0003
   seed: 1
   mutation_prob: null
-  device: cpu
+  device: cuda
 
 training:
   physical_batch_size: 32
