@@ -41,9 +41,50 @@ class SearchSpaceConfig:
 
 
 @dataclasses.dataclass
+class ProxyConfig:
+    """Zero-cost proxy settings (handoff §17-19)."""
+
+    zico_batch_size: int = 4
+    zico_num_batches: int = 4
+    proxy_sample_seed: int = 123
+
+
+@dataclasses.dataclass
+class NSGA2Config:
+    """NSGA-II search settings (handoff §22, §24, §34)."""
+
+    population_size: int = 20
+    num_generations: int = 10
+    seed: int = 1
+    crossover_prob: float = 0.9
+    # None -> 1 / n_var, pymoo's usual default for polynomial mutation.
+    mutation_prob: float | None = None
+    device: str = "cpu"
+    # (log_synflow, zico, flops_billion); log_synflow/zico are benefit criteria, flops is a cost criterion.
+    topsis_weights: tuple[float, float, float] = (0.4, 0.4, 0.2)
+
+
+@dataclasses.dataclass
+class AugmentationConfig:
+    """Augmentation policy search settings (handoff §25, §34)."""
+
+    population_size: int = 5
+    num_generations: int = 5
+    trial_epochs: int = 10
+    learning_rate: float = 0.025
+    weight_decay: float = 3e-4
+    seed: int = 1
+    mutation_prob: float | None = None
+    device: str = "cpu"
+
+
+@dataclasses.dataclass
 class Config:
     dataset: DatasetConfig
     search_space: SearchSpaceConfig = dataclasses.field(default_factory=SearchSpaceConfig)
+    proxies: ProxyConfig = dataclasses.field(default_factory=ProxyConfig)
+    nsga2: NSGA2Config = dataclasses.field(default_factory=NSGA2Config)
+    augmentation: AugmentationConfig = dataclasses.field(default_factory=AugmentationConfig)
 
 
 def _dataclass_from_dict(cls, data: dict):
@@ -51,7 +92,15 @@ def _dataclass_from_dict(cls, data: dict):
     unknown = set(data) - field_names
     if unknown:
         raise ValueError(f"Unknown config keys for {cls.__name__}: {sorted(unknown)}")
-    return cls(**data)
+
+    # YAML has no tuple type -- coerce list -> tuple for any field declared as one,
+    # so e.g. NSGA2Config.topsis_weights round-trips as a tuple either way.
+    coerced = dict(data)
+    for f in dataclasses.fields(cls):
+        if f.name in coerced and isinstance(coerced[f.name], list) and isinstance(f.type, str) and f.type.startswith("tuple"):
+            coerced[f.name] = tuple(coerced[f.name])
+
+    return cls(**coerced)
 
 
 def load_config(path: str | Path) -> Config:
@@ -64,8 +113,13 @@ def load_config(path: str | Path) -> Config:
     dataset = _dataclass_from_dict(DatasetConfig, dataset_raw)
 
     search_space = _dataclass_from_dict(SearchSpaceConfig, raw.get("search_space", {}) or {})
+    proxies = _dataclass_from_dict(ProxyConfig, raw.get("proxies", {}) or {})
+    nsga2 = _dataclass_from_dict(NSGA2Config, raw.get("nsga2", {}) or {})
+    augmentation = _dataclass_from_dict(AugmentationConfig, raw.get("augmentation", {}) or {})
 
-    return Config(dataset=dataset, search_space=search_space)
+    return Config(
+        dataset=dataset, search_space=search_space, proxies=proxies, nsga2=nsga2, augmentation=augmentation
+    )
 
 
 def save_config(config: Config, path: str | Path) -> None:
@@ -74,6 +128,9 @@ def save_config(config: Config, path: str | Path) -> None:
     raw = {
         "dataset": dataclasses.asdict(config.dataset),
         "search_space": dataclasses.asdict(config.search_space),
+        "proxies": dataclasses.asdict(config.proxies),
+        "nsga2": dataclasses.asdict(config.nsga2),
+        "augmentation": dataclasses.asdict(config.augmentation),
     }
     with open(path, "w") as f:
         yaml.safe_dump(raw, f, sort_keys=False)

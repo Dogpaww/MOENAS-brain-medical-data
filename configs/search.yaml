@@ -18,3 +18,27 @@ search_space:
   number_of_cells: 7
   drop_path_probability: 0.2
   stem_type: cifar
+
+proxies:
+  zico_batch_size: 4
+  zico_num_batches: 4
+  proxy_sample_seed: 123
+
+nsga2:
+  population_size: 20
+  num_generations: 10
+  seed: 1
+  crossover_prob: 0.9
+  mutation_prob: null
+  device: cpu
+  topsis_weights: [0.4, 0.4, 0.2]
+
+augmentation:
+  population_size: 5
+  num_generations: 5
+  trial_epochs: 10
+  learning_rate: 0.025
+  weight_decay: 0.0003
+  seed: 1
+  mutation_prob: null
+  device: cpu
