@@ -24,6 +24,7 @@ from brainmri_nas.utils.config import (
     SearchSpaceConfig,
     TrainingConfig,
 )
+from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 
 INPUT_CHANNELS, IMAGE_SIZE, NUM_CLASSES = 3, 16, 4
 
@@ -55,6 +56,33 @@ def _tiny_loader(num_samples=8, batch_size=8, seed=0):
 
 def test_default_gradient_accumulation_is_disabled():
     assert TrainingConfig().gradient_accumulation_steps == 1
+
+
+def test_optimizer_and_scheduler_match_legacy_repo():
+    # Legacy evaluate.py::train(): Adam(lr, weight_decay=3e-4) + MultiStepLR(
+    # milestones=[0.5*epochs, 0.75*epochs], gamma=0.1). No momentum -- Adam
+    # doesn't take one.
+    model = _tiny_model()
+    optimizer, scheduler = build_optimizer_and_scheduler(
+        model, learning_rate=0.025, weight_decay=3e-4, epochs=200
+    )
+
+    assert isinstance(optimizer, torch.optim.Adam)
+    param_group = optimizer.param_groups[0]
+    assert param_group["lr"] == 0.025
+    assert param_group["weight_decay"] == 3e-4
+
+    assert isinstance(scheduler, torch.optim.lr_scheduler.MultiStepLR)
+    assert sorted(scheduler.milestones.keys()) == [100, 150]  # 0.5*200, 0.75*200
+    assert scheduler.gamma == 0.1
+
+
+def test_scheduler_degrades_gracefully_for_short_runs():
+    model = _tiny_model()
+    # int(0.5*1)=0 and int(0.75*1)=0 -- both excluded (must be > 0), so no
+    # milestones rather than a degenerate double-decay at epoch 0.
+    _, scheduler = build_optimizer_and_scheduler(model, learning_rate=0.025, weight_decay=3e-4, epochs=1)
+    assert dict(scheduler.milestones) == {}
 
 
 def test_evaluate_model_returns_full_metric_suite():

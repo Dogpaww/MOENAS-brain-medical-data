@@ -36,6 +36,7 @@ from brainmri_nas.utils.config import Config, save_config
 from brainmri_nas.utils.determinism import seed_everything
 from brainmri_nas.utils.device import resolve_device
 from brainmri_nas.utils.git_info import get_run_manifest
+from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 from brainmri_nas.utils.serialization import dump_json, load_json
 
 
@@ -145,13 +146,12 @@ def run_final_training(
         num_workers=config.dataset.num_workers,
     )
 
-    optimizer = torch.optim.SGD(
-        model.parameters(),
-        lr=config.training.learning_rate,
-        momentum=config.training.momentum,
+    optimizer, scheduler = build_optimizer_and_scheduler(
+        model,
+        learning_rate=config.training.learning_rate,
         weight_decay=config.training.weight_decay,
+        epochs=config.training.final_epochs,
     )
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(config.training.final_epochs, 1))
     scaler = torch.amp.GradScaler(device="cuda") if use_amp else None
 
     checkpoint_path = output_dir / "best_checkpoint.pt"

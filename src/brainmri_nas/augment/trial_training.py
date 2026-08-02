@@ -23,6 +23,7 @@ from torch.utils.data import DataLoader, Subset
 from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
+from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 from brainmri_nas.augment.transform_builder import build_augmented_train_transform
 
 
@@ -79,8 +80,9 @@ def train_trial_model(
     model.to(device)
     model.train()
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=weight_decay)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(epochs, 1))
+    optimizer, scheduler = build_optimizer_and_scheduler(
+        model, learning_rate=learning_rate, weight_decay=weight_decay, epochs=epochs
+    )
     loss_fn = nn.CrossEntropyLoss()
 
     for _ in range(epochs):

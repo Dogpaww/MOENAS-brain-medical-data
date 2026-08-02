@@ -87,13 +87,17 @@ class TrainingConfig:
     available accelerator hardware; `precision="amp"` only actually engages
     autocast/GradScaler when the resolved device is CUDA (handoff §27, §30
     item 17 -- never claim AMP is on while quietly training FP32).
+
+    `learning_rate`/`weight_decay` and the optimizer/scheduler built from
+    them (see `utils/optim.py`) match the legacy repo's `evaluate.py::train()`
+    exactly (Adam, MultiStepLR at 50%/75% of the epoch budget) -- there's no
+    `momentum` field because Adam doesn't take one.
     """
 
     physical_batch_size: int = 32
     gradient_accumulation_steps: int = 1
     final_epochs: int = 200
     learning_rate: float = 0.025
-    momentum: float = 0.9
     weight_decay: float = 3e-4
     grad_clip_norm: float = 5.0
     precision: str = "amp"  # "amp" or "fp32"
