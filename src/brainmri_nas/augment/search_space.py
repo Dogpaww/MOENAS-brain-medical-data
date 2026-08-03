@@ -1,4 +1,5 @@
-"""MRI-safe augmentation search space (handoff §7).
+"""MRI-safe, sample-adaptive augmentation search space (handoff §7, extended
+with SapAugment-style per-sample adaptivity -- Hu et al. 2021).
 
 Conservative by design: only the ops handoff §7 explicitly recommends are
 included, each restricted to the recommended magnitude range. Explicitly
@@ -6,21 +7,32 @@ excluded (per §7's "avoid or justify carefully" list): vertical flips, large
 rotations, strong color jitter, hue/saturation changes, large crops, severe
 affine deformation, large-area random erasing.
 
-Chromosome layout: 2 genes per op (probability, magnitude), each in [0, 1),
-in the fixed canonical order below -- that canonical order *is* each step's
-`order` field, so "order" doesn't need its own search dimension. A policy
-where every probability gene decodes near 0 is the identity policy; there's
-no separate identity gene.
+Chromosome layout: 3 genes per op (probability, strength_s, strength_a),
+each in [0, 1), in the fixed canonical order below -- that canonical order
+*is* each step's `order` field, so "order" doesn't need its own search
+dimension. A policy where every probability gene decodes near 0 is the
+identity policy; there's no separate identity gene.
 
-Decoding is pure arithmetic, no randomness, mirroring the NAS chromosome
-decoder in `search_space/chromosome.py`.
+`strength_s`/`strength_a` don't map to a fixed magnitude directly -- they
+parameterize a curve (`resolve_step`, via the regularized incomplete beta
+function, exactly as in the SapAugment paper) from a *sample's current loss
+rank* to how strongly this op should be applied to that specific sample.
+Easy samples (low relative loss) get pushed toward the strong end of the
+op's magnitude range; hard samples get pushed toward the mild end. This is
+why there's no single "magnitude" gene anymore -- magnitude is now a
+function evaluated per sample, not a policy-wide constant.
+
+Decoding the chromosome itself is still pure arithmetic, no randomness,
+mirroring the NAS chromosome decoder in `search_space/chromosome.py`.
 """
 
 from __future__ import annotations
 
 from collections.abc import Sequence
 
-from brainmri_nas.augment.genotype import AugmentationPolicy, AugmentationStep
+from scipy.special import betainc
+
+from brainmri_nas.augment.genotype import AugmentationPolicy, AugmentationStep, ResolvedAugmentationStep
 
 # Canonical pipeline order: geometric ops, then photometric ops, then
 # tensor-space erasing. horizontal_flip and random_erasing use RandomApply's
@@ -42,7 +54,9 @@ PIL_SPACE_OPS: frozenset[str] = frozenset(
 )
 TENSOR_SPACE_OPS: frozenset[str] = frozenset({"random_erasing"})
 
-# (low, high) magnitude bounds, per handoff §7's recommended ranges.
+# (low, high) magnitude bounds, per handoff §7's recommended ranges. This is
+# the range strength_s/strength_a's curve maps a loss rank *into* -- not a
+# fixed value anymore.
 MAGNITUDE_RANGES: dict[str, tuple[float, float]] = {
     "rotation": (0.0, 15.0),  # degrees, up to +/-15 deg
     "affine_translation": (0.0, 0.10),  # translate fraction, up to 5-10%
@@ -53,7 +67,16 @@ MAGNITUDE_RANGES: dict[str, tuple[float, float]] = {
     "random_erasing": (0.0, 0.05),  # small-area
 }
 
-GENES_PER_OP = 2  # probability, magnitude
+# strength_s: "sharpness" of the loss-rank -> strength curve (paper tests
+# s in {1, 10, 100}); decoded on a log scale since sharpness parameters are
+# conventionally searched that way, not linearly.
+STRENGTH_S_RANGE: tuple[float, float] = (1.0, 100.0)
+# strength_a: shape/center of the curve, must stay strictly inside (0, 1) --
+# it's used as s*(1-a) and s*a, both of which must stay positive for a
+# valid beta function.
+STRENGTH_A_RANGE: tuple[float, float] = (0.05, 0.95)
+
+GENES_PER_OP = 3  # probability, strength_s, strength_a
 
 
 def chromosome_length() -> int:
@@ -96,19 +119,51 @@ def decode_chromosome(chromosome: Sequence[float]) -> AugmentationPolicy:
         # float(...): chromosome may be a numpy array (e.g. from pymoo) -- keep
         # decoded policies plain-Python-native, never leak numpy scalar types.
         probability_gene = float(chromosome[order * GENES_PER_OP])
-        magnitude_gene = float(chromosome[order * GENES_PER_OP + 1])
+        s_gene = float(chromosome[order * GENES_PER_OP + 1])
+        a_gene = float(chromosome[order * GENES_PER_OP + 2])
 
-        low, high = MAGNITUDE_RANGES[name]
-        magnitude = low + magnitude_gene * (high - low)
+        s_low, s_high = STRENGTH_S_RANGE
+        strength_s = s_low * (s_high / s_low) ** s_gene  # log-scale interpolation
+
+        a_low, a_high = STRENGTH_A_RANGE
+        strength_a = a_low + a_gene * (a_high - a_low)
 
         steps.append(
             AugmentationStep(
                 name=name,
                 order=order,
                 probability=probability_gene,
-                magnitude=magnitude,
-                parameters=_build_parameters(name, magnitude),
+                strength_s=strength_s,
+                strength_a=strength_a,
             )
         )
 
     return AugmentationPolicy(steps=tuple(steps))
+
+
+def sap_strength(strength_s: float, strength_a: float, loss_rank: float) -> float:
+    """The SapAugment policy function f_{s,a}(loss_rank) -> lambda in [0, 1]
+    (handoff-adjacent, but this is the paper's Eq. 1: `1 - I(s(1-a), s*a; l)`,
+    I being the regularized incomplete beta function). loss_rank=0 (easiest
+    sample) should map toward strong augmentation, loss_rank=1 (hardest)
+    toward mild -- `betainc` is increasing in its third argument, so this
+    inversion (`1 - ...`) is what gives that direction."""
+    p = strength_s * (1.0 - strength_a)
+    q = strength_s * strength_a
+    return float(1.0 - betainc(p, q, loss_rank))
+
+
+def resolve_step(step: AugmentationStep, loss_rank: float) -> ResolvedAugmentationStep:
+    """Evaluate one policy step's curve at a specific sample's loss rank,
+    producing a concrete magnitude/parameters for that sample right now."""
+    lam = sap_strength(step.strength_s, step.strength_a, loss_rank)
+    low, high = MAGNITUDE_RANGES[step.name]
+    magnitude = low + lam * (high - low)
+
+    return ResolvedAugmentationStep(
+        name=step.name,
+        order=step.order,
+        probability=step.probability,
+        magnitude=magnitude,
+        parameters=_build_parameters(step.name, magnitude),
+    )

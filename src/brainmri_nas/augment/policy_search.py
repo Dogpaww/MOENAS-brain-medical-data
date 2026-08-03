@@ -30,8 +30,9 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.optimize import minimize
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
+from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
 from brainmri_nas.augment.search_space import chromosome_length, decode_chromosome
-from brainmri_nas.augment.trial_training import build_policy_train_loader, train_trial_model
+from brainmri_nas.augment.trial_training import train_trial_model
 from brainmri_nas.data.loader import build_dataset_bundle
 from brainmri_nas.model.network import build_model
 from brainmri_nas.search_space.genotype import NetworkGenotype
@@ -39,6 +40,7 @@ from brainmri_nas.utils.config import Config, save_config
 from brainmri_nas.utils.determinism import seed_everything
 from brainmri_nas.utils.device import resolve_device
 from brainmri_nas.utils.git_info import get_run_manifest
+from brainmri_nas.utils.loss_cache import LossCache
 from brainmri_nas.utils.serialization import dump_json, load_json
 
 CHROMOSOME_UPPER_BOUND = 1.0 - 1e-9
@@ -110,12 +112,17 @@ class PolicySearchProblem(ElementwiseProblem):
         policy: AugmentationPolicy = decode_chromosome(x)
         self.logger.info("%s: starting (%d trial epochs)", trial_label, self.trial_epochs)
 
-        train_loader = build_policy_train_loader(
+        # Fresh cache per trial -- a trial's sample-adaptive behavior must
+        # depend only on losses observed *within that trial*, not carry over
+        # difficulty signal from a previous candidate's training run.
+        loss_cache = LossCache(num_samples=len(self.train_indices), total_epochs=self.trial_epochs)
+        train_loader = build_sample_adaptive_loader(
             self.train_dir,
             self.train_indices,
             image_size=self.image_size,
             batch_size=self.batch_size,
             policy=policy,
+            loss_cache=loss_cache,
             num_workers=self.num_workers,
         )
 
@@ -131,10 +138,11 @@ class PolicySearchProblem(ElementwiseProblem):
             weight_decay=self.weight_decay,
             device=self.device,
             num_classes=self.num_classes,
+            loss_cache=loss_cache,
             logger=self.logger,
         )
 
-        del trial_model, train_loader
+        del trial_model, train_loader, loss_cache
         gc.collect()
 
         best_so_far = max(

@@ -96,7 +96,7 @@ class TrainingConfig:
 
     physical_batch_size: int = 32
     gradient_accumulation_steps: int = 1
-    final_epochs: int = 200
+    final_epochs: int = 250
     learning_rate: float = 0.025
     weight_decay: float = 3e-4
     grad_clip_norm: float = 5.0

@@ -23,7 +23,7 @@ from torch.utils.data import DataLoader, Subset
 from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
-from brainmri_nas.augment.trial_training import build_policy_train_loader
+from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
 from brainmri_nas.data.loader import build_dataset_bundle
 from brainmri_nas.data.transforms import build_train_transform
 from brainmri_nas.model.network import build_model
@@ -36,6 +36,7 @@ from brainmri_nas.utils.config import Config, save_config
 from brainmri_nas.utils.determinism import seed_everything
 from brainmri_nas.utils.device import resolve_device
 from brainmri_nas.utils.git_info import get_run_manifest
+from brainmri_nas.utils.loss_cache import LossCache
 from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 from brainmri_nas.utils.serialization import dump_json, load_json
 
@@ -63,15 +64,17 @@ def _build_train_loader(
     image_size: int,
     batch_size: int,
     policy: AugmentationPolicy | None,
+    loss_cache: LossCache | None,
     num_workers: int,
 ) -> DataLoader:
     if policy is not None:
-        return build_policy_train_loader(
+        return build_sample_adaptive_loader(
             train_dir,
             train_indices,
             image_size=image_size,
             batch_size=batch_size,
             policy=policy,
+            loss_cache=loss_cache,
             num_workers=num_workers,
         )
     dataset = datasets.ImageFolder(str(train_dir), transform=build_train_transform(image_size))
@@ -136,6 +139,15 @@ def run_final_training(
     model = build_model(genotype, **model_config)  # fresh weights, no reuse from search/proxies/augmentation trials
     model.to(device)
 
+    # Only meaningful when a policy is actually being applied -- sized to the
+    # full training split (not the physical batch size) since it tracks one
+    # loss value per training sample, refreshed every ~1/40th of the run.
+    loss_cache = (
+        LossCache(num_samples=len(bundle.train_indices), total_epochs=config.training.final_epochs)
+        if policy is not None
+        else None
+    )
+
     train_dir = Path(config.dataset.data_root) / "Training"
     train_loader = _build_train_loader(
         train_dir,
@@ -143,6 +155,7 @@ def run_final_training(
         image_size=config.dataset.image_size,
         batch_size=config.training.physical_batch_size,
         policy=policy,
+        loss_cache=loss_cache,
         num_workers=config.dataset.num_workers,
     )
 
@@ -171,6 +184,7 @@ def run_final_training(
             grad_clip_norm=config.training.grad_clip_norm,
             epoch=epoch,
             total_epochs=config.training.final_epochs,
+            loss_cache=loss_cache,
             logger=logger,
         )
         scheduler.step()

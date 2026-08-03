@@ -17,39 +17,31 @@ policy's score evolves during its trial (the handoff only prohibits
 evaluating *test* every epoch; validation every epoch is fine, same as
 final training already does). The value returned is still just the last
 epoch's score, so this doesn't change which policy ends up selected.
+
+`loss_cache`, when given, makes this sample-adaptive (SapAugment, Hu et al.
+2021): `train_loader` must then yield `(x, y, index)` triples (see
+`sample_adaptive_dataset.py`) instead of `(x, y)` pairs, per-sample loss is
+computed (`reduction="none"`, still `.mean()`-reduced for the actual
+backward pass) and recorded into the cache every batch, and the cache is
+told an epoch elapsed once all of that epoch's batches are done. Passing
+`loss_cache=None` preserves the plain (non-adaptive) 2-tuple-batch behavior,
+for callers that don't use sample-adaptive augmentation.
 """
 
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 
 import torch
 import torch.nn as nn
 from sklearn.metrics import roc_auc_score
-from torch.utils.data import DataLoader, Subset
-from torchvision import datasets
+from torch.utils.data import DataLoader
 
-from brainmri_nas.augment.genotype import AugmentationPolicy
-from brainmri_nas.augment.transform_builder import build_augmented_train_transform
+from brainmri_nas.utils.loss_cache import LossCache
 from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 from brainmri_nas.utils.progress import batch_log_interval, maybe_log_batch_progress
 
 DEFAULT_LOGGER_NAME = "brainmri_nas.augmentation_search"
-
-
-def build_policy_train_loader(
-    train_dir: str | Path,
-    train_indices: tuple[int, ...],
-    *,
-    image_size: int,
-    batch_size: int,
-    policy: AugmentationPolicy,
-    num_workers: int = 0,
-) -> DataLoader:
-    transform = build_augmented_train_transform(policy, image_size)
-    dataset = datasets.ImageFolder(str(train_dir), transform=transform)
-    return DataLoader(Subset(dataset, train_indices), batch_size=batch_size, shuffle=True, num_workers=num_workers)
 
 
 @torch.no_grad()
@@ -87,6 +79,7 @@ def train_trial_model(
     weight_decay: float,
     device: torch.device,
     num_classes: int,
+    loss_cache: LossCache | None = None,
     logger: logging.Logger | None = None,
 ) -> dict:
     logger = logger or logging.getLogger(DEFAULT_LOGGER_NAME)
@@ -97,7 +90,7 @@ def train_trial_model(
     optimizer, scheduler = build_optimizer_and_scheduler(
         model, learning_rate=learning_rate, weight_decay=weight_decay, epochs=epochs
     )
-    loss_fn = nn.CrossEntropyLoss()
+    loss_fn = nn.CrossEntropyLoss(reduction="none")
 
     num_batches = len(train_loader)
     log_interval = batch_log_interval(num_batches)
@@ -108,12 +101,23 @@ def train_trial_model(
         total_loss = 0.0
         total_samples = 0
 
-        for step, (x, y) in enumerate(train_loader):
+        for step, batch in enumerate(train_loader):
+            if loss_cache is not None:
+                x, y, indices = batch
+            else:
+                x, y = batch
+                indices = None
+
             x, y = x.to(device), y.to(device)
             optimizer.zero_grad(set_to_none=True)
-            loss = loss_fn(model(x), y)
+
+            per_sample_loss = loss_fn(model(x), y)
+            loss = per_sample_loss.mean()
             loss.backward()
             optimizer.step()
+
+            if loss_cache is not None:
+                loss_cache.record_batch(indices.tolist(), per_sample_loss.detach().cpu().tolist())
 
             total_loss += loss.item() * x.size(0)
             total_samples += x.size(0)
@@ -130,6 +134,8 @@ def train_trial_model(
             )
 
         scheduler.step()
+        if loss_cache is not None:
+            loss_cache.end_epoch()
 
         val_macro_auc = evaluate_macro_auc(model, val_loader, device=device, num_classes=num_classes)
         logger.info(

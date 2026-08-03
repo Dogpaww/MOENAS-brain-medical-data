@@ -2,14 +2,23 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 import torch
 from PIL import Image
 from torchvision import transforms
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
 from brainmri_nas.augment.policy_search import run_augmentation_search
-from brainmri_nas.augment.search_space import AUGMENTATION_OPS, chromosome_length, decode_chromosome
-from brainmri_nas.augment.transform_builder import build_augmented_train_transform
+from brainmri_nas.augment.search_space import (
+    AUGMENTATION_OPS,
+    STRENGTH_A_RANGE,
+    STRENGTH_S_RANGE,
+    chromosome_length,
+    decode_chromosome,
+    resolve_step,
+    sap_strength,
+)
+from brainmri_nas.augment.transform_builder import build_sample_adaptive_transform
 from brainmri_nas.data.loader import build_dataset_bundle
 from brainmri_nas.model.network import build_model
 from brainmri_nas.search.nsga2_runner import run_search
@@ -21,6 +30,10 @@ N_VAR = chromosome_length()
 
 def _sample_chromosome(offset=0):
     return [((i * 53 + offset) % 101) / 101.0 for i in range(N_VAR)]
+
+
+def test_chromosome_length_is_three_genes_per_op():
+    assert N_VAR == len(AUGMENTATION_OPS) * 3
 
 
 def test_decode_is_deterministic():
@@ -48,18 +61,53 @@ def test_policy_steps_follow_canonical_order():
     assert orders == sorted(orders)
 
 
-def test_every_step_stores_required_fields():
+def test_every_step_stores_required_fields_within_range():
     policy = decode_chromosome(_sample_chromosome())
+    s_low, s_high = STRENGTH_S_RANGE
+    a_low, a_high = STRENGTH_A_RANGE
     for step_dict in policy.to_dict():
-        assert set(step_dict) == {"name", "order", "probability", "magnitude", "parameters"}
+        assert set(step_dict) == {"name", "order", "probability", "strength_s", "strength_a"}
         assert 0.0 <= step_dict["probability"] < 1.0
+        assert s_low <= step_dict["strength_s"] <= s_high
+        assert a_low <= step_dict["strength_a"] <= a_high
+
+
+def test_sap_strength_gives_stronger_augmentation_to_easier_samples():
+    # This is SapAugment's core hypothesis, and the whole reason the mapping
+    # is inverted (1 - betainc(...)): easy samples (loss_rank near 0) should
+    # get pushed toward strong augmentation (lambda near 1); hard samples
+    # (loss_rank near 1) toward mild (lambda near 0).
+    s, a = 10.0, 0.5
+    lambda_easy = sap_strength(s, a, loss_rank=0.0)
+    lambda_hard = sap_strength(s, a, loss_rank=1.0)
+    assert lambda_easy > lambda_hard
+    assert lambda_easy == pytest.approx(1.0, abs=1e-6)
+    assert lambda_hard == pytest.approx(0.0, abs=1e-6)
+
+
+def test_sap_strength_is_monotonically_decreasing_in_loss_rank():
+    s, a = 20.0, 0.4
+    ranks = [0.0, 0.25, 0.5, 0.75, 1.0]
+    strengths = [sap_strength(s, a, r) for r in ranks]
+    assert strengths == sorted(strengths, reverse=True)
+
+
+def test_resolve_step_maps_lambda_into_the_op_magnitude_range():
+    policy = decode_chromosome(_sample_chromosome())
+    rotation_step = next(s for s in policy.steps if s.name == "rotation")
+
+    resolved_easy = resolve_step(rotation_step, loss_rank=0.0)
+    resolved_hard = resolve_step(rotation_step, loss_rank=1.0)
+
+    assert 0.0 <= resolved_easy.magnitude <= 15.0
+    assert 0.0 <= resolved_hard.magnitude <= 15.0
+    assert resolved_easy.parameters["degrees"] == resolved_easy.magnitude
 
 
 def test_transform_pipeline_ordering_matches_handoff_spec():
-    # All-probability-1 policy so every op is guaranteed to be present/applied.
     chromosome = [0.999999 for _ in range(N_VAR)]
     policy = decode_chromosome(chromosome)
-    pipeline = build_augmented_train_transform(policy, image_size=32)
+    pipeline = build_sample_adaptive_transform(policy, image_size=32, loss_rank=0.5)
 
     kinds = [type(t).__name__ for t in pipeline.transforms]
     assert kinds[0] == "ResizeLongerSideAndPad"
@@ -79,7 +127,7 @@ def test_transform_pipeline_ordering_matches_handoff_spec():
 def test_pipeline_runs_end_to_end_on_a_real_image(tmp_path: Path):
     img = Image.new("RGB", (40, 40), color=(120, 60, 200))
     policy = decode_chromosome(_sample_chromosome())
-    pipeline = build_augmented_train_transform(policy, image_size=32)
+    pipeline = build_sample_adaptive_transform(policy, image_size=32, loss_rank=0.5)
     tensor = pipeline(img)
     assert tensor.shape == torch.Size([3, 32, 32])
 
@@ -155,6 +203,8 @@ def test_train_trial_model_emits_per_epoch_progress_and_val_auc(caplog):
     train_loader = DataLoader(TensorDataset(x_train, y_train), batch_size=4)
     val_loader = DataLoader(TensorDataset(x_val, y_val), batch_size=4)
 
+    # loss_cache=None (the default): plain (x, y) batches, no sample-adaptivity --
+    # confirms the non-adaptive code path still works unchanged.
     result = train_trial_model(
         model,
         train_loader,
@@ -215,7 +265,7 @@ def test_end_to_end_tiny_augmentation_search(synthetic_dataset_root: Path, tmp_p
 
     # The saved policy is genuinely reconstructible into a real transform pipeline.
     policy = AugmentationPolicy.from_dict(selected_policy["policy"])
-    pipeline = build_augmented_train_transform(policy, image_size=16)
+    pipeline = build_sample_adaptive_transform(policy, image_size=16, loss_rank=0.5)
     img = Image.new("RGB", (20, 20), color=(10, 10, 10))
     tensor = pipeline(img)
     assert tensor.shape == torch.Size([3, 16, 16])

@@ -32,9 +32,10 @@ import torch
 from PIL import Image
 from sklearn.model_selection import train_test_split
 
+from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
 from brainmri_nas.augment.search_space import chromosome_length as augmentation_chromosome_length
 from brainmri_nas.augment.search_space import decode_chromosome as decode_augmentation_chromosome
-from brainmri_nas.augment.trial_training import build_policy_train_loader, train_trial_model
+from brainmri_nas.augment.trial_training import train_trial_model
 from brainmri_nas.data.loader import DatasetValidationError, build_dataset_bundle, describe_dataset
 from brainmri_nas.data.split import save_split_indices
 from brainmri_nas.model.network import build_model
@@ -50,6 +51,7 @@ from brainmri_nas.training.final_training import run_final_training
 from brainmri_nas.utils.config import Config, NSGA2Config, ProxyConfig, TrainingConfig, load_config
 from brainmri_nas.utils.determinism import seed_everything
 from brainmri_nas.utils.device import resolve_device
+from brainmri_nas.utils.loss_cache import LossCache
 from brainmri_nas.utils.serialization import dump_json
 
 TOTAL_STEPS = 14
@@ -243,12 +245,14 @@ def main() -> None:
 
         selected_genotype = NetworkGenotype.from_dict(selected_architecture["genotype"])
         trial_model = build_model(selected_genotype, **model_config)
-        policy_train_loader = build_policy_train_loader(
+        loss_cache = LossCache(num_samples=len(bundle.train_indices), total_epochs=1)
+        policy_train_loader = build_sample_adaptive_loader(
             data_root / "Training",
             bundle.train_indices,
             image_size=config.dataset.image_size,
             batch_size=batch_size,
             policy=policy,
+            loss_cache=loss_cache,
             num_workers=0,
         )
         trial_result = train_trial_model(
@@ -260,9 +264,10 @@ def main() -> None:
             weight_decay=3e-4,
             device=device,
             num_classes=bundle.num_classes,
+            loss_cache=loss_cache,
         )
         print(f"    one-trial val_macro_auc={trial_result['val_macro_auc']:.4f}")
-        del trial_model, policy_train_loader
+        del trial_model, policy_train_loader, loss_cache
 
         selected_policy_path = output_dir / "selected_policy.json"
         dump_json(

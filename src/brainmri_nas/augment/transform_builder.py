@@ -1,21 +1,25 @@
-"""Reconstruct an actual torchvision pipeline from a serializable policy
-(handoff §8: "a policy builder must reconstruct the actual torchvision
-pipeline"). Routes each step into Stage 1's `build_train_transform`
-PIL-space or tensor-space slot, so the resize -> augmentation -> tensor ->
-normalize -> tensor-augmentation ordering from handoff §6 is preserved
-without duplicating that pipeline assembly logic here.
+"""Reconstruct an actual torchvision pipeline from a policy, resolved at one
+specific sample's loss rank (handoff §8: "a policy builder must reconstruct
+the actual torchvision pipeline"; extended for sample-adaptivity -- each
+call resolves fresh, since a different sample or a refreshed loss cache
+means different magnitudes).
+
+Routes each step into Stage 1's `build_train_transform` PIL-space or
+tensor-space slot, so the resize -> augmentation -> tensor -> normalize ->
+tensor-augmentation ordering from handoff §6 is preserved without
+duplicating that pipeline assembly logic here.
 """
 
 from __future__ import annotations
 
 from torchvision import transforms
 
-from brainmri_nas.augment.genotype import AugmentationPolicy, AugmentationStep
-from brainmri_nas.augment.search_space import TENSOR_SPACE_OPS
+from brainmri_nas.augment.genotype import AugmentationPolicy, ResolvedAugmentationStep
+from brainmri_nas.augment.search_space import TENSOR_SPACE_OPS, resolve_step
 from brainmri_nas.data.transforms import build_train_transform
 
 
-def build_transform_step(step: AugmentationStep, image_size: int):
+def build_transform_step(step: ResolvedAugmentationStep, image_size: int):
     if step.name == "horizontal_flip":
         return transforms.RandomHorizontalFlip(p=step.probability)
 
@@ -46,13 +50,16 @@ def build_transform_step(step: AugmentationStep, image_size: int):
     return transforms.RandomApply([base_op], p=step.probability)
 
 
-def build_augmented_train_transform(policy: AugmentationPolicy, image_size: int) -> transforms.Compose:
+def build_sample_adaptive_transform(
+    policy: AugmentationPolicy, image_size: int, loss_rank: float
+) -> transforms.Compose:
     pil_ops = []
     tensor_ops = []
 
     for step in policy.ordered_steps():
-        transform = build_transform_step(step, image_size)
-        if step.name in TENSOR_SPACE_OPS:
+        resolved = resolve_step(step, loss_rank)
+        transform = build_transform_step(resolved, image_size)
+        if resolved.name in TENSOR_SPACE_OPS:
             tensor_ops.append(transform)
         else:
             pil_ops.append(transform)
