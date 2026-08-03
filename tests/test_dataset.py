@@ -7,9 +7,16 @@ import pytest
 import torch
 from torchvision import datasets
 
+from PIL import Image
+
 from brainmri_nas.data.loader import DatasetValidationError, build_dataset_bundle, describe_dataset
 from brainmri_nas.data.split import stratified_split
-from brainmri_nas.data.transforms import build_eval_transform, build_train_transform
+from brainmri_nas.data.transforms import (
+    PerImageNormalize,
+    ResizeLongerSideAndPad,
+    build_eval_transform,
+    build_train_transform,
+)
 from conftest import CLASSES, TEST_COUNTS, TRAIN_COUNTS
 
 
@@ -145,3 +152,61 @@ def test_train_and_eval_transforms_are_distinct_instances(synthetic_dataset_root
     assert train_transform is not train_eval_transform
     # val_loader and train_eval_loader are both deterministic eval views and may
     # legitimately share one transform instance -- that's not the bug being guarded against.
+
+
+def test_resize_longer_side_and_pad_produces_exact_target_size():
+    transform = ResizeLongerSideAndPad(size=64)
+    for original_size in [(200, 100), (100, 200), (50, 50), (174, 1375)]:
+        img = Image.new("RGB", original_size, color=(10, 20, 30))
+        out = transform(img)
+        assert out.size == (64, 64)
+
+
+def test_resize_longer_side_and_pad_preserves_aspect_ratio():
+    # 200x100 (2:1) -> longer side (width) becomes 64, height scales to 32,
+    # then 16px of padding is added above and below to reach 64x64.
+    transform = ResizeLongerSideAndPad(size=64, fill=0)
+    img = Image.new("RGB", (200, 100), color=(255, 255, 255))
+    out = transform(img)
+
+    top_row = out.crop((0, 0, 64, 1)).getpixel((0, 0))
+    middle_row = out.crop((0, 32, 64, 33)).getpixel((0, 0))
+    assert top_row == (0, 0, 0)  # padding: black
+    assert middle_row == (255, 255, 255)  # real (resized) content: white
+
+
+def test_resize_longer_side_and_pad_no_padding_needed_for_square_input():
+    transform = ResizeLongerSideAndPad(size=64)
+    img = Image.new("RGB", (300, 300), color=(100, 150, 200))
+    out = transform(img)
+    assert out.size == (64, 64)
+    # No black border should appear anywhere for an already-square input.
+    corners = [out.getpixel(p) for p in [(0, 0), (63, 0), (0, 63), (63, 63)]]
+    assert all(c != (0, 0, 0) for c in corners)
+
+
+def test_per_image_normalize_output_has_zero_mean_unit_std():
+    normalize = PerImageNormalize()
+    tensor = torch.rand(3, 16, 16)
+    out = normalize(tensor)
+    assert out.mean().abs() < 1e-5
+    assert abs(out.std().item() - 1.0) < 1e-3
+
+
+def test_per_image_normalize_removes_uniform_brightness_shift():
+    # Same underlying "content" (relative pattern), two different absolute
+    # brightness levels -- exactly the train/test gap measured in the real
+    # dataset. Per-image normalization must make these identical.
+    torch.manual_seed(0)
+    dark = torch.rand(1, 8, 8) * 0.3 + 0.1  # roughly in [0.1, 0.4]
+    bright = dark + 0.3  # same pattern, uniformly brighter
+
+    normalize = PerImageNormalize()
+    assert torch.allclose(normalize(dark), normalize(bright), atol=1e-5)
+
+
+def test_per_image_normalize_handles_constant_image_without_nan():
+    normalize = PerImageNormalize()
+    constant = torch.full((3, 8, 8), 0.5)
+    out = normalize(constant)
+    assert torch.isfinite(out).all()

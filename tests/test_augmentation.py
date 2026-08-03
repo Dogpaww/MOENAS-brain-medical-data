@@ -62,10 +62,10 @@ def test_transform_pipeline_ordering_matches_handoff_spec():
     pipeline = build_augmented_train_transform(policy, image_size=32)
 
     kinds = [type(t).__name__ for t in pipeline.transforms]
-    assert kinds[0] == "Resize"
+    assert kinds[0] == "ResizeLongerSideAndPad"
     assert "Grayscale" in kinds
     to_tensor_idx = kinds.index("ToTensor")
-    normalize_idx = kinds.index("Normalize")
+    normalize_idx = kinds.index("PerImageNormalize")
     erasing_idx = kinds.index("RandomErasing")
 
     assert normalize_idx == to_tensor_idx + 1  # tensor conversion -> normalization, adjacent
