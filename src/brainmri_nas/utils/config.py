@@ -34,8 +34,12 @@ class DatasetConfig:
 class SearchSpaceConfig:
     num_intermediate_nodes: int = 4
     edges_per_node: int = 2
-    initial_channels: int = 16
-    number_of_cells: int = 7
+    # Depth/width are chromosome-encoded (searched per-candidate), not fixed
+    # -- these are the bounds NSGA-II picks within, not single values.
+    number_of_cells_min: int = 3
+    number_of_cells_max: int = 11
+    initial_channels_min: int = 8
+    initial_channels_max: int = 48
     drop_path_probability: float = 0.2
     stem_type: str = "cifar"
 

@@ -14,8 +14,12 @@ dataset:
 search_space:
   num_intermediate_nodes: 4
   edges_per_node: 2
-  initial_channels: 16
-  number_of_cells: 7
+  # Depth/width are chromosome-encoded and searched per-candidate within
+  # these bounds (not fixed single values anymore).
+  number_of_cells_min: 3
+  number_of_cells_max: 11
+  initial_channels_min: 8
+  initial_channels_max: 48
   drop_path_probability: 0.2
   stem_type: cifar
 
@@ -31,7 +35,7 @@ nsga2:
   crossover_prob: 0.9
   mutation_prob: null
   device: cuda
-  topsis_weights: [0.4, 0.4, 0.2]
+  topsis_weights: [0.3, 0.3, 0.4]
 
 augmentation:
   population_size: 5

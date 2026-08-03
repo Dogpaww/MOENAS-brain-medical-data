@@ -44,7 +44,7 @@ from brainmri_nas.proxies.synflow import compute_synflow
 from brainmri_nas.proxies.zico import compute_zico
 from brainmri_nas.search.nsga2_runner import run_search
 from brainmri_nas.search.proxy_samples import build_fixed_proxy_batches
-from brainmri_nas.search_space.chromosome import chromosome_length, decode_chromosome
+from brainmri_nas.search_space.chromosome import decode_full_chromosome, total_chromosome_length
 from brainmri_nas.search_space.genotype import NetworkGenotype
 from brainmri_nas.training.checkpoint import load_checkpoint, rebuild_model_from_checkpoint
 from brainmri_nas.training.final_training import run_final_training
@@ -164,12 +164,19 @@ def main() -> None:
 
         # -- Step 3: decode one chromosome ------------------------------------
         _step(3, "Decoding one chromosome")
-        n_var = chromosome_length(config.search_space.num_intermediate_nodes, config.search_space.edges_per_node)
+        n_var = total_chromosome_length(config.search_space.num_intermediate_nodes, config.search_space.edges_per_node)
         demo_chromosome = [((i * 37) % 97) / 97.0 for i in range(n_var)]
-        genotype = decode_chromosome(
-            demo_chromosome, config.search_space.num_intermediate_nodes, config.search_space.edges_per_node
+        genotype, demo_number_of_cells, demo_initial_channels = decode_full_chromosome(
+            demo_chromosome,
+            config.search_space.num_intermediate_nodes,
+            config.search_space.edges_per_node,
+            number_of_cells_range=(config.search_space.number_of_cells_min, config.search_space.number_of_cells_max),
+            initial_channels_range=(config.search_space.initial_channels_min, config.search_space.initial_channels_max),
         )
-        print(f"    normal edges={len(genotype.normal.edges)}, reduction edges={len(genotype.reduction.edges)}")
+        print(
+            f"    normal edges={len(genotype.normal.edges)}, reduction edges={len(genotype.reduction.edges)}, "
+            f"number_of_cells={demo_number_of_cells}, initial_channels={demo_initial_channels}"
+        )
 
         # -- Step 4: forward and backward -------------------------------------
         _step(4, "Building the model and running forward + backward")
@@ -177,8 +184,8 @@ def main() -> None:
             input_channels=config.dataset.input_channels,
             num_classes=bundle.num_classes,
             image_size=config.dataset.image_size,
-            initial_channels=config.search_space.initial_channels,
-            number_of_cells=config.search_space.number_of_cells,
+            initial_channels=demo_initial_channels,
+            number_of_cells=demo_number_of_cells,
             drop_path_probability=config.search_space.drop_path_probability,
             stem_type=config.search_space.stem_type,
         )
@@ -244,7 +251,12 @@ def main() -> None:
         policy = decode_augmentation_chromosome(demo_policy_chromosome)
 
         selected_genotype = NetworkGenotype.from_dict(selected_architecture["genotype"])
-        trial_model = build_model(selected_genotype, **model_config)
+        selected_model_config = dict(
+            model_config,
+            initial_channels=selected_architecture["initial_channels"],
+            number_of_cells=selected_architecture["number_of_cells"],
+        )
+        trial_model = build_model(selected_genotype, **selected_model_config)
         loss_cache = LossCache(num_samples=len(bundle.train_indices), total_epochs=1)
         policy_train_loader = build_sample_adaptive_loader(
             data_root / "Training",

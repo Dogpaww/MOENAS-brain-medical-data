@@ -24,7 +24,12 @@ from brainmri_nas.model.network import build_model
 from brainmri_nas.proxies.profiling import profile_flops_and_params
 from brainmri_nas.proxies.synflow import compute_synflow
 from brainmri_nas.proxies.zico import compute_zico
-from brainmri_nas.search_space.chromosome import decode_chromosome, validate_and_repair_genotype
+from brainmri_nas.search_space.chromosome import (
+    DEFAULT_INITIAL_CHANNELS_RANGE,
+    DEFAULT_NUMBER_OF_CELLS_RANGE,
+    decode_full_chromosome,
+    validate_and_repair_genotype,
+)
 from brainmri_nas.search_space.genotype import NetworkGenotype
 from brainmri_nas.utils.serialization import dump_json, load_json
 
@@ -32,8 +37,14 @@ INVALID_LOG_SYNFLOW = -300.0
 INVALID_ZICO = -300.0
 
 
-def compute_candidate_hash(genotype: NetworkGenotype) -> str:
-    canonical = json.dumps(genotype.to_dict(), sort_keys=True)
+def compute_candidate_hash(genotype: NetworkGenotype, number_of_cells: int, initial_channels: int) -> str:
+    """Two candidates with identical topology but different depth/width are
+    genuinely different architectures, so both must be part of the hash --
+    otherwise the cache would collapse them into the same entry."""
+    canonical = json.dumps(
+        {"genotype": genotype.to_dict(), "number_of_cells": number_of_cells, "initial_channels": initial_channels},
+        sort_keys=True,
+    )
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
@@ -67,11 +78,20 @@ class CandidateCache:
         return cache
 
 
-def _invalid_record(chromosome: Sequence[float], candidate_hash: str, genotype: NetworkGenotype, error: Exception) -> dict:
+def _invalid_record(
+    chromosome: Sequence[float],
+    candidate_hash: str,
+    genotype: NetworkGenotype,
+    number_of_cells: int,
+    initial_channels: int,
+    error: Exception,
+) -> dict:
     return {
         "chromosome": [float(g) for g in chromosome],
         "candidate_hash": candidate_hash,
         "genotype": genotype.to_dict(),
+        "number_of_cells": number_of_cells,
+        "initial_channels": initial_channels,
         "synflow": 0.0,
         "log_synflow": INVALID_LOG_SYNFLOW,
         "zico": INVALID_ZICO,
@@ -93,15 +113,21 @@ def evaluate_candidate(
     input_channels: int,
     num_classes: int,
     image_size: int,
-    initial_channels: int,
-    number_of_cells: int,
     stem_type: str,
     proxy_batches: list[tuple[torch.Tensor, torch.Tensor]],
     device: torch.device,
+    number_of_cells_range: tuple[int, int] = DEFAULT_NUMBER_OF_CELLS_RANGE,
+    initial_channels_range: tuple[int, int] = DEFAULT_INITIAL_CHANNELS_RANGE,
 ) -> dict:
-    genotype = decode_chromosome(chromosome, num_intermediate_nodes, edges_per_node)
+    genotype, number_of_cells, initial_channels = decode_full_chromosome(
+        chromosome,
+        num_intermediate_nodes,
+        edges_per_node,
+        number_of_cells_range=number_of_cells_range,
+        initial_channels_range=initial_channels_range,
+    )
     genotype = validate_and_repair_genotype(genotype, num_intermediate_nodes, edges_per_node)
-    candidate_hash = compute_candidate_hash(genotype)
+    candidate_hash = compute_candidate_hash(genotype, number_of_cells, initial_channels)
 
     cached = cache.get(candidate_hash)
     if cached is not None:
@@ -131,6 +157,8 @@ def evaluate_candidate(
             "chromosome": [float(g) for g in chromosome],
             "candidate_hash": candidate_hash,
             "genotype": genotype.to_dict(),
+            "number_of_cells": number_of_cells,
+            "initial_channels": initial_channels,
             "synflow": synflow_result["synflow"],
             "log_synflow": synflow_result["log_synflow"],
             "zico": zico_result["zico"],
@@ -142,7 +170,7 @@ def evaluate_candidate(
             "error": None,
         }
     except Exception as exc:  # noqa: BLE001 -- an invalid candidate must be penalized, not crash the search
-        record = _invalid_record(chromosome, candidate_hash, genotype, exc)
+        record = _invalid_record(chromosome, candidate_hash, genotype, number_of_cells, initial_channels, exc)
 
     cache.put(candidate_hash, record)
     return record

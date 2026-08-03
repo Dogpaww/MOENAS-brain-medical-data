@@ -11,12 +11,17 @@ from brainmri_nas.search.candidate import CandidateCache, evaluate_candidate
 from brainmri_nas.search.nsga2_problem import NASSearchProblem
 from brainmri_nas.search.nsga2_runner import run_search
 from brainmri_nas.search.topsis import get_pareto_front, rank_topsis
-from brainmri_nas.search_space.chromosome import chromosome_length
+from brainmri_nas.search_space.chromosome import total_chromosome_length
 from brainmri_nas.utils.config import Config, DatasetConfig, NSGA2Config, ProxyConfig, SearchSpaceConfig
 from brainmri_nas.utils.serialization import dump_json, load_json
 
 INPUT_CHANNELS, IMAGE_SIZE, NUM_CLASSES = 3, 16, 4
-N_VAR = chromosome_length()
+N_VAR = total_chromosome_length()
+# Pinned to a single point (min == max) so these tests get a fixed, tiny,
+# fast model regardless of the size genes' actual float value -- depth/width
+# are chromosome-decoded now, not passed to evaluate_candidate directly.
+FIXED_NUMBER_OF_CELLS_RANGE = (3, 3)
+FIXED_INITIAL_CHANNELS_RANGE = (4, 4)
 
 
 def _fixed_batches(num_batches=2, batch_size=2):
@@ -40,11 +45,11 @@ def _candidate_kwargs(**overrides):
         input_channels=INPUT_CHANNELS,
         num_classes=NUM_CLASSES,
         image_size=IMAGE_SIZE,
-        initial_channels=4,
-        number_of_cells=3,
         stem_type="cifar",
         proxy_batches=_fixed_batches(),
         device=torch.device("cpu"),
+        number_of_cells_range=FIXED_NUMBER_OF_CELLS_RANGE,
+        initial_channels_range=FIXED_INITIAL_CHANNELS_RANGE,
     )
     kwargs.update(overrides)
     return kwargs
@@ -88,7 +93,7 @@ def test_evaluate_candidate_produces_finite_valid_record():
 def test_invalid_candidate_is_penalized_not_crashed():
     # number_of_cells=2 is rejected by build_model's reduction-schedule guard.
     record = evaluate_candidate(
-        _sample_chromosome(), cache=CandidateCache(), **_candidate_kwargs(number_of_cells=2)
+        _sample_chromosome(), cache=CandidateCache(), **_candidate_kwargs(number_of_cells_range=(2, 2))
     )
     assert record["valid"] is False
     assert record["error"] is not None
@@ -109,11 +114,11 @@ def test_objective_directions_in_nsga2_problem():
         input_channels=INPUT_CHANNELS,
         num_classes=NUM_CLASSES,
         image_size=IMAGE_SIZE,
-        initial_channels=4,
-        number_of_cells=3,
         stem_type="cifar",
         proxy_batches=_fixed_batches(),
         device=torch.device("cpu"),
+        number_of_cells_range=FIXED_NUMBER_OF_CELLS_RANGE,
+        initial_channels_range=FIXED_INITIAL_CHANNELS_RANGE,
     )
 
     import numpy as np
@@ -258,7 +263,9 @@ def test_end_to_end_tiny_nsga2_search(synthetic_dataset_root: Path, tmp_path: Pa
             batch_size=4,
             num_workers=0,
         ),
-        search_space=SearchSpaceConfig(initial_channels=4, number_of_cells=3),
+        search_space=SearchSpaceConfig(
+            initial_channels_min=4, initial_channels_max=4, number_of_cells_min=3, number_of_cells_max=3
+        ),
         proxies=ProxyConfig(zico_batch_size=2, zico_num_batches=2),
         nsga2=NSGA2Config(population_size=4, num_generations=2, seed=1, device="cpu"),
     )
@@ -298,8 +305,8 @@ def test_end_to_end_tiny_nsga2_search(synthetic_dataset_root: Path, tmp_path: Pa
         input_channels=config.dataset.input_channels,
         num_classes=config.dataset.num_classes,
         image_size=config.dataset.image_size,
-        initial_channels=config.search_space.initial_channels,
-        number_of_cells=config.search_space.number_of_cells,
+        initial_channels=selected["initial_channels"],
+        number_of_cells=selected["number_of_cells"],
         drop_path_probability=0.0,
         stem_type=config.search_space.stem_type,
     )

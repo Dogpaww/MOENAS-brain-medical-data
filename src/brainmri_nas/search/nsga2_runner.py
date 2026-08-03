@@ -24,7 +24,7 @@ from brainmri_nas.search.nsga2_problem import NASSearchProblem
 from brainmri_nas.search.proxy_samples import build_fixed_proxy_batches
 from brainmri_nas.search.topsis import get_pareto_front, rank_topsis
 from brainmri_nas.search.visualization import save_pareto_front_2d_plot, save_pareto_front_3d_plot
-from brainmri_nas.search_space.chromosome import chromosome_length
+from brainmri_nas.search_space.chromosome import total_chromosome_length
 from brainmri_nas.utils.config import Config, save_config
 from brainmri_nas.utils.determinism import seed_everything
 from brainmri_nas.utils.device import resolve_device
@@ -92,7 +92,7 @@ def run_search(config: Config, output_dir: str | Path) -> dict:
     cache_path = output_dir / "candidate_cache.json"
     cache = CandidateCache.load(cache_path) if cache_path.exists() else CandidateCache()
 
-    n_var = chromosome_length(config.search_space.num_intermediate_nodes, config.search_space.edges_per_node)
+    n_var = total_chromosome_length(config.search_space.num_intermediate_nodes, config.search_space.edges_per_node)
     archive: list[dict] = []
 
     problem = NASSearchProblem(
@@ -104,11 +104,11 @@ def run_search(config: Config, output_dir: str | Path) -> dict:
         input_channels=config.dataset.input_channels,
         num_classes=bundle.num_classes,
         image_size=config.dataset.image_size,
-        initial_channels=config.search_space.initial_channels,
-        number_of_cells=config.search_space.number_of_cells,
         stem_type=config.search_space.stem_type,
         proxy_batches=proxy_batches,
         device=device,
+        number_of_cells_range=(config.search_space.number_of_cells_min, config.search_space.number_of_cells_max),
+        initial_channels_range=(config.search_space.initial_channels_min, config.search_space.initial_channels_max),
     )
 
     algorithm = NSGA2(

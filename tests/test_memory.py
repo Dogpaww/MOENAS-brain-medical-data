@@ -15,10 +15,10 @@ import sys
 import torch
 
 from brainmri_nas.search.candidate import CandidateCache, evaluate_candidate
-from brainmri_nas.search_space.chromosome import chromosome_length
+from brainmri_nas.search_space.chromosome import total_chromosome_length
 
 INPUT_CHANNELS, IMAGE_SIZE, NUM_CLASSES = 3, 16, 4
-N_VAR = chromosome_length()
+N_VAR = total_chromosome_length()
 
 
 def _rss_bytes() -> int:
@@ -57,11 +57,11 @@ def test_sequential_candidate_evaluations_do_not_grow_memory_unbounded():
             input_channels=INPUT_CHANNELS,
             num_classes=NUM_CLASSES,
             image_size=IMAGE_SIZE,
-            initial_channels=4,
-            number_of_cells=3,
             stem_type="cifar",
             proxy_batches=proxy_batches,
             device=torch.device("cpu"),
+            number_of_cells_range=(3, 3),
+            initial_channels_range=(4, 4),
         )
         gc.collect()
         rss_samples.append(_rss_bytes())

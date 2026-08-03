@@ -26,7 +26,9 @@ PIPELINE_SCRIPT = REPO_ROOT / "scripts" / "run_pipeline.py"
 def _write_tiny_config(path: Path, data_root: Path) -> None:
     config = Config(
         dataset=DatasetConfig(data_root=str(data_root), image_size=16, batch_size=4, num_workers=0),
-        search_space=SearchSpaceConfig(initial_channels=4, number_of_cells=3),
+        search_space=SearchSpaceConfig(
+            initial_channels_min=4, initial_channels_max=4, number_of_cells_min=3, number_of_cells_max=3
+        ),
         proxies=ProxyConfig(zico_batch_size=2, zico_num_batches=2),
         nsga2=NSGA2Config(population_size=4, num_generations=1, seed=1, device="cpu"),
         augmentation=AugmentationConfig(population_size=2, num_generations=1, trial_epochs=1, seed=1, device="cpu"),

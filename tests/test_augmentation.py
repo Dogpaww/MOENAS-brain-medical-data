@@ -225,7 +225,9 @@ def test_train_trial_model_emits_per_epoch_progress_and_val_auc(caplog):
 def test_end_to_end_tiny_augmentation_search(synthetic_dataset_root: Path, tmp_path: Path):
     search_config = Config(
         dataset=DatasetConfig(data_root=str(synthetic_dataset_root), image_size=16, batch_size=4, num_workers=0),
-        search_space=SearchSpaceConfig(initial_channels=4, number_of_cells=3),
+        search_space=SearchSpaceConfig(
+            initial_channels_min=4, initial_channels_max=4, number_of_cells_min=3, number_of_cells_max=3
+        ),
         proxies=ProxyConfig(zico_batch_size=2, zico_num_batches=2),
         nsga2=NSGA2Config(population_size=4, num_generations=1, seed=1, device="cpu"),
     )

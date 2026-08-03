@@ -201,8 +201,8 @@ def run_augmentation_search(
         input_channels=config.dataset.input_channels,
         num_classes=bundle.num_classes,
         image_size=config.dataset.image_size,
-        initial_channels=config.search_space.initial_channels,
-        number_of_cells=config.search_space.number_of_cells,
+        initial_channels=selected_architecture["initial_channels"],
+        number_of_cells=selected_architecture["number_of_cells"],
         drop_path_probability=config.search_space.drop_path_probability,
         stem_type=config.search_space.stem_type,
     )
