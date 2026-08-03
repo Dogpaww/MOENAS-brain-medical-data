@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import torch
 from torch.utils.data import DataLoader, Subset
 from torchvision import datasets
 
@@ -145,3 +146,25 @@ def build_dataset_bundle(
         input_channels=3,
         num_classes=len(classes),
     )
+
+
+def compute_class_weights(
+    data_root: str | Path, class_to_idx: dict[str, int], train_indices: tuple[int, ...]
+) -> torch.Tensor:
+    """Balanced class weights for `CrossEntropyLoss(weight=...)`, computed
+    from the actual training split (not the raw folder counts) so they
+    reflect exactly what the model trains on: `weight_c = train_size /
+    (num_classes * count_c)`. Every class ends up contributing the same
+    total loss-mass over an epoch regardless of its raw sample count.
+    """
+    train_dir = Path(data_root) / TRAIN_SPLIT_DIR_NAME
+    targets = [label for _, label in datasets.ImageFolder(str(train_dir)).samples]
+
+    num_classes = len(class_to_idx)
+    counts = [0] * num_classes
+    for idx in train_indices:
+        counts[targets[idx]] += 1
+
+    train_size = len(train_indices)
+    weights = [train_size / (num_classes * max(count, 1)) for count in counts]
+    return torch.tensor(weights, dtype=torch.float32)

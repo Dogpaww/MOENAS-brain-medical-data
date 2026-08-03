@@ -56,6 +56,7 @@ def train_one_epoch(
     epoch: int = 1,
     total_epochs: int = 1,
     loss_cache: LossCache | None = None,
+    class_weights: torch.Tensor | None = None,
     logger: logging.Logger | None = None,
 ) -> float:
     if use_amp and scaler is None:
@@ -64,7 +65,8 @@ def train_one_epoch(
     logger = logger or logging.getLogger(DEFAULT_LOGGER_NAME)
 
     model.train()
-    loss_fn = nn.CrossEntropyLoss(reduction="none")
+    weight = class_weights.to(device) if class_weights is not None else None
+    loss_fn = nn.CrossEntropyLoss(reduction="none", weight=weight)
 
     num_batches = len(train_loader)
     log_interval = batch_log_interval(num_batches)

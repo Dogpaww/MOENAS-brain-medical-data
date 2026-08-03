@@ -24,7 +24,7 @@ from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
 from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
-from brainmri_nas.data.loader import build_dataset_bundle
+from brainmri_nas.data.loader import build_dataset_bundle, compute_class_weights
 from brainmri_nas.data.transforms import build_train_transform
 from brainmri_nas.model.network import build_model
 from brainmri_nas.proxies.profiling import profile_peak_memory
@@ -139,6 +139,12 @@ def run_final_training(
     model = build_model(genotype, **model_config)  # fresh weights, no reuse from search/proxies/augmentation trials
     model.to(device)
 
+    class_weights = compute_class_weights(config.dataset.data_root, bundle.class_to_idx, bundle.train_indices)
+    logger.info(
+        "Class weights (balanced): %s",
+        {cls: round(class_weights[idx].item(), 3) for cls, idx in bundle.class_to_idx.items()},
+    )
+
     # Only meaningful when a policy is actually being applied -- sized to the
     # full training split (not the physical batch size) since it tracks one
     # loss value per training sample, refreshed every ~1/40th of the run.
@@ -185,6 +191,7 @@ def run_final_training(
             epoch=epoch,
             total_epochs=config.training.final_epochs,
             loss_cache=loss_cache,
+            class_weights=class_weights,
             logger=logger,
         )
         scheduler.step()
