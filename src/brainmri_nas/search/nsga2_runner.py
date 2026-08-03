@@ -23,6 +23,7 @@ from brainmri_nas.search.candidate import CandidateCache
 from brainmri_nas.search.nsga2_problem import NASSearchProblem
 from brainmri_nas.search.proxy_samples import build_fixed_proxy_batches
 from brainmri_nas.search.topsis import get_pareto_front, rank_topsis
+from brainmri_nas.search.visualization import save_pareto_front_2d_plot, save_pareto_front_3d_plot
 from brainmri_nas.search_space.chromosome import chromosome_length
 from brainmri_nas.utils.config import Config, save_config
 from brainmri_nas.utils.determinism import seed_everything
@@ -152,6 +153,16 @@ def run_search(config: Config, output_dir: str | Path) -> dict:
         selected_architecture["candidate_hash"][:12],
         selected_architecture["topsis_score"],
     )
+
+    plot_3d_path = output_dir / "pareto_front_3d.png"
+    save_pareto_front_3d_plot(archive, selected_architecture, plot_3d_path)
+    if plot_3d_path.exists():
+        logger.info("Saved 3D Pareto front plot to %s", plot_3d_path)
+
+    plot_2d_path = output_dir / "pareto_front_2d.png"
+    save_pareto_front_2d_plot(archive, selected_architecture, plot_2d_path)
+    if plot_2d_path.exists():
+        logger.info("Saved 2D Pareto front plot to %s", plot_2d_path)
 
     save_config(config, output_dir / "config.yaml")
     dump_json(get_run_manifest(), output_dir / "run_manifest.json")

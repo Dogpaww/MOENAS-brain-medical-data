@@ -183,6 +183,73 @@ def test_topsis_ranks_dominant_architecture_first():
     assert all(0.0 <= s <= 1.0 for s in scores)
 
 
+def test_save_pareto_front_3d_plot_writes_a_readable_image(tmp_path: Path):
+    from PIL import Image
+
+    from brainmri_nas.search.visualization import save_pareto_front_3d_plot
+
+    records = [
+        _make_record(log_synflow=10.0, zico=10.0, flops_billion=0.1),
+        _make_record(log_synflow=5.0, zico=5.0, flops_billion=0.5),
+        _make_record(log_synflow=1.0, zico=1.0, flops_billion=5.0),
+        _make_record(log_synflow=8.0, zico=2.0, flops_billion=0.2),
+    ]
+    selected = records[0]
+    path = tmp_path / "pareto_front_3d.png"
+
+    save_pareto_front_3d_plot(records, selected, path)
+
+    assert path.exists()
+    img = Image.open(path)
+    img.verify()
+    assert path.stat().st_size > 0
+
+
+def test_save_pareto_front_3d_plot_skips_cleanly_with_no_valid_records(tmp_path: Path):
+    from brainmri_nas.search.visualization import save_pareto_front_3d_plot
+
+    invalid = _make_record(log_synflow=float("nan"), zico=1.0, flops_billion=1.0)
+    path = tmp_path / "pareto_front_3d.png"
+
+    save_pareto_front_3d_plot([invalid], invalid, path)  # must not raise
+    assert not path.exists()
+
+
+def test_save_pareto_front_2d_plot_writes_a_readable_image(tmp_path: Path):
+    from PIL import Image
+
+    from brainmri_nas.search.visualization import save_pareto_front_2d_plot
+
+    records = [
+        _make_record(log_synflow=10.0, zico=10.0, flops_billion=0.1),
+        _make_record(log_synflow=5.0, zico=5.0, flops_billion=0.5),
+        _make_record(log_synflow=1.0, zico=1.0, flops_billion=5.0),
+        _make_record(log_synflow=8.0, zico=2.0, flops_billion=0.2),
+    ]
+    path = tmp_path / "pareto_front_2d.png"
+
+    save_pareto_front_2d_plot(records, records[0], path)
+
+    assert path.exists()
+    img = Image.open(path)
+    img.verify()
+
+
+def test_pareto_staircase_is_monotonic_non_increasing():
+    import numpy as np
+
+    from brainmri_nas.search.visualization import _pareto_staircase
+
+    rng = np.random.default_rng(0)
+    x = rng.uniform(0, 10, size=30)
+    y = rng.uniform(0, 10, size=30)
+
+    step_x, step_y = _pareto_staircase(x, y)
+
+    assert np.all(np.diff(step_x) > 0)  # strictly increasing x
+    assert np.all(np.diff(step_y) < 0)  # strictly decreasing y -- the actual "downward curve" guarantee
+
+
 def test_end_to_end_tiny_nsga2_search(synthetic_dataset_root: Path, tmp_path: Path):
     config = Config(
         dataset=DatasetConfig(
@@ -212,6 +279,8 @@ def test_end_to_end_tiny_nsga2_search(synthetic_dataset_root: Path, tmp_path: Pa
         "selected_architecture.json",
         "search.log",
         "run_manifest.json",
+        "pareto_front_3d.png",
+        "pareto_front_2d.png",
     ):
         assert (output_dir / filename).exists(), f"missing output file: {filename}"
 

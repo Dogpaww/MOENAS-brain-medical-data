@@ -20,7 +20,7 @@ DEFAULT_CRITERIA = ("log_synflow", "zico", "flops_billion")
 DEFAULT_BENEFIT = (True, True, False)  # log_synflow: benefit, zico: benefit, flops_billion: cost
 
 
-def _finite_valid_records(records: list[dict], criteria: tuple[str, ...]) -> list[dict]:
+def finite_valid_records(records: list[dict], criteria: tuple[str, ...]) -> list[dict]:
     valid = []
     for r in records:
         if not r.get("valid", True):
@@ -30,15 +30,20 @@ def _finite_valid_records(records: list[dict], criteria: tuple[str, ...]) -> lis
     return valid
 
 
+def nsga2_objective_matrix(records: list[dict]) -> np.ndarray:
+    """The internal minimization objective space NSGA-II actually searched
+    in (`-log_synflow`, `-zico`, `flops_billion`) -- shared by Pareto-front
+    extraction here and the 3D front plot in `visualization.py`, so both
+    always agree on which points are non-dominated."""
+    return np.array([[-r["log_synflow"], -r["zico"], r["flops_billion"]] for r in records], dtype=float)
+
+
 def get_pareto_front(records: list[dict]) -> list[dict]:
-    valid = _finite_valid_records(records, DEFAULT_CRITERIA)
+    valid = finite_valid_records(records, DEFAULT_CRITERIA)
     if not valid:
         return []
 
-    objectives = np.array(
-        [[-r["log_synflow"], -r["zico"], r["flops_billion"]] for r in valid],
-        dtype=float,
-    )
+    objectives = nsga2_objective_matrix(valid)
     nd_idx = NonDominatedSorting().do(objectives, only_non_dominated_front=True)
     return [valid[i] for i in nd_idx]
 
@@ -51,7 +56,7 @@ def rank_topsis(
     benefit: tuple[bool, ...] = DEFAULT_BENEFIT,
 ) -> list[dict]:
     eps = 1e-12
-    valid = _finite_valid_records(records, criteria)
+    valid = finite_valid_records(records, criteria)
     if not valid:
         raise RuntimeError("No valid architectures available for TOPSIS ranking.")
 
