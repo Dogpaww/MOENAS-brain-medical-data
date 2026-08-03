@@ -75,7 +75,7 @@ class AugmentationConfig:
     population_size: int = 5
     num_generations: int = 5
     trial_epochs: int = 10
-    learning_rate: float = 0.025
+    learning_rate: float = 1e-3
     weight_decay: float = 3e-4
     seed: int = 1
     mutation_prob: float | None = None
@@ -92,16 +92,20 @@ class TrainingConfig:
     autocast/GradScaler when the resolved device is CUDA (handoff §27, §30
     item 17 -- never claim AMP is on while quietly training FP32).
 
-    `learning_rate`/`weight_decay` and the optimizer/scheduler built from
-    them (see `utils/optim.py`) match the legacy repo's `evaluate.py::train()`
-    exactly (Adam, MultiStepLR at 50%/75% of the epoch budget) -- there's no
-    `momentum` field because Adam doesn't take one.
+    Optimizer/scheduler (see `utils/optim.py`) is Adam + MultiStepLR at
+    50%/75% of the epoch budget, matching the legacy repo's
+    `evaluate.py::train()` shape -- there's no `momentum` field because Adam
+    doesn't take one. `learning_rate` itself no longer matches the legacy
+    value: that value (0.025) is the standard DARTS *SGD* recipe's LR, which
+    is ~25x too high for Adam (whose own PyTorch default is 1e-3) and was
+    the likely cause of the large epoch-to-epoch validation swings observed
+    in real training runs -- rescaled to Adam's normal range instead.
     """
 
     physical_batch_size: int = 32
     gradient_accumulation_steps: int = 1
     final_epochs: int = 250
-    learning_rate: float = 0.025
+    learning_rate: float = 1e-3
     weight_decay: float = 3e-4
     grad_clip_norm: float = 5.0
     precision: str = "amp"  # "amp" or "fp32"

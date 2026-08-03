@@ -11,12 +11,15 @@ Predictions are moved to CPU per batch and concatenated once after the eval
 loop (handoff §29/§30 items 14-15), even though this is a smaller-scale
 trial loop than Stage 4's final training.
 
-Validation macro AUC is (re-)evaluated at the end of *every* trial epoch,
-not just once after the last one -- purely for visibility into how a
-policy's score evolves during its trial (the handoff only prohibits
-evaluating *test* every epoch; validation every epoch is fine, same as
-final training already does). The value returned is still just the last
-epoch's score, so this doesn't change which policy ends up selected.
+Validation macro AUC is (re-)evaluated at the end of *every* trial epoch
+(the handoff only prohibits evaluating *test* every epoch; validation every
+epoch is fine, same as final training already does). The returned score is
+the average of the last `FITNESS_SMOOTHING_WINDOW` epochs, not a single
+last-epoch snapshot -- with only `trial_epochs` (typically 10) to train on,
+a lone final-epoch reading is a high-variance estimator of a policy's real
+quality (real runs show macro AUC swinging substantially between adjacent
+epochs), and that noise would otherwise leak directly into which policy the
+augmentation search picks.
 
 `loss_cache`, when given, makes this sample-adaptive (SapAugment, Hu et al.
 2021): `train_loader` must then yield `(x, y, index)` triples (see
@@ -42,6 +45,7 @@ from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 from brainmri_nas.utils.progress import batch_log_interval, maybe_log_batch_progress
 
 DEFAULT_LOGGER_NAME = "brainmri_nas.augmentation_search"
+FITNESS_SMOOTHING_WINDOW = 3
 
 
 @torch.no_grad()
@@ -96,6 +100,7 @@ def train_trial_model(
     log_interval = batch_log_interval(num_batches)
 
     val_macro_auc = 0.0
+    recent_val_aucs: list[float] = []
     for epoch in range(1, epochs + 1):
         model.train()
         total_loss = 0.0
@@ -138,6 +143,7 @@ def train_trial_model(
             loss_cache.end_epoch()
 
         val_macro_auc = evaluate_macro_auc(model, val_loader, device=device, num_classes=num_classes)
+        recent_val_aucs.append(val_macro_auc)
         logger.info(
             "trial epoch %d/%d done: train_loss=%.4f val_macro_auc=%.4f",
             epoch,
@@ -146,4 +152,6 @@ def train_trial_model(
             val_macro_auc,
         )
 
-    return {"val_macro_auc": val_macro_auc}
+    window = recent_val_aucs[-FITNESS_SMOOTHING_WINDOW:]
+    smoothed_val_macro_auc = sum(window) / len(window)
+    return {"val_macro_auc": smoothed_val_macro_auc}
