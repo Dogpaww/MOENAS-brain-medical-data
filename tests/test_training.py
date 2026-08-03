@@ -130,6 +130,32 @@ def test_train_one_epoch_updates_weights_and_returns_finite_loss():
     assert changed
 
 
+def test_train_one_epoch_emits_batch_progress_logs(caplog):
+    import logging
+
+    caplog.set_level(logging.INFO, logger="brainmri_nas.final_training")
+    model = _tiny_model()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+
+    # 8 samples, batch_size=1 -> 8 batches/epoch -> interval = max(1, 8//5) = 1 -> logs every batch.
+    train_one_epoch(
+        model,
+        _tiny_loader(num_samples=8, batch_size=1),
+        optimizer,
+        device=torch.device("cpu"),
+        use_amp=False,
+        scaler=None,
+        accumulation_steps=1,
+        grad_clip_norm=5.0,
+        epoch=3,
+        total_epochs=10,
+    )
+
+    messages = [r.getMessage() for r in caplog.records]
+    assert any("3/10" in m and "batch" in m for m in messages)
+    assert any("8/8" in m for m in messages)  # the final batch always logs
+
+
 def test_train_one_epoch_amp_without_scaler_raises():
     model = _tiny_model()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1)

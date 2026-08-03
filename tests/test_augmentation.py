@@ -126,6 +126,52 @@ def _arch_chromosome(offset=0):
     return [((i * 37 + offset) % 97) / 97.0 for i in range(length)]
 
 
+def test_train_trial_model_emits_per_epoch_progress_and_val_auc(caplog):
+    import logging
+
+    from torch.utils.data import DataLoader, TensorDataset
+
+    from brainmri_nas.augment.trial_training import train_trial_model
+
+    caplog.set_level(logging.INFO, logger="brainmri_nas.augmentation_search")
+
+    genotype = decode_arch_chromosome(_arch_chromosome())
+    model = build_model(
+        genotype,
+        input_channels=3,
+        num_classes=4,
+        image_size=16,
+        initial_channels=4,
+        number_of_cells=3,
+        drop_path_probability=0.0,
+        stem_type="cifar",
+    )
+
+    g = torch.Generator().manual_seed(0)
+    x_train = torch.randn(8, 3, 16, 16, generator=g)
+    y_train = torch.randint(0, 4, (8,), generator=g)
+    x_val = torch.randn(4, 3, 16, 16, generator=g)
+    y_val = torch.randint(0, 4, (4,), generator=g)
+    train_loader = DataLoader(TensorDataset(x_train, y_train), batch_size=4)
+    val_loader = DataLoader(TensorDataset(x_val, y_val), batch_size=4)
+
+    result = train_trial_model(
+        model,
+        train_loader,
+        val_loader,
+        epochs=2,
+        learning_rate=0.025,
+        weight_decay=3e-4,
+        device=torch.device("cpu"),
+        num_classes=4,
+    )
+
+    messages = [r.getMessage() for r in caplog.records]
+    assert any("trial epoch 1/2" in m and "val_macro_auc" in m for m in messages)
+    assert any("trial epoch 2/2" in m and "val_macro_auc" in m for m in messages)
+    assert "val_macro_auc" in result
+
+
 def test_end_to_end_tiny_augmentation_search(synthetic_dataset_root: Path, tmp_path: Path):
     search_config = Config(
         dataset=DatasetConfig(data_root=str(synthetic_dataset_root), image_size=16, batch_size=4, num_workers=0),

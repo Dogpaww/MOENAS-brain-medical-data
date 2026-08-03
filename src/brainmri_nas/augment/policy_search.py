@@ -80,6 +80,8 @@ class PolicySearchProblem(ElementwiseProblem):
         weight_decay: float,
         num_classes: int,
         device: torch.device,
+        total_trials: int,
+        logger: logging.Logger,
     ):
         super().__init__(n_var=n_var, n_obj=1, n_ieq_constr=0, xl=np.zeros(n_var), xu=np.full(n_var, CHROMOSOME_UPPER_BOUND))
         self.archive = archive
@@ -97,9 +99,16 @@ class PolicySearchProblem(ElementwiseProblem):
         self.weight_decay = weight_decay
         self.num_classes = num_classes
         self.device = device
+        self.total_trials = total_trials
+        self.logger = logger
+        self.trial_count = 0
 
     def _evaluate(self, x, out, *args, **kwargs):
+        self.trial_count += 1
+        trial_label = f"Trial {self.trial_count}/{self.total_trials}"
+
         policy: AugmentationPolicy = decode_chromosome(x)
+        self.logger.info("%s: starting (%d trial epochs)", trial_label, self.trial_epochs)
 
         train_loader = build_policy_train_loader(
             self.train_dir,
@@ -122,10 +131,22 @@ class PolicySearchProblem(ElementwiseProblem):
             weight_decay=self.weight_decay,
             device=self.device,
             num_classes=self.num_classes,
+            logger=self.logger,
         )
 
         del trial_model, train_loader
         gc.collect()
+
+        best_so_far = max(
+            (r["val_macro_auc"] for r in self.archive), default=result["val_macro_auc"]
+        )
+        best_so_far = max(best_so_far, result["val_macro_auc"])
+        self.logger.info(
+            "%s: finished val_macro_auc=%.4f (best so far: %.4f)",
+            trial_label,
+            result["val_macro_auc"],
+            best_so_far,
+        )
 
         record = {
             "chromosome": [float(v) for v in x],
@@ -205,6 +226,8 @@ def run_augmentation_search(
         weight_decay=config.augmentation.weight_decay,
         num_classes=bundle.num_classes,
         device=device,
+        total_trials=config.augmentation.population_size * config.augmentation.num_generations,
+        logger=logger,
     )
 
     algorithm = GA(

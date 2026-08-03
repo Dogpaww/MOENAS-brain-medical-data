@@ -10,10 +10,18 @@ module only knows how to run one trial's train loop and evaluate it.
 Predictions are moved to CPU per batch and concatenated once after the eval
 loop (handoff §29/§30 items 14-15), even though this is a smaller-scale
 trial loop than Stage 4's final training.
+
+Validation macro AUC is (re-)evaluated at the end of *every* trial epoch,
+not just once after the last one -- purely for visibility into how a
+policy's score evolves during its trial (the handoff only prohibits
+evaluating *test* every epoch; validation every epoch is fine, same as
+final training already does). The value returned is still just the last
+epoch's score, so this doesn't change which policy ends up selected.
 """
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import torch
@@ -23,8 +31,11 @@ from torch.utils.data import DataLoader, Subset
 from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
-from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 from brainmri_nas.augment.transform_builder import build_augmented_train_transform
+from brainmri_nas.utils.optim import build_optimizer_and_scheduler
+from brainmri_nas.utils.progress import batch_log_interval, maybe_log_batch_progress
+
+DEFAULT_LOGGER_NAME = "brainmri_nas.augmentation_search"
 
 
 def build_policy_train_loader(
@@ -76,7 +87,10 @@ def train_trial_model(
     weight_decay: float,
     device: torch.device,
     num_classes: int,
+    logger: logging.Logger | None = None,
 ) -> dict:
+    logger = logger or logging.getLogger(DEFAULT_LOGGER_NAME)
+
     model.to(device)
     model.train()
 
@@ -85,15 +99,45 @@ def train_trial_model(
     )
     loss_fn = nn.CrossEntropyLoss()
 
-    for _ in range(epochs):
+    num_batches = len(train_loader)
+    log_interval = batch_log_interval(num_batches)
+
+    val_macro_auc = 0.0
+    for epoch in range(1, epochs + 1):
         model.train()
-        for x, y in train_loader:
+        total_loss = 0.0
+        total_samples = 0
+
+        for step, (x, y) in enumerate(train_loader):
             x, y = x.to(device), y.to(device)
             optimizer.zero_grad(set_to_none=True)
             loss = loss_fn(model(x), y)
             loss.backward()
             optimizer.step()
+
+            total_loss += loss.item() * x.size(0)
+            total_samples += x.size(0)
+
+            maybe_log_batch_progress(
+                logger,
+                prefix="trial",
+                epoch=epoch,
+                total_epochs=epochs,
+                batch_idx=step,
+                total_batches=num_batches,
+                running_loss=total_loss / total_samples,
+                interval=log_interval,
+            )
+
         scheduler.step()
 
-    val_macro_auc = evaluate_macro_auc(model, val_loader, device=device, num_classes=num_classes)
+        val_macro_auc = evaluate_macro_auc(model, val_loader, device=device, num_classes=num_classes)
+        logger.info(
+            "trial epoch %d/%d done: train_loss=%.4f val_macro_auc=%.4f",
+            epoch,
+            epochs,
+            total_loss / max(total_samples, 1),
+            val_macro_auc,
+        )
+
     return {"val_macro_auc": val_macro_auc}

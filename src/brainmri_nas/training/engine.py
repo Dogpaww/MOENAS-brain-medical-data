@@ -14,13 +14,24 @@ gradients are unscaled before clipping (handoff §26); a per-epoch LR
 scheduler is stepped by the caller after this returns, which is also why
 "advance step-based schedulers only with optimizer updates" doesn't need
 special handling here -- there's no per-iteration scheduler in this design.
+
+Batch progress is logged through the same named logger `final_training.py`
+already attaches handlers to, so it needs no extra plumbing to reach both
+the console and `training.log`; called from a bare unit test with no
+handler configured, these log calls are simply silent no-ops.
 """
 
 from __future__ import annotations
 
+import logging
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+
+from brainmri_nas.utils.progress import batch_log_interval, maybe_log_batch_progress
+
+DEFAULT_LOGGER_NAME = "brainmri_nas.final_training"
 
 
 def train_one_epoch(
@@ -34,14 +45,20 @@ def train_one_epoch(
     accumulation_steps: int,
     grad_clip_norm: float,
     loss_fn: nn.Module | None = None,
+    epoch: int = 1,
+    total_epochs: int = 1,
+    logger: logging.Logger | None = None,
 ) -> float:
     if use_amp and scaler is None:
         raise ValueError("use_amp=True requires a GradScaler.")
+
+    logger = logger or logging.getLogger(DEFAULT_LOGGER_NAME)
 
     model.train()
     loss_fn = loss_fn or nn.CrossEntropyLoss()
 
     num_batches = len(train_loader)
+    log_interval = batch_log_interval(num_batches)
     total_loss = 0.0
     total_samples = 0
     optimizer.zero_grad(set_to_none=True)
@@ -73,5 +90,16 @@ def train_one_epoch(
 
         total_loss += loss.item() * x.size(0)
         total_samples += x.size(0)
+
+        maybe_log_batch_progress(
+            logger,
+            prefix="train",
+            epoch=epoch,
+            total_epochs=total_epochs,
+            batch_idx=step,
+            total_batches=num_batches,
+            running_loss=total_loss / total_samples,
+            interval=log_interval,
+        )
 
     return total_loss / max(total_samples, 1)

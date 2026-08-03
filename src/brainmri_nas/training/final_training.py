@@ -169,6 +169,9 @@ def run_final_training(
             scaler=scaler,
             accumulation_steps=config.training.gradient_accumulation_steps,
             grad_clip_norm=config.training.grad_clip_norm,
+            epoch=epoch,
+            total_epochs=config.training.final_epochs,
+            logger=logger,
         )
         scheduler.step()
 
@@ -209,14 +212,17 @@ def run_final_training(
             }
         )
         logger.info(
-            "epoch %d/%d train_loss=%.4f val_loss=%.4f val_%s=%.4f%s",
+            "epoch %d/%d done: train_loss=%.4f val_loss=%.4f val_accuracy=%.4f "
+            "val_macro_f1=%.4f val_macro_auc=%.4f (checkpoint_metric=%s)%s",
             epoch,
             config.training.final_epochs,
             train_loss,
             val_metrics["loss"],
+            val_metrics["accuracy"],
+            val_metrics["macro_f1"],
+            val_metrics["macro_auc"],
             config.training.checkpoint_metric,
-            score if math.isfinite(score) else float("nan"),
-            " (best)" if is_best else "",
+            " [new best]" if is_best else "",
         )
 
     if best_epoch == -1:
