@@ -80,6 +80,7 @@ class PolicySearchProblem(ElementwiseProblem):
         trial_epochs: int,
         learning_rate: float,
         weight_decay: float,
+        momentum: float,
         num_classes: int,
         device: torch.device,
         total_trials: int,
@@ -99,6 +100,7 @@ class PolicySearchProblem(ElementwiseProblem):
         self.trial_epochs = trial_epochs
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
+        self.momentum = momentum
         self.num_classes = num_classes
         self.device = device
         self.total_trials = total_trials
@@ -136,6 +138,7 @@ class PolicySearchProblem(ElementwiseProblem):
             epochs=self.trial_epochs,
             learning_rate=self.learning_rate,
             weight_decay=self.weight_decay,
+            momentum=self.momentum,
             device=self.device,
             num_classes=self.num_classes,
             loss_cache=loss_cache,
@@ -232,6 +235,7 @@ def run_augmentation_search(
         trial_epochs=config.augmentation.trial_epochs,
         learning_rate=config.augmentation.learning_rate,
         weight_decay=config.augmentation.weight_decay,
+        momentum=config.augmentation.momentum,
         num_classes=bundle.num_classes,
         device=device,
         total_trials=config.augmentation.population_size * config.augmentation.num_generations,

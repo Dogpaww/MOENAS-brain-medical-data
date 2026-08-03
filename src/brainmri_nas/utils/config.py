@@ -75,8 +75,9 @@ class AugmentationConfig:
     population_size: int = 5
     num_generations: int = 5
     trial_epochs: int = 10
-    learning_rate: float = 1e-3
+    learning_rate: float = 0.025
     weight_decay: float = 3e-4
+    momentum: float = 0.9
     seed: int = 1
     mutation_prob: float | None = None
     device: str = "cpu"
@@ -92,21 +93,25 @@ class TrainingConfig:
     autocast/GradScaler when the resolved device is CUDA (handoff §27, §30
     item 17 -- never claim AMP is on while quietly training FP32).
 
-    Optimizer/scheduler (see `utils/optim.py`) is Adam + MultiStepLR at
-    50%/75% of the epoch budget, matching the legacy repo's
-    `evaluate.py::train()` shape -- there's no `momentum` field because Adam
-    doesn't take one. `learning_rate` itself no longer matches the legacy
-    value: that value (0.025) is the standard DARTS *SGD* recipe's LR, which
-    is ~25x too high for Adam (whose own PyTorch default is 1e-3) and was
-    the likely cause of the large epoch-to-epoch validation swings observed
-    in real training runs -- rescaled to Adam's normal range instead.
+    Optimizer/scheduler (see `utils/optim.py`) is SGD(momentum) +
+    CosineAnnealingLR over the full epoch budget -- the standard DARTS
+    training recipe these `learning_rate`/`weight_decay`/`momentum` values
+    belong to. The legacy repo paired this exact recipe's LR (0.025) with
+    Adam instead of SGD, which is ~25x too high for Adam's normal range and
+    a likely cause of the large epoch-to-epoch validation swings observed in
+    real training runs; switched to SGD+momentum rather than just rescaling
+    Adam's LR, since on a small, overfitting-prone dataset with a
+    BatchNorm-heavy architecture, SGD's flatter-minima tendency and
+    undistorted (not adaptively-rescaled) weight decay both favor
+    generalization over Adam's faster but often sharper convergence.
     """
 
     physical_batch_size: int = 32
     gradient_accumulation_steps: int = 1
     final_epochs: int = 250
-    learning_rate: float = 1e-3
+    learning_rate: float = 0.025
     weight_decay: float = 3e-4
+    momentum: float = 0.9
     grad_clip_norm: float = 5.0
     precision: str = "amp"  # "amp" or "fp32"
     checkpoint_metric: str = "macro_auc"  # key into evaluate_model()'s returned dict

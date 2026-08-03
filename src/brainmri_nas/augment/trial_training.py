@@ -83,6 +83,7 @@ def train_trial_model(
     weight_decay: float,
     device: torch.device,
     num_classes: int,
+    momentum: float = 0.9,
     loss_cache: LossCache | None = None,
     logger: logging.Logger | None = None,
 ) -> dict:
@@ -92,7 +93,7 @@ def train_trial_model(
     model.train()
 
     optimizer, scheduler = build_optimizer_and_scheduler(
-        model, learning_rate=learning_rate, weight_decay=weight_decay, epochs=epochs
+        model, learning_rate=learning_rate, weight_decay=weight_decay, epochs=epochs, momentum=momentum
     )
     loss_fn = nn.CrossEntropyLoss(reduction="none")
 

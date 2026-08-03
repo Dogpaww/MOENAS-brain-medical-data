@@ -170,6 +170,7 @@ def run_final_training(
         learning_rate=config.training.learning_rate,
         weight_decay=config.training.weight_decay,
         epochs=config.training.final_epochs,
+        momentum=config.training.momentum,
     )
     scaler = torch.amp.GradScaler(device="cuda") if use_amp else None
 

@@ -58,31 +58,39 @@ def test_default_gradient_accumulation_is_disabled():
     assert TrainingConfig().gradient_accumulation_steps == 1
 
 
-def test_optimizer_and_scheduler_match_legacy_repo():
-    # Legacy evaluate.py::train(): Adam(lr, weight_decay=3e-4) + MultiStepLR(
-    # milestones=[0.5*epochs, 0.75*epochs], gamma=0.1). No momentum -- Adam
-    # doesn't take one.
+def test_optimizer_and_scheduler_match_darts_recipe():
+    # SGD(momentum) + CosineAnnealingLR over the full epoch budget -- the
+    # standard DARTS training recipe these lr/weight_decay/momentum values
+    # belong to (see utils/optim.py docstring for why this replaced Adam).
     model = _tiny_model()
     optimizer, scheduler = build_optimizer_and_scheduler(
-        model, learning_rate=0.025, weight_decay=3e-4, epochs=200
+        model, learning_rate=0.025, weight_decay=3e-4, momentum=0.9, epochs=200
     )
 
-    assert isinstance(optimizer, torch.optim.Adam)
+    assert isinstance(optimizer, torch.optim.SGD)
     param_group = optimizer.param_groups[0]
     assert param_group["lr"] == 0.025
     assert param_group["weight_decay"] == 3e-4
+    assert param_group["momentum"] == 0.9
 
-    assert isinstance(scheduler, torch.optim.lr_scheduler.MultiStepLR)
-    assert sorted(scheduler.milestones.keys()) == [100, 150]  # 0.5*200, 0.75*200
-    assert scheduler.gamma == 0.1
+    assert isinstance(scheduler, torch.optim.lr_scheduler.CosineAnnealingLR)
+    assert scheduler.T_max == 200
 
 
 def test_scheduler_degrades_gracefully_for_short_runs():
     model = _tiny_model()
-    # int(0.5*1)=0 and int(0.75*1)=0 -- both excluded (must be > 0), so no
-    # milestones rather than a degenerate double-decay at epoch 0.
-    _, scheduler = build_optimizer_and_scheduler(model, learning_rate=0.025, weight_decay=3e-4, epochs=1)
-    assert dict(scheduler.milestones) == {}
+    # CosineAnnealingLR needs T_max >= 1 -- a 1-epoch smoke-test run must not
+    # raise or produce a degenerate (e.g. zero-length) cosine cycle.
+    optimizer, scheduler = build_optimizer_and_scheduler(model, learning_rate=0.025, weight_decay=3e-4, epochs=1)
+    assert scheduler.T_max == 1
+
+    x = torch.randn(2, INPUT_CHANNELS, IMAGE_SIZE, IMAGE_SIZE)
+    optimizer.zero_grad()
+    model(x).sum().backward()
+    optimizer.step()
+    scheduler.step()  # must not raise
+
+    assert optimizer.param_groups[0]["lr"] >= 0.0
 
 
 def test_evaluate_model_returns_full_metric_suite():

@@ -1,16 +1,20 @@
 """Optimizer/scheduler construction shared by augmentation-policy trial
 training and final training.
 
-Adam + `MultiStepLR(milestones=[0.5*epochs, 0.75*epochs], gamma=0.1)`,
-matching the legacy repo's `evaluate.py::train()` shape. The base
-`learning_rate` itself is passed in by the caller (`configs/search.yaml`),
-not hardcoded here -- it was originally set to 0.025 to match the legacy
-value exactly, but that number is the standard DARTS *SGD* recipe's LR
-(~25x too high for Adam, whose own PyTorch default is 1e-3) and was the
-likely cause of large epoch-to-epoch validation swings in real runs;
-`TrainingConfig`/`AugmentationConfig` now default to 1e-3 instead. Centralized
-here, instead of duplicated in both training loops, so they can't silently
-drift apart on this again.
+SGD(momentum) + CosineAnnealingLR -- the standard DARTS training recipe
+(lr=0.025, weight_decay=3e-4, momentum=0.9), not Adam. The legacy repo's
+`lr=0.025` value is this exact SGD recipe's learning rate; it was originally
+carried over unchanged when this project's training loop used Adam, which
+is ~25x too high for Adam's own normal range and a likely cause of large
+epoch-to-epoch validation swings seen in real training runs. Rather than
+just rescale the learning rate for Adam, the optimizer itself was switched
+to match the recipe those numbers actually belong to: on a small,
+overfitting-prone dataset with a BatchNorm-heavy DARTS-style architecture,
+SGD+momentum's flatter-minima tendency and undistorted weight decay (Adam's
+non-decoupled weight decay gets rescaled unevenly per-parameter by its own
+adaptive step normalization) both favor generalization over Adam's faster
+but often sharper convergence. Centralized here, instead of duplicated in
+both training loops, so they can't silently drift apart on this again.
 """
 
 from __future__ import annotations
@@ -25,13 +29,11 @@ def build_optimizer_and_scheduler(
     learning_rate: float,
     weight_decay: float,
     epochs: int,
-    gamma: float = 0.1,
+    momentum: float = 0.9,
 ) -> tuple[torch.optim.Optimizer, torch.optim.lr_scheduler.LRScheduler]:
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
-
-    # Degrades to "no decay" for very short runs (e.g. a 1-epoch smoke test)
-    # instead of MultiStepLR raising/double-firing on a milestone of 0.
-    milestones = sorted({m for m in (int(0.5 * epochs), int(0.75 * epochs)) if 0 < m < epochs})
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=gamma)
+    optimizer = torch.optim.SGD(
+        model.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay
+    )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(epochs, 1))
 
     return optimizer, scheduler

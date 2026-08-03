@@ -41,8 +41,9 @@ augmentation:
   population_size: 5
   num_generations: 5
   trial_epochs: 10
-  learning_rate: 0.001
+  learning_rate: 0.025
   weight_decay: 0.0003
+  momentum: 0.9
   seed: 1
   mutation_prob: null
   device: cuda
@@ -51,8 +52,9 @@ training:
   physical_batch_size: 32
   gradient_accumulation_steps: 1
   final_epochs: 250
-  learning_rate: 0.001
+  learning_rate: 0.025
   weight_decay: 0.0003
+  momentum: 0.9
   grad_clip_norm: 5.0
   precision: amp
   checkpoint_metric: macro_auc
