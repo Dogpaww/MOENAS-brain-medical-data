@@ -27,6 +27,17 @@ rationale, which applies identically here. `train_loader` must then yield
 preserves plain 2-tuple-batch behavior, used both for final training
 without a selected augmentation policy and by tests that don't exercise
 sample-adaptivity at all.
+
+`no_tumor_class_index`/`cancer_no_tumor_penalty`, when both given, add an
+extra differentiable term to the *aggregate* loss (not `per_sample_loss`,
+so it never distorts what LossCache records as "how hard is this sample"):
+`penalty_weight * mean(is_cancerous * P(no_tumor | x))` over the batch.
+This specifically discourages the model from assigning probability to
+no_tumor on genuinely-cancerous samples -- a false negative on cancer is
+the clinically worst outcome for this task -- without touching how the
+three cancer types are told apart from each other, which standard
+per-class weighting can't express (it only sees a sample's true class, not
+which wrong class it got predicted as).
 """
 
 from __future__ import annotations
@@ -57,6 +68,8 @@ def train_one_epoch(
     total_epochs: int = 1,
     loss_cache: LossCache | None = None,
     class_weights: torch.Tensor | None = None,
+    no_tumor_class_index: int | None = None,
+    cancer_no_tumor_penalty: float = 0.0,
     logger: logging.Logger | None = None,
 ) -> float:
     if use_amp and scaler is None:
@@ -87,6 +100,11 @@ def train_one_epoch(
             logits = model(x)
             per_sample_loss = loss_fn(logits, y)
             loss = per_sample_loss.mean()
+
+            if no_tumor_class_index is not None and cancer_no_tumor_penalty > 0:
+                no_tumor_prob = torch.softmax(logits, dim=1)[:, no_tumor_class_index]
+                is_cancerous = (y != no_tumor_class_index).float()
+                loss = loss + cancer_no_tumor_penalty * (is_cancerous * no_tumor_prob).mean()
 
         scaled_loss = loss / accumulation_steps
         if use_amp:

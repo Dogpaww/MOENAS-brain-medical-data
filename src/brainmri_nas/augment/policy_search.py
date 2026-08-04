@@ -111,7 +111,7 @@ class PolicySearchProblem(ElementwiseProblem):
         self.trial_count += 1
         trial_label = f"Trial {self.trial_count}/{self.total_trials}"
 
-        policy: AugmentationPolicy = decode_chromosome(x)
+        policy: AugmentationPolicy = decode_chromosome(x, num_classes=self.num_classes)
         self.logger.info("%s: starting (%d trial epochs)", trial_label, self.trial_epochs)
 
         # Fresh cache per trial -- a trial's sample-adaptive behavior must
@@ -217,7 +217,7 @@ def run_augmentation_search(
     logger.info("Captured shared initial weights for policy trials")
 
     train_dir = Path(config.dataset.data_root) / "Training"
-    n_var = chromosome_length()
+    n_var = chromosome_length(num_classes=bundle.num_classes)
     archive: list[dict] = []
 
     problem = PolicySearchProblem(

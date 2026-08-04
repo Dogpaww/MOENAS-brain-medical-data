@@ -145,6 +145,15 @@ def run_final_training(
         {cls: round(class_weights[idx].item(), 3) for cls, idx in bundle.class_to_idx.items()},
     )
 
+    no_tumor_class_index = bundle.class_to_idx.get("no_tumor")
+    if no_tumor_class_index is None:
+        raise ValueError(f"Expected a 'no_tumor' class in class_to_idx, got {bundle.class_to_idx}.")
+    logger.info(
+        "Cancer->no_tumor false-negative penalty: %.3f (no_tumor class index=%d)",
+        config.training.cancer_no_tumor_penalty,
+        no_tumor_class_index,
+    )
+
     # Only meaningful when a policy is actually being applied -- sized to the
     # full training split (not the physical batch size) since it tracks one
     # loss value per training sample, refreshed every ~1/40th of the run.
@@ -193,6 +202,8 @@ def run_final_training(
             total_epochs=config.training.final_epochs,
             loss_cache=loss_cache,
             class_weights=class_weights,
+            no_tumor_class_index=no_tumor_class_index,
+            cancer_no_tumor_penalty=config.training.cancer_no_tumor_penalty,
             logger=logger,
         )
         scheduler.step()

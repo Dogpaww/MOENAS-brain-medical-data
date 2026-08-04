@@ -51,13 +51,13 @@ def build_transform_step(step: ResolvedAugmentationStep, image_size: int):
 
 
 def build_sample_adaptive_transform(
-    policy: AugmentationPolicy, image_size: int, loss_rank: float
+    policy: AugmentationPolicy, image_size: int, loss_rank: float, class_scale: float = 1.0
 ) -> transforms.Compose:
     pil_ops = []
     tensor_ops = []
 
     for step in policy.ordered_steps():
-        resolved = resolve_step(step, loss_rank)
+        resolved = resolve_step(step, loss_rank, class_scale)
         transform = build_transform_step(resolved, image_size)
         if resolved.name in TENSOR_SPACE_OPS:
             tensor_ops.append(transform)

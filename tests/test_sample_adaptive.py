@@ -31,7 +31,7 @@ def _policy():
 def test_dataset_getitem_uses_that_specific_samples_cached_rank(monkeypatch, synthetic_dataset_root: Path):
     calls: list[float] = []
 
-    def fake_build_transform(policy, image_size, loss_rank):
+    def fake_build_transform(policy, image_size, loss_rank, class_scale=1.0):
         calls.append(loss_rank)
         return lambda img: torch.zeros(3, image_size, image_size)
 

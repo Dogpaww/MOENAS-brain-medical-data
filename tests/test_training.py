@@ -77,6 +77,44 @@ def test_optimizer_and_scheduler_match_darts_recipe():
     assert scheduler.T_max == 200
 
 
+def test_cancer_no_tumor_penalty_increases_reported_loss_when_active():
+    # lr=0.0 freezes the weights across both calls -- an apples-to-apples
+    # comparison of the loss value itself, not training dynamics.
+    torch.manual_seed(0)
+    model = _tiny_model()
+    initial_state = {k: v.clone() for k, v in model.state_dict().items()}
+    loader = _tiny_loader()
+
+    loss_without_penalty = train_one_epoch(
+        model,
+        loader,
+        torch.optim.SGD(model.parameters(), lr=0.0),
+        device=torch.device("cpu"),
+        use_amp=False,
+        scaler=None,
+        accumulation_steps=1,
+        grad_clip_norm=5.0,
+        no_tumor_class_index=2,
+        cancer_no_tumor_penalty=0.0,
+    )
+
+    model.load_state_dict(initial_state)
+    loss_with_penalty = train_one_epoch(
+        model,
+        loader,
+        torch.optim.SGD(model.parameters(), lr=0.0),
+        device=torch.device("cpu"),
+        use_amp=False,
+        scaler=None,
+        accumulation_steps=1,
+        grad_clip_norm=5.0,
+        no_tumor_class_index=2,
+        cancer_no_tumor_penalty=0.5,
+    )
+
+    assert loss_with_penalty > loss_without_penalty
+
+
 def test_scheduler_degrades_gracefully_for_short_runs():
     model = _tiny_model()
     # CosineAnnealingLR needs T_max >= 1 -- a 1-epoch smoke-test run must not
