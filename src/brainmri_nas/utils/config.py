@@ -117,7 +117,7 @@ class TrainingConfig:
     gradient_accumulation_steps: int = 1
     final_epochs: int = 250
     learning_rate: float = 0.025
-    weight_decay: float = 3e-4
+    weight_decay: float = 7e-4
     momentum: float = 0.9
     grad_clip_norm: float = 5.0
     precision: str = "amp"  # "amp" or "fp32"
