@@ -362,3 +362,65 @@ def test_end_to_end_tiny_final_training(synthetic_dataset_root: Path, tmp_path: 
     history_df = pd.read_csv(training_output_dir / "training_history.csv")
     assert len(history_df) == training_config.training.final_epochs
     assert history_df["is_best"].any()
+
+
+def test_checkpoint_selection_uses_smoothed_score_not_raw_epoch_value(
+    synthetic_dataset_root: Path, tmp_path: Path, monkeypatch
+):
+    search_config = Config(
+        dataset=DatasetConfig(data_root=str(synthetic_dataset_root), image_size=16, batch_size=4, num_workers=0),
+        search_space=SearchSpaceConfig(
+            initial_channels_min=4, initial_channels_max=4, number_of_cells_min=3, number_of_cells_max=3
+        ),
+        proxies=ProxyConfig(zico_batch_size=2, zico_num_batches=2),
+        nsga2=NSGA2Config(population_size=4, num_generations=1, seed=1, device="cpu"),
+    )
+    search_output_dir = tmp_path / "search_run"
+    run_search(search_config, search_output_dir)
+
+    training_config = Config(
+        dataset=search_config.dataset,
+        search_space=search_config.search_space,
+        training=TrainingConfig(
+            physical_batch_size=4, gradient_accumulation_steps=1, final_epochs=6, precision="fp32", device="cpu"
+        ),
+    )
+
+    # An isolated spike at epoch 3: under a raw "single best epoch" rule,
+    # epoch 3 (0.9) would win outright. Under CHECKPOINT_SMOOTHING_WINDOW=3,
+    # what actually gets compared is its 3-epoch rolling average (0.7), not
+    # the raw 0.9 -- this pins that behavior down concretely rather than
+    # just asserting "some" checkpoint got selected.
+    raw_scores = [0.5, 0.7, 0.9, 0.5, 0.5, 0.5, 0.5]  # last entry: final test-set evaluation call
+    call_count = {"n": 0}
+
+    def fake_evaluate_model(model, loader, *, device, num_classes):
+        score = raw_scores[call_count["n"]]
+        call_count["n"] += 1
+        return {
+            "num_samples": 1,
+            "loss": 1.0 - score,
+            "accuracy": score,
+            "macro_precision": score,
+            "macro_recall": score,
+            "macro_f1": score,
+            "macro_auc": score,
+            "per_class": {"precision": [score] * 4, "recall": [score] * 4, "f1": [score] * 4, "support": [1] * 4},
+            "confusion_matrix": [[0] * 4 for _ in range(4)],
+        }
+
+    monkeypatch.setattr("brainmri_nas.training.final_training.evaluate_model", fake_evaluate_model)
+
+    training_output_dir = tmp_path / "training_run"
+    result = run_final_training(
+        training_config,
+        selected_architecture_path=search_output_dir / "selected_architecture.json",
+        split_indices_path=search_output_dir / "split_indices.json",
+        output_dir=training_output_dir,
+    )
+
+    history = result["history"]
+    assert len(history) == 6
+    assert history[2]["val_macro_auc"] == pytest.approx(0.9)  # raw epoch-3 score preserved in history
+    assert history[2]["checkpoint_score_smoothed"] == pytest.approx(0.7)  # avg of epochs 1-3, not the raw spike
+    assert result["best_epoch"] == 3  # window avg (0.7) still beats every later window despite the spike fading out

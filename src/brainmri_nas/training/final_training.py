@@ -40,6 +40,14 @@ from brainmri_nas.utils.loss_cache import LossCache
 from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 from brainmri_nas.utils.serialization import dump_json, load_json
 
+# Matches trial_training.py's FITNESS_SMOOTHING_WINDOW: with 250 epochs to
+# pick a "best" checkpoint from against a ~15-20% validation split, a single
+# epoch's raw score is a high-variance estimator (real runs show the val
+# metric swinging noticeably between adjacent epochs) -- checkpointing on a
+# rolling average of the last few epochs instead makes the selected
+# checkpoint reflect a genuine plateau rather than one lucky epoch.
+CHECKPOINT_SMOOTHING_WINDOW = 3
+
 
 def _configure_logging(output_dir: Path) -> logging.Logger:
     logger = logging.getLogger("brainmri_nas.final_training")
@@ -188,6 +196,7 @@ def run_final_training(
     best_score = float("-inf")
     best_epoch = -1
     history: list[dict] = []
+    recent_scores: list[float] = []
 
     for epoch in range(1, config.training.final_epochs + 1):
         train_loss = train_one_epoch(
@@ -212,10 +221,19 @@ def run_final_training(
         # Validation only during training -- test data is never touched here (handoff §29/§30 item 12).
         val_metrics = evaluate_model(model, bundle.val_loader, device=device, num_classes=bundle.num_classes)
         score = val_metrics[config.training.checkpoint_metric]
+        recent_scores.append(score)
 
-        is_best = math.isfinite(score) and score > best_score
+        # Rolling average over the last CHECKPOINT_SMOOTHING_WINDOW epochs
+        # (partial window early on) decides "best", not this epoch's raw
+        # score -- see CHECKPOINT_SMOOTHING_WINDOW's docstring above. The
+        # checkpoint itself still saves this epoch's actual raw weights and
+        # raw val_metrics; only the *decision* of whether to save is smoothed.
+        window = [s for s in recent_scores[-CHECKPOINT_SMOOTHING_WINDOW:] if math.isfinite(s)]
+        smoothed_score = sum(window) / len(window) if window else float("-inf")
+
+        is_best = smoothed_score > best_score
         if is_best:
-            best_score = score
+            best_score = smoothed_score
             best_epoch = epoch
             save_checkpoint(
                 checkpoint_path,
@@ -241,6 +259,7 @@ def run_final_training(
                 "val_macro_recall": val_metrics["macro_recall"],
                 "val_macro_f1": val_metrics["macro_f1"],
                 "val_macro_auc": val_metrics["macro_auc"],
+                "checkpoint_score_smoothed": smoothed_score,
                 "learning_rate": scheduler.get_last_lr()[0],
                 "is_best": is_best,
             }
@@ -270,7 +289,13 @@ def run_final_training(
     if device.type == "cuda":
         torch.cuda.empty_cache()
 
-    logger.info("Training finished. Best epoch=%d, %s=%.4f", best_epoch, config.training.checkpoint_metric, best_score)
+    logger.info(
+        "Training finished. Best epoch=%d, smoothed %s=%.4f (window=%d)",
+        best_epoch,
+        config.training.checkpoint_metric,
+        best_score,
+        CHECKPOINT_SMOOTHING_WINDOW,
+    )
 
     # Reload the best checkpoint into an independently rebuilt model -- never
     # reuse the (already-past-its-best-epoch) training-loop model object.
