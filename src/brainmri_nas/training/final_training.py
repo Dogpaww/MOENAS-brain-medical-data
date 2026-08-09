@@ -134,6 +134,7 @@ def run_final_training(
         number_of_cells=selected_architecture["number_of_cells"],
         drop_path_probability=config.search_space.drop_path_probability,
         stem_type=config.search_space.stem_type,
+        classifier_dropout_probability=config.training.classifier_dropout_probability,
     )
 
     model = build_model(genotype, **model_config)  # fresh weights, no reuse from search/proxies/augmentation trials

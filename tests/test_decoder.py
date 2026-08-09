@@ -68,6 +68,35 @@ def test_same_genotype_produces_structurally_identical_model():
     assert shapes_a == shapes_b
 
 
+def test_classifier_dropout_defaults_to_disabled():
+    genotype = decode_chromosome(_sample_chromosome())
+    model = build_model(**_build_kwargs(genotype))
+    assert model.classifier_dropout.p == 0.0
+
+
+def test_classifier_dropout_is_inactive_in_eval_mode_but_active_in_train_mode():
+    genotype = decode_chromosome(_sample_chromosome())
+    kwargs = _build_kwargs(genotype)
+    kwargs["classifier_dropout_probability"] = 0.9
+    model = build_model(**kwargs)
+    x = torch.randn(4, 3, 32, 32)
+
+    model.eval()
+    with torch.no_grad():
+        out_a = model(x)
+        out_b = model(x)
+    assert torch.equal(out_a, out_b)  # eval mode: dropout disabled, deterministic
+
+    model.train()
+    torch.manual_seed(0)
+    with torch.no_grad():
+        out_c = model(x)
+    torch.manual_seed(1)
+    with torch.no_grad():
+        out_d = model(x)
+    assert not torch.equal(out_c, out_d)  # train mode: dropout active, stochastic
+
+
 def test_invalid_source_is_deterministically_repaired_not_random():
     # Node 0's valid sources are {0, 1} (count=2); source=5 is out of range.
     bad_edge = EdgeGene(source=5, operation="skip_connect", attention="identity")

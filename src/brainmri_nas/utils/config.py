@@ -123,6 +123,12 @@ class TrainingConfig:
     precision: str = "amp"  # "amp" or "fp32"
     checkpoint_metric: str = "macro_auc"  # key into evaluate_model()'s returned dict
     cancer_no_tumor_penalty: float = 0.3
+    # Dropout immediately before the final classifier Linear layer -- only
+    # applied here (search/proxy/augmentation-trial models default to 0.0,
+    # via build_model's own default), targeting the train/val generalization
+    # gap observed in real final-training runs without touching the
+    # search-space or trial-training paths at all.
+    classifier_dropout_probability: float = 0.3
     seed: int = 1
     device: str = "auto"
 

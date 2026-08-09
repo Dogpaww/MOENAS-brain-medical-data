@@ -32,6 +32,7 @@ class NASNetwork(nn.Module):
         number_of_cells: int,
         drop_path_probability: float,
         stem_type: str,
+        classifier_dropout_probability: float = 0.0,
     ):
         super().__init__()
         if stem_type not in SUPPORTED_STEM_TYPES:
@@ -82,6 +83,7 @@ class NASNetwork(nn.Module):
             c_prev_prev, c_prev = c_prev, cell.multiplier * c_curr
 
         self.global_pooling = nn.AdaptiveAvgPool2d(1)
+        self.classifier_dropout = nn.Dropout(p=classifier_dropout_probability)
         self.classifier = nn.Linear(c_prev, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -90,6 +92,7 @@ class NASNetwork(nn.Module):
             s0, s1 = s1, cell(s0, s1)
         out = self.global_pooling(s1)
         out = out.view(out.size(0), -1)
+        out = self.classifier_dropout(out)
         return self.classifier(out)
 
 
@@ -103,6 +106,7 @@ def build_model(
     number_of_cells: int,
     drop_path_probability: float,
     stem_type: str,
+    classifier_dropout_probability: float = 0.0,
 ) -> nn.Module:
     return NASNetwork(
         genotype,
@@ -113,4 +117,5 @@ def build_model(
         number_of_cells=number_of_cells,
         drop_path_probability=drop_path_probability,
         stem_type=stem_type,
+        classifier_dropout_probability=classifier_dropout_probability,
     )
