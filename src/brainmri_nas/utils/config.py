@@ -24,7 +24,7 @@ class DatasetConfig:
     image_size: int = 64
     input_channels: int = 3
     num_classes: int = 4
-    validation_fraction: float = 0.15
+    validation_fraction: float = 0.20
     split_seed: int = 42
     batch_size: int = 32
     num_workers: int = 4
