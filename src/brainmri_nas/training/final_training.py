@@ -162,6 +162,13 @@ def run_final_training(
         config.training.cancer_no_tumor_penalty,
         no_tumor_class_index,
     )
+    logger.info(
+        "Regularization: weight_decay=%.1e classifier_dropout=%.2f label_smoothing=%.2f drop_path=%.2f",
+        config.training.weight_decay,
+        config.training.classifier_dropout_probability,
+        config.training.label_smoothing,
+        config.search_space.drop_path_probability,
+    )
 
     # Only meaningful when a policy is actually being applied -- sized to the
     # full training split (not the physical batch size) since it tracks one
@@ -214,6 +221,7 @@ def run_final_training(
             class_weights=class_weights,
             no_tumor_class_index=no_tumor_class_index,
             cancer_no_tumor_penalty=config.training.cancer_no_tumor_penalty,
+            label_smoothing=config.training.label_smoothing,
             logger=logger,
         )
         scheduler.step()

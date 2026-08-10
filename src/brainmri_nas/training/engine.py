@@ -28,6 +28,23 @@ preserves plain 2-tuple-batch behavior, used both for final training
 without a selected augmentation policy and by tests that don't exercise
 sample-adaptivity at all.
 
+`label_smoothing` (>0) trains against softened targets instead of hard
+one-hot ones, which puts a floor under how low cross-entropy can go and so
+keeps regularizing at full strength for the whole run -- unlike weight
+decay, whose per-step pull is `lr * weight_decay * w` and therefore fades
+out along with CosineAnnealingLR exactly when late-epoch overfitting is
+worst (real 250-epoch runs bottom out around train_loss=0.04 despite a
+raised weight decay).
+
+It is applied to the *optimized* loss only, never to what LossCache
+records, for the same reason the cancer penalty below is: smoothing
+penalizes confident predictions, which does not preserve the difficulty
+*ordering* LossCache ranks on. Concretely, a correct p_y=0.99 sample
+(plain CE 0.0101) and a correct p_y=0.90 one (plain CE 0.1054) swap places
+under smoothing (0.4423 vs 0.3578) -- so the genuinely easiest samples
+would be misread as hardest and handed mild augmentation instead of
+strong, inverting SapAugment for exactly the samples it most wants to push.
+
 `no_tumor_class_index`/`cancer_no_tumor_penalty`, when both given, add an
 extra differentiable term to the *aggregate* loss (not `per_sample_loss`,
 so it never distorts what LossCache records as "how hard is this sample"):
@@ -70,6 +87,7 @@ def train_one_epoch(
     class_weights: torch.Tensor | None = None,
     no_tumor_class_index: int | None = None,
     cancer_no_tumor_penalty: float = 0.0,
+    label_smoothing: float = 0.0,
     logger: logging.Logger | None = None,
 ) -> float:
     if use_amp and scaler is None:
@@ -79,7 +97,11 @@ def train_one_epoch(
 
     model.train()
     weight = class_weights.to(device) if class_weights is not None else None
-    loss_fn = nn.CrossEntropyLoss(reduction="none", weight=weight)
+    loss_fn = nn.CrossEntropyLoss(reduction="none", weight=weight, label_smoothing=label_smoothing)
+    # Unsmoothed twin, used only to feed LossCache a difficulty signal whose
+    # ordering smoothing would otherwise scramble (see module docstring).
+    # `is loss_fn` when smoothing is off, so the common path stays one CE call.
+    cache_loss_fn = nn.CrossEntropyLoss(reduction="none", weight=weight) if label_smoothing > 0.0 else loss_fn
 
     num_batches = len(train_loader)
     log_interval = batch_log_interval(num_batches)
@@ -125,7 +147,13 @@ def train_one_epoch(
             optimizer.zero_grad(set_to_none=True)
 
         if loss_cache is not None:
-            loss_cache.record_batch(indices.tolist(), per_sample_loss.detach().cpu().tolist())
+            if cache_loss_fn is loss_fn:
+                cached_loss = per_sample_loss.detach()
+            else:
+                with torch.no_grad():
+                    # .float(): logits may be half under autocast, and this runs outside it.
+                    cached_loss = cache_loss_fn(logits.detach().float(), y)
+            loss_cache.record_batch(indices.tolist(), cached_loss.cpu().tolist())
 
         total_loss += loss.item() * x.size(0)
         total_samples += x.size(0)

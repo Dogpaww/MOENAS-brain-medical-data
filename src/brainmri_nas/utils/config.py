@@ -129,6 +129,13 @@ class TrainingConfig:
     # gap observed in real final-training runs without touching the
     # search-space or trial-training paths at all.
     classifier_dropout_probability: float = 0.3
+    # Softened targets in the optimized loss (Szegedy et al. 2016). Unlike
+    # weight decay -- whose effective pull scales with the learning rate and
+    # so fades out under CosineAnnealingLR precisely when late-epoch
+    # overfitting is worst -- this keeps a fixed floor under training loss
+    # for the entire run. Final training only; see engine.py on why it is
+    # deliberately kept out of the per-sample loss LossCache ranks on.
+    label_smoothing: float = 0.1
     seed: int = 1
     device: str = "auto"
 

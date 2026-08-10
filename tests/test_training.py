@@ -24,6 +24,7 @@ from brainmri_nas.utils.config import (
     SearchSpaceConfig,
     TrainingConfig,
 )
+from brainmri_nas.utils.loss_cache import LossCache
 from brainmri_nas.utils.optim import build_optimizer_and_scheduler
 
 INPUT_CHANNELS, IMAGE_SIZE, NUM_CLASSES = 3, 16, 4
@@ -52,6 +53,16 @@ def _tiny_loader(num_samples=8, batch_size=8, seed=0):
     x = torch.randn(num_samples, INPUT_CHANNELS, IMAGE_SIZE, IMAGE_SIZE, generator=g)
     y = torch.randint(0, NUM_CLASSES, (num_samples,), generator=g)
     return DataLoader(TensorDataset(x, y), batch_size=batch_size, shuffle=False)
+
+
+def _tiny_indexed_loader(num_samples=8, batch_size=8, seed=0):
+    """(x, y, index) triples -- the shape train_one_epoch needs when a LossCache is in play."""
+    g = torch.Generator().manual_seed(seed)
+    x = torch.randn(num_samples, INPUT_CHANNELS, IMAGE_SIZE, IMAGE_SIZE, generator=g)
+    y = torch.randint(0, NUM_CLASSES, (num_samples,), generator=g)
+    return DataLoader(
+        TensorDataset(x, y, torch.arange(num_samples)), batch_size=batch_size, shuffle=False
+    )
 
 
 def test_default_gradient_accumulation_is_disabled():
@@ -113,6 +124,78 @@ def test_cancer_no_tumor_penalty_increases_reported_loss_when_active():
     )
 
     assert loss_with_penalty > loss_without_penalty
+
+
+def test_label_smoothing_changes_the_optimized_loss():
+    # lr=0.0 freezes the weights across both calls, so any difference is the
+    # loss function itself rather than divergent training dynamics.
+    torch.manual_seed(0)
+    model = _tiny_model()
+    initial_state = {k: v.clone() for k, v in model.state_dict().items()}
+    loader = _tiny_loader()
+
+    def run(label_smoothing):
+        model.load_state_dict(initial_state)
+        return train_one_epoch(
+            model,
+            loader,
+            torch.optim.SGD(model.parameters(), lr=0.0),
+            device=torch.device("cpu"),
+            use_amp=False,
+            scaler=None,
+            accumulation_steps=1,
+            grad_clip_norm=5.0,
+            label_smoothing=label_smoothing,
+        )
+
+    assert run(0.1) != pytest.approx(run(0.0))
+
+
+def test_label_smoothing_is_kept_out_of_the_cached_per_sample_loss():
+    """Smoothing penalizes confident predictions, which does not preserve the
+    difficulty *ordering* LossCache ranks on -- a correct p_y=0.99 sample
+    scores as 'harder' than a correct p_y=0.90 one under smoothing. So it must
+    reach the optimized loss without reaching the cache (see engine.py)."""
+    torch.manual_seed(0)
+    model = _tiny_model()
+    initial_state = {k: v.clone() for k, v in model.state_dict().items()}
+    loader = _tiny_indexed_loader(num_samples=8, batch_size=4)
+
+    def run(label_smoothing):
+        model.load_state_dict(initial_state)
+        cache = LossCache(num_samples=8, total_epochs=1)
+        # Spy on the exact values engine.py hands the cache. Asserting on
+        # get_loss_ranks() instead would be vacuous: ranks come from an argsort
+        # and so survive any order-preserving change to the underlying losses.
+        recorded: list[float] = []
+        real_record_batch = cache.record_batch
+
+        def spy(indices, losses):
+            recorded.extend(losses)
+            real_record_batch(indices, losses)
+
+        cache.record_batch = spy
+
+        reported = train_one_epoch(
+            model,
+            loader,
+            torch.optim.SGD(model.parameters(), lr=0.0),
+            device=torch.device("cpu"),
+            use_amp=False,
+            scaler=None,
+            accumulation_steps=1,
+            grad_clip_norm=5.0,
+            loss_cache=cache,
+            label_smoothing=label_smoothing,
+        )
+        assert len(recorded) == 8
+        return reported, recorded
+
+    plain_reported, plain_cached = run(0.0)
+    smoothed_reported, smoothed_cached = run(0.1)
+
+    assert smoothed_reported != pytest.approx(plain_reported)  # optimized loss: affected
+    assert smoothed_cached == pytest.approx(plain_cached)  # difficulty signal: untouched
 
 
 def test_scheduler_degrades_gracefully_for_short_runs():
