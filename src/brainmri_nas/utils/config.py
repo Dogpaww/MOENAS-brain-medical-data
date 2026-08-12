@@ -104,13 +104,6 @@ class TrainingConfig:
     BatchNorm-heavy architecture, SGD's flatter-minima tendency and
     undistorted (not adaptively-rescaled) weight decay both favor
     generalization over Adam's faster but often sharper convergence.
-
-    `cancer_no_tumor_penalty` adds an extra loss term specifically
-    discouraging the model from predicting no_tumor on genuinely-cancerous
-    samples (see engine.py's docstring) -- a moderate default, not an
-    aggressive one; tune up if false negatives on cancer are still too
-    common, tune down (or 0.0 to disable) if it's suppressing legitimate
-    no_tumor predictions too much.
     """
 
     physical_batch_size: int = 32
@@ -122,7 +115,6 @@ class TrainingConfig:
     grad_clip_norm: float = 5.0
     precision: str = "amp"  # "amp" or "fp32"
     checkpoint_metric: str = "macro_auc"  # key into evaluate_model()'s returned dict
-    cancer_no_tumor_penalty: float = 0.3
     # Dropout immediately before the final classifier Linear layer -- only
     # applied here (search/proxy/augmentation-trial models default to 0.0,
     # via build_model's own default), targeting the train/val generalization

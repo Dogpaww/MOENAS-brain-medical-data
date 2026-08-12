@@ -45,16 +45,10 @@ under smoothing (0.4423 vs 0.3578) -- so the genuinely easiest samples
 would be misread as hardest and handed mild augmentation instead of
 strong, inverting SapAugment for exactly the samples it most wants to push.
 
-`no_tumor_class_index`/`cancer_no_tumor_penalty`, when both given, add an
-extra differentiable term to the *aggregate* loss (not `per_sample_loss`,
-so it never distorts what LossCache records as "how hard is this sample"):
-`penalty_weight * mean(is_cancerous * P(no_tumor | x))` over the batch.
-This specifically discourages the model from assigning probability to
-no_tumor on genuinely-cancerous samples -- a false negative on cancer is
-the clinically worst outcome for this task -- without touching how the
-three cancer types are told apart from each other, which standard
-per-class weighting can't express (it only sees a sample's true class, not
-which wrong class it got predicted as).
+A `cancer_no_tumor_penalty` term and balanced `class_weights` were tried
+here and removed -- see the git history for the rationale and the evidence
+that retired them. Both assumed a `no_tumor` class, which the figshare
+dataset does not have.
 """
 
 from __future__ import annotations
@@ -84,9 +78,6 @@ def train_one_epoch(
     epoch: int = 1,
     total_epochs: int = 1,
     loss_cache: LossCache | None = None,
-    class_weights: torch.Tensor | None = None,
-    no_tumor_class_index: int | None = None,
-    cancer_no_tumor_penalty: float = 0.0,
     label_smoothing: float = 0.0,
     logger: logging.Logger | None = None,
 ) -> float:
@@ -96,12 +87,11 @@ def train_one_epoch(
     logger = logger or logging.getLogger(DEFAULT_LOGGER_NAME)
 
     model.train()
-    weight = class_weights.to(device) if class_weights is not None else None
-    loss_fn = nn.CrossEntropyLoss(reduction="none", weight=weight, label_smoothing=label_smoothing)
+    loss_fn = nn.CrossEntropyLoss(reduction="none", label_smoothing=label_smoothing)
     # Unsmoothed twin, used only to feed LossCache a difficulty signal whose
     # ordering smoothing would otherwise scramble (see module docstring).
     # `is loss_fn` when smoothing is off, so the common path stays one CE call.
-    cache_loss_fn = nn.CrossEntropyLoss(reduction="none", weight=weight) if label_smoothing > 0.0 else loss_fn
+    cache_loss_fn = nn.CrossEntropyLoss(reduction="none") if label_smoothing > 0.0 else loss_fn
 
     num_batches = len(train_loader)
     log_interval = batch_log_interval(num_batches)
@@ -122,11 +112,6 @@ def train_one_epoch(
             logits = model(x)
             per_sample_loss = loss_fn(logits, y)
             loss = per_sample_loss.mean()
-
-            if no_tumor_class_index is not None and cancer_no_tumor_penalty > 0:
-                no_tumor_prob = torch.softmax(logits, dim=1)[:, no_tumor_class_index]
-                is_cancerous = (y != no_tumor_class_index).float()
-                loss = loss + cancer_no_tumor_penalty * (is_cancerous * no_tumor_prob).mean()
 
         scaled_loss = loss / accumulation_steps
         if use_amp:

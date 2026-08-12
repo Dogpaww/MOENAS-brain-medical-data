@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from pathlib import Path
 
 import pytest
@@ -11,6 +12,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from brainmri_nas.augment.policy_search import run_augmentation_search
 from brainmri_nas.model.network import build_model
 from brainmri_nas.search.nsga2_runner import run_search
+from brainmri_nas.search_space.chromosome import chromosome_length as _arch_chromosome_length
 from brainmri_nas.search_space.chromosome import decode_chromosome
 from brainmri_nas.training.engine import train_one_epoch
 from brainmri_nas.training.evaluate import evaluate_model
@@ -88,42 +90,37 @@ def test_optimizer_and_scheduler_match_darts_recipe():
     assert scheduler.T_max == 200
 
 
-def test_cancer_no_tumor_penalty_increases_reported_loss_when_active():
-    # lr=0.0 freezes the weights across both calls -- an apples-to-apples
-    # comparison of the loss value itself, not training dynamics.
+def test_training_does_not_require_a_no_tumor_class():
+    """The loss must be class-name agnostic. A `no_tumor`-specific penalty
+    used to live here and hard-failed on any dataset lacking that class,
+    which blocked the 3-class figshare dataset."""
     torch.manual_seed(0)
-    model = _tiny_model()
-    initial_state = {k: v.clone() for k, v in model.state_dict().items()}
-    loader = _tiny_loader()
+    model = build_model(
+        decode_chromosome([((i * 41) % 89) / 89.0 for i in range(_arch_chromosome_length())]),
+        input_channels=INPUT_CHANNELS,
+        num_classes=3,
+        image_size=IMAGE_SIZE,
+        initial_channels=4,
+        number_of_cells=3,
+        drop_path_probability=0.0,
+        stem_type="cifar",
+    )
+    g = torch.Generator().manual_seed(0)
+    x = torch.randn(8, INPUT_CHANNELS, IMAGE_SIZE, IMAGE_SIZE, generator=g)
+    y = torch.randint(0, 3, (8,), generator=g)
+    loader = DataLoader(TensorDataset(x, y), batch_size=8)
 
-    loss_without_penalty = train_one_epoch(
+    loss = train_one_epoch(
         model,
         loader,
-        torch.optim.SGD(model.parameters(), lr=0.0),
+        torch.optim.SGD(model.parameters(), lr=0.01),
         device=torch.device("cpu"),
         use_amp=False,
         scaler=None,
         accumulation_steps=1,
         grad_clip_norm=5.0,
-        no_tumor_class_index=2,
-        cancer_no_tumor_penalty=0.0,
     )
-
-    model.load_state_dict(initial_state)
-    loss_with_penalty = train_one_epoch(
-        model,
-        loader,
-        torch.optim.SGD(model.parameters(), lr=0.0),
-        device=torch.device("cpu"),
-        use_amp=False,
-        scaler=None,
-        accumulation_steps=1,
-        grad_clip_norm=5.0,
-        no_tumor_class_index=2,
-        cancer_no_tumor_penalty=0.5,
-    )
-
-    assert loss_with_penalty > loss_without_penalty
+    assert math.isfinite(loss)
 
 
 def test_label_smoothing_changes_the_optimized_loss():

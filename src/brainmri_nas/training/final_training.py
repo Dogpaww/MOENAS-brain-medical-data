@@ -24,7 +24,7 @@ from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
 from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
-from brainmri_nas.data.loader import build_dataset_bundle, compute_class_weights
+from brainmri_nas.data.loader import build_dataset_bundle
 from brainmri_nas.data.transforms import build_train_transform
 from brainmri_nas.model.network import build_model
 from brainmri_nas.proxies.profiling import profile_peak_memory
@@ -148,20 +148,7 @@ def run_final_training(
     model = build_model(genotype, **model_config)  # fresh weights, no reuse from search/proxies/augmentation trials
     model.to(device)
 
-    class_weights = compute_class_weights(config.dataset.data_root, bundle.class_to_idx, bundle.train_indices)
-    logger.info(
-        "Class weights (balanced): %s",
-        {cls: round(class_weights[idx].item(), 3) for cls, idx in bundle.class_to_idx.items()},
-    )
-
-    no_tumor_class_index = bundle.class_to_idx.get("no_tumor")
-    if no_tumor_class_index is None:
-        raise ValueError(f"Expected a 'no_tumor' class in class_to_idx, got {bundle.class_to_idx}.")
-    logger.info(
-        "Cancer->no_tumor false-negative penalty: %.3f (no_tumor class index=%d)",
-        config.training.cancer_no_tumor_penalty,
-        no_tumor_class_index,
-    )
+    logger.info("Classes: %s", dict(bundle.class_to_idx))
     logger.info(
         "Regularization: weight_decay=%.1e classifier_dropout=%.2f label_smoothing=%.2f drop_path=%.2f",
         config.training.weight_decay,
@@ -218,9 +205,6 @@ def run_final_training(
             epoch=epoch,
             total_epochs=config.training.final_epochs,
             loss_cache=loss_cache,
-            class_weights=class_weights,
-            no_tumor_class_index=no_tumor_class_index,
-            cancer_no_tumor_penalty=config.training.cancer_no_tumor_penalty,
             label_smoothing=config.training.label_smoothing,
             logger=logger,
         )
