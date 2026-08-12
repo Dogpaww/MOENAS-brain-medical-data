@@ -32,8 +32,8 @@ def _sample_chromosome(offset=0):
     return [((i * 53 + offset) % 101) / 101.0 for i in range(N_VAR)]
 
 
-def test_chromosome_length_is_three_genes_per_op_plus_class_scales():
-    assert N_VAR == len(AUGMENTATION_OPS) * 3 + 4  # + one class-scale gene per class (default num_classes=4)
+def test_chromosome_length_is_three_genes_per_op():
+    assert N_VAR == len(AUGMENTATION_OPS) * 3  # probability, strength_s, strength_a
 
 
 def test_decode_is_deterministic():
@@ -72,13 +72,20 @@ def test_every_step_stores_required_fields_within_range():
         assert a_low <= step_dict["strength_a"] <= a_high
 
 
-def test_class_scales_are_within_range():
-    from brainmri_nas.augment.search_space import CLASS_SCALE_RANGE
-
+def test_policy_carries_only_steps():
+    """Class-scale genes were removed; a policy is steps and nothing else, so
+    chromosome length must not depend on the number of classes."""
     policy = decode_chromosome(_sample_chromosome())
-    scale_low, scale_high = CLASS_SCALE_RANGE
-    assert len(policy.class_scales) == 4
-    assert all(scale_low <= s <= scale_high for s in policy.class_scales)
+    assert set(policy.to_dict()) == {"steps"}
+    assert not hasattr(policy, "class_scales")
+
+
+def test_policy_from_dict_ignores_legacy_class_scales_key():
+    """Policies written by earlier runs carry a class_scales key -- loading one
+    must still work rather than raising."""
+    policy = decode_chromosome(_sample_chromosome())
+    legacy = policy.to_dict() | {"class_scales": [0.5, 1.0, 1.5, 2.0]}
+    assert AugmentationPolicy.from_dict(legacy) == policy
 
 
 def test_sap_strength_gives_stronger_augmentation_to_easier_samples():
@@ -113,21 +120,15 @@ def test_resolve_step_maps_lambda_into_the_op_magnitude_range():
     assert resolved_easy.parameters["degrees"] == resolved_easy.magnitude
 
 
-def test_class_scale_multiplies_lambda_before_clipping():
+def test_resolve_step_depends_only_on_the_sample_loss_rank():
+    """Two samples of different classes at the same loss rank must now resolve
+    identically -- the per-class multiplier is gone."""
     policy = decode_chromosome(_sample_chromosome())
     rotation_step = next(s for s in policy.steps if s.name == "rotation")
-
-    baseline = resolve_step(rotation_step, loss_rank=0.5, class_scale=1.0)
-    boosted = resolve_step(rotation_step, loss_rank=0.5, class_scale=1.9)
-    suppressed = resolve_step(rotation_step, loss_rank=0.5, class_scale=0.1)
-
-    assert boosted.magnitude >= baseline.magnitude
-    assert suppressed.magnitude <= baseline.magnitude
-
-    # A large enough class_scale must clip at the op's real max, never
-    # overshoot it (this is what the clip(lam * class_scale, 0, 1) guards).
-    near_max = resolve_step(rotation_step, loss_rank=0.0, class_scale=100.0)
-    assert near_max.magnitude == pytest.approx(15.0)
+    assert resolve_step(rotation_step, loss_rank=0.5) == resolve_step(rotation_step, loss_rank=0.5)
+    # ...and magnitude still never escapes the op's declared range.
+    for rank in (0.0, 0.25, 0.5, 0.75, 1.0):
+        assert 0.0 <= resolve_step(rotation_step, loss_rank=rank).magnitude <= 15.0
 
 
 def test_transform_pipeline_ordering_matches_handoff_spec():
@@ -290,7 +291,6 @@ def test_end_to_end_tiny_augmentation_search(synthetic_dataset_root: Path, tmp_p
     selected_policy = result["selected_policy"]
     assert 0.0 <= selected_policy["val_macro_auc"] <= 1.0
     assert len(selected_policy["policy"]["steps"]) == len(AUGMENTATION_OPS)
-    assert len(selected_policy["policy"]["class_scales"]) == search_config.dataset.num_classes
 
     # The saved policy is genuinely reconstructible into a real transform pipeline.
     policy = AugmentationPolicy.from_dict(selected_policy["policy"])

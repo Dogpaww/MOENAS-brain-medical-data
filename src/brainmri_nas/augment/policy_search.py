@@ -3,8 +3,9 @@
 Runs only after an architecture has already been selected (Stage 2's
 `selected_architecture.json`). Builds that architecture once, snapshots its
 randomly-initialized weights, then runs a single-objective genetic algorithm
-(pymoo `GA`, mirroring the NSGA-II wrapper's structure) over the 14-gene
-augmentation chromosome: every candidate policy trains a *fresh* model
+(pymoo `GA`, mirroring the NSGA-II wrapper's structure) over the
+augmentation chromosome (3 genes per op, `chromosome_length()` total):
+every candidate policy trains a *fresh* model
 loaded from that same snapshot, for the same number of epochs, with the
 same optimizer settings, evaluated on the same (reused, not resplit)
 validation set -- so a policy's score reflects the policy, not incidental
@@ -111,7 +112,7 @@ class PolicySearchProblem(ElementwiseProblem):
         self.trial_count += 1
         trial_label = f"Trial {self.trial_count}/{self.total_trials}"
 
-        policy: AugmentationPolicy = decode_chromosome(x, num_classes=self.num_classes)
+        policy: AugmentationPolicy = decode_chromosome(x)
         self.logger.info("%s: starting (%d trial epochs)", trial_label, self.trial_epochs)
 
         # Fresh cache per trial -- a trial's sample-adaptive behavior must
@@ -217,7 +218,7 @@ def run_augmentation_search(
     logger.info("Captured shared initial weights for policy trials")
 
     train_dir = Path(config.dataset.data_root) / "Training"
-    n_var = chromosome_length(num_classes=bundle.num_classes)
+    n_var = chromosome_length()
     archive: list[dict] = []
 
     problem = PolicySearchProblem(

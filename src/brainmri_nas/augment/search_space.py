@@ -25,18 +25,14 @@ function evaluated per sample, not a policy-wide constant.
 Decoding the chromosome itself is still pure arithmetic, no randomness,
 mirroring the NAS chromosome decoder in `search_space/chromosome.py`.
 
-Class-specific strength (`class_scales`): after the per-op genes, `num_classes`
-trailing genes each decode to a log-scale multiplier in `CLASS_SCALE_RANGE`,
-one per true class. `resolve_step` applies a sample's class multiplier to
-its already-computed per-sample `lam` (clipped back to [0, 1]) before
-mapping into the op's magnitude range -- so a class scale nudges the whole
-per-sample adaptivity curve up or down for that class without overriding
-the underlying "easy sample -> stronger augmentation" logic. This exists
-because loss ranks are computed globally across all classes (`LossCache`),
-so a persistently-harder class (e.g. one with more visually diverse
-presentations) clusters toward the "hard" end of that global ranking even
-for its own easiest samples, systematically under-augmenting it relative to
-what within-class-relative difficulty would suggest.
+Class-specific strength scaling was tried here and removed. It added one
+log-scale multiplier per class on top of each sample's `lam`, aimed at the
+glioma weakness on the original Kaggle/SARTAJ dataset. Controlled
+experiments later showed that weakness came from corrupted glioma labels
+plus ~73% patient leakage in the validation split, not from under-augmenting
+the class -- and that the augmentation GA's validation fitness carried no
+signal about it at all (Spearman ~0 against test glioma recall). The genes
+therefore cost search budget for no measurable benefit and were reverted.
 """
 
 from __future__ import annotations
@@ -91,16 +87,13 @@ STRENGTH_A_RANGE: tuple[float, float] = (0.05, 0.95)
 
 GENES_PER_OP = 3  # probability, strength_s, strength_a
 
-DEFAULT_NUM_CLASSES = 4
-CLASS_SCALE_RANGE: tuple[float, float] = (0.5, 2.0)
+
+def chromosome_length() -> int:
+    return len(AUGMENTATION_OPS) * GENES_PER_OP
 
 
-def chromosome_length(num_classes: int = DEFAULT_NUM_CLASSES) -> int:
-    return len(AUGMENTATION_OPS) * GENES_PER_OP + num_classes
-
-
-def validate_chromosome(chromosome: Sequence[float], num_classes: int = DEFAULT_NUM_CLASSES) -> None:
-    expected = chromosome_length(num_classes)
+def validate_chromosome(chromosome: Sequence[float]) -> None:
+    expected = chromosome_length()
     if len(chromosome) != expected:
         raise ValueError(f"Augmentation chromosome has length {len(chromosome)}, expected {expected}.")
     for i, gene in enumerate(chromosome):
@@ -127,8 +120,8 @@ def _build_parameters(name: str, magnitude: float) -> dict:
     raise ValueError(f"Unknown augmentation operation {name!r}.")
 
 
-def decode_chromosome(chromosome: Sequence[float], num_classes: int = DEFAULT_NUM_CLASSES) -> AugmentationPolicy:
-    validate_chromosome(chromosome, num_classes)
+def decode_chromosome(chromosome: Sequence[float]) -> AugmentationPolicy:
+    validate_chromosome(chromosome)
 
     steps = []
     for order, name in enumerate(AUGMENTATION_OPS):
@@ -154,14 +147,7 @@ def decode_chromosome(chromosome: Sequence[float], num_classes: int = DEFAULT_NU
             )
         )
 
-    class_scale_offset = len(AUGMENTATION_OPS) * GENES_PER_OP
-    scale_low, scale_high = CLASS_SCALE_RANGE
-    class_scales = tuple(
-        scale_low * (scale_high / scale_low) ** float(chromosome[class_scale_offset + i])  # log-scale
-        for i in range(num_classes)
-    )
-
-    return AugmentationPolicy(steps=tuple(steps), class_scales=class_scales)
+    return AugmentationPolicy(steps=tuple(steps))
 
 
 def sap_strength(strength_s: float, strength_a: float, loss_rank: float) -> float:
@@ -176,14 +162,11 @@ def sap_strength(strength_s: float, strength_a: float, loss_rank: float) -> floa
     return float(1.0 - betainc(p, q, loss_rank))
 
 
-def resolve_step(step: AugmentationStep, loss_rank: float, class_scale: float = 1.0) -> ResolvedAugmentationStep:
+def resolve_step(step: AugmentationStep, loss_rank: float) -> ResolvedAugmentationStep:
     """Evaluate one policy step's curve at a specific sample's loss rank,
-    producing a concrete magnitude/parameters for that sample right now.
-    `class_scale` (default 1.0 = no change) multiplies the resulting lambda
-    before it's clipped back into [0, 1] and mapped into the op's magnitude
-    range -- see module docstring."""
+    producing a concrete magnitude/parameters for that sample right now."""
     lam = sap_strength(step.strength_s, step.strength_a, loss_rank)
-    lam = min(max(lam * class_scale, 0.0), 1.0)
+    lam = min(max(lam, 0.0), 1.0)
     low, high = MAGNITUDE_RANGES[step.name]
     magnitude = low + lam * (high - low)
 

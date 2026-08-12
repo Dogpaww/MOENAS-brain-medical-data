@@ -46,10 +46,7 @@ class SampleAdaptiveDataset(Dataset):
     def __getitem__(self, index: int):
         img, label = self.base_dataset[index]
         loss_rank = float(self.loss_cache.get_loss_ranks()[index])
-        # Defensive fallback to 1.0 (no scaling) for policies saved before
-        # class_scales existed, or a label outside the decoded range.
-        class_scale = self.policy.class_scales[label] if label < len(self.policy.class_scales) else 1.0
-        transform = build_sample_adaptive_transform(self.policy, self.image_size, loss_rank, class_scale)
+        transform = build_sample_adaptive_transform(self.policy, self.image_size, loss_rank)
         return transform(img), label, index
 
 

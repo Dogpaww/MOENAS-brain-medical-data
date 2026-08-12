@@ -53,31 +53,21 @@ class AugmentationStep:
 @dataclass(frozen=True)
 class AugmentationPolicy:
     steps: tuple[AugmentationStep, ...]
-    # One log-scale multiplier per class (index = class_to_idx's ordering),
-    # applied to a sample's resolved lambda in resolve_step -- empty tuple
-    # (the default) means "no class-specific scaling", so old policies
-    # saved before this field existed still decode to identical behavior.
-    class_scales: tuple[float, ...] = ()
 
     def ordered_steps(self) -> tuple[AugmentationStep, ...]:
         return tuple(sorted(self.steps, key=lambda s: s.order))
 
     def to_dict(self) -> dict:
-        return {
-            "steps": [s.to_dict() for s in self.ordered_steps()],
-            "class_scales": list(self.class_scales),
-        }
+        return {"steps": [s.to_dict() for s in self.ordered_steps()]}
 
     @staticmethod
     def from_dict(data: dict | list[dict]) -> "AugmentationPolicy":
-        # Backward compatible with the old schema, where to_dict() returned
-        # a bare list of steps with no class_scales at all.
+        # Tolerates both the bare-list schema and the dict schema (which for a
+        # while also carried a now-removed `class_scales` key -- ignored here,
+        # so policies saved by earlier runs still load).
         if isinstance(data, list):
             return AugmentationPolicy(steps=tuple(AugmentationStep.from_dict(d) for d in data))
-        return AugmentationPolicy(
-            steps=tuple(AugmentationStep.from_dict(d) for d in data["steps"]),
-            class_scales=tuple(float(v) for v in data.get("class_scales", ())),
-        )
+        return AugmentationPolicy(steps=tuple(AugmentationStep.from_dict(d) for d in data["steps"]))
 
 
 @dataclass(frozen=True)

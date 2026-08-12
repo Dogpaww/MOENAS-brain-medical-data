@@ -246,9 +246,9 @@ def main() -> None:
 
         # -- Step 10: test one augmentation policy -----------------------------------
         _step(10, "Testing one augmentation policy")
-        augmentation_n_var = augmentation_chromosome_length(num_classes=bundle.num_classes)
+        augmentation_n_var = augmentation_chromosome_length()
         demo_policy_chromosome = [((i * 53) % 101) / 101.0 for i in range(augmentation_n_var)]
-        policy = decode_augmentation_chromosome(demo_policy_chromosome, num_classes=bundle.num_classes)
+        policy = decode_augmentation_chromosome(demo_policy_chromosome)
 
         selected_genotype = NetworkGenotype.from_dict(selected_architecture["genotype"])
         selected_model_config = dict(
