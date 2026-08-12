@@ -1,0 +1,70 @@
+# figshare / Cheng et al. brain tumour dataset (DOI 10.6084/m9.figshare.1512427).
+# Build the folder layout first:
+#   python scripts/prepare_figshare.py --source <extracted .mat dir> --output data/figshare_brain_tumor
+#
+# Differences from configs/search.yaml, all forced by the dataset:
+#   - three classes (meningioma / glioma / pituitary); there is no healthy class
+#   - a patient_ids.json sidecar exists, so the train/val split is patient-level
+dataset:
+  data_root: data/figshare_brain_tumor
+  image_size: 96
+  input_channels: 3
+  num_classes: 3
+  validation_fraction: 0.20
+  split_seed: 42
+  batch_size: 32
+  num_workers: 4
+  # 233 patients total, so validation is ~37 patients after the prepare script
+  # holds 20% out as Testing/. Small, but honestly small -- the previous
+  # dataset's larger-looking validation set was 73% leaked.
+  group_aware_split: true
+
+search_space:
+  num_intermediate_nodes: 4
+  edges_per_node: 2
+  number_of_cells_min: 3
+  number_of_cells_max: 11
+  initial_channels_min: 8
+  initial_channels_max: 48
+  drop_path_probability: 0.2
+  stem_type: cifar
+
+proxies:
+  zico_batch_size: 4
+  zico_num_batches: 4
+  proxy_sample_seed: 123
+
+nsga2:
+  population_size: 20
+  num_generations: 10
+  seed: 1
+  crossover_prob: 0.9
+  mutation_prob: null
+  device: cuda
+  topsis_weights: [0.3, 0.3, 0.4]
+
+augmentation:
+  population_size: 5
+  num_generations: 5
+  trial_epochs: 10
+  learning_rate: 0.025
+  weight_decay: 0.0003
+  momentum: 0.9
+  seed: 1
+  mutation_prob: null
+  device: cuda
+
+training:
+  physical_batch_size: 32
+  gradient_accumulation_steps: 1
+  final_epochs: 250
+  learning_rate: 0.025
+  weight_decay: 0.0007
+  momentum: 0.9
+  grad_clip_norm: 5.0
+  precision: amp
+  checkpoint_metric: macro_auc
+  classifier_dropout_probability: 0.3
+  label_smoothing: 0.1
+  seed: 1
+  device: auto
