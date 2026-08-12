@@ -18,7 +18,7 @@ from pymoo.operators.mutation.pm import PolynomialMutation
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.optimize import minimize
 
-from brainmri_nas.data.loader import build_dataset_bundle, describe_dataset
+from brainmri_nas.data.loader import build_dataset_bundle, describe_dataset, load_patient_ids
 from brainmri_nas.search.candidate import CandidateCache
 from brainmri_nas.search.nsga2_problem import NASSearchProblem
 from brainmri_nas.search.proxy_samples import build_fixed_proxy_batches
@@ -67,13 +67,22 @@ def run_search(config: Config, output_dir: str | Path) -> dict:
         batch_size=config.dataset.batch_size,
         num_workers=config.dataset.num_workers,
         split_indices_path=output_dir / "split_indices.json",
+        group_aware_split=config.dataset.group_aware_split,
     )
     dump_json(bundle.class_to_idx, output_dir / "class_mapping.json")
+    patient_ids = load_patient_ids(config.dataset.data_root)
+    if patient_ids is None:
+        split_mode = "per-image (no patient_ids.json -- validation may share patients with training)"
+    elif config.dataset.group_aware_split:
+        split_mode = f"group-aware over {len(set(patient_ids.values()))} groups"
+    else:
+        split_mode = "per-image (group_aware_split=False, ablation -- LEAKY on purpose)"
     logger.info(
-        "Dataset ready: %d classes, %d train / %d val samples",
+        "Dataset ready: %d classes, %d train / %d val samples; split=%s",
         bundle.num_classes,
         len(bundle.train_indices),
         len(bundle.val_indices),
+        split_mode,
     )
 
     proxy_batches = build_fixed_proxy_batches(

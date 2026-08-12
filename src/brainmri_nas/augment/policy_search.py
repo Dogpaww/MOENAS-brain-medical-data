@@ -196,6 +196,7 @@ def run_augmentation_search(
         batch_size=config.dataset.batch_size,
         num_workers=config.dataset.num_workers,
         split_indices_path=split_indices_path,  # must already exist -- reuses the architecture-search split (handoff §3)
+        group_aware_split=config.dataset.group_aware_split,
     )
     logger.info(
         "Reused split from %s: %d train / %d val samples", split_indices_path, len(bundle.train_indices), len(bundle.val_indices)

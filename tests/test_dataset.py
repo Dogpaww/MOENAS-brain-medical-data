@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
 
@@ -10,7 +11,7 @@ from torchvision import datasets
 from PIL import Image
 
 from brainmri_nas.data.loader import DatasetValidationError, build_dataset_bundle, describe_dataset
-from brainmri_nas.data.split import stratified_split
+from brainmri_nas.data.split import grouped_stratified_split, save_split_indices, stratified_split
 from brainmri_nas.data.transforms import (
     PerImageNormalize,
     ResizeLongerSideAndPad,
@@ -152,6 +153,114 @@ def test_train_and_eval_transforms_are_distinct_instances(synthetic_dataset_root
     assert train_transform is not train_eval_transform
     # val_loader and train_eval_loader are both deterministic eval views and may
     # legitimately share one transform instance -- that's not the bug being guarded against.
+
+
+def _write_patient_ids(root: Path, images_per_group: int = 3) -> dict[str, str]:
+    """Assign consecutive images within each Training/ class to shared groups,
+    imitating multiple slices per patient."""
+    mapping = {}
+    for class_dir in sorted((root / "Training").iterdir()):
+        if not class_dir.is_dir():
+            continue
+        for i, img in enumerate(sorted(class_dir.iterdir())):
+            key = img.relative_to(root).as_posix()
+            mapping[key] = f"{class_dir.name}_patient_{i // images_per_group}"
+    (root / "patient_ids.json").write_text(json.dumps(mapping))
+    return mapping
+
+
+def test_grouped_split_never_puts_one_group_on_both_sides():
+    targets, groups = [], []
+    for cls in range(3):
+        for g in range(20):
+            n = 1 + (g % 5)  # uneven group sizes, like real per-patient slice counts
+            targets += [cls] * n
+            groups += [f"c{cls}_g{g}"] * n
+
+    train_idx, val_idx = grouped_stratified_split(targets, groups, validation_fraction=0.25, split_seed=0)
+
+    assert set(train_idx).isdisjoint(val_idx)
+    assert len(train_idx) + len(val_idx) == len(targets)
+    train_groups = {groups[i] for i in train_idx}
+    val_groups = {groups[i] for i in val_idx}
+    assert train_groups.isdisjoint(val_groups)  # the whole point
+    assert set(targets[i] for i in val_idx) == {0, 1, 2}  # still stratified
+
+
+def test_grouped_split_is_deterministic_for_a_given_seed():
+    targets = [i % 2 for i in range(60)]
+    groups = [f"g{i // 3}" for i in range(60)]
+    a = grouped_stratified_split(targets, groups, 0.25, split_seed=7)
+    b = grouped_stratified_split(targets, groups, 0.25, split_seed=7)
+    assert a == b
+    assert grouped_stratified_split(targets, groups, 0.25, split_seed=8) != a
+
+
+def test_grouped_split_rejects_too_few_groups():
+    # 3 groups cannot yield a 20% (1-in-5) grouped split.
+    with pytest.raises(ValueError, match="distinct groups"):
+        grouped_stratified_split([0] * 9, ["a", "a", "a", "b", "b", "b", "c", "c", "c"], 0.20, 0)
+
+
+def test_bundle_uses_group_aware_split_when_patient_ids_present(synthetic_dataset_root: Path):
+    mapping = _write_patient_ids(synthetic_dataset_root)
+    bundle = build_dataset_bundle(
+        synthetic_dataset_root, image_size=32, validation_fraction=0.25, split_seed=1, batch_size=4
+    )
+    samples = bundle.train_loader.dataset.dataset.samples
+    keys = [mapping[Path(p).relative_to(synthetic_dataset_root).as_posix()] for p, _ in samples]
+    train_groups = {keys[i] for i in bundle.train_indices}
+    val_groups = {keys[i] for i in bundle.val_indices}
+    assert train_groups and val_groups
+    assert train_groups.isdisjoint(val_groups)
+
+
+def test_group_aware_split_can_be_disabled_for_the_leaky_ablation(synthetic_dataset_root: Path):
+    """Turning the flag off must reproduce the plain per-image split, which is
+    how the 'how much of validation is memorisation' comparison is run."""
+    _write_patient_ids(synthetic_dataset_root)
+    bundle = build_dataset_bundle(
+        synthetic_dataset_root,
+        image_size=32,
+        validation_fraction=0.25,
+        split_seed=1,
+        batch_size=4,
+        group_aware_split=False,
+    )
+    targets = [label for _, label in bundle.train_loader.dataset.dataset.samples]
+    expected_train, expected_val = stratified_split(targets, 0.25, 1)
+    assert bundle.train_indices == expected_train
+    assert bundle.val_indices == expected_val
+
+
+def test_incomplete_patient_ids_file_raises_rather_than_leaking(synthetic_dataset_root: Path):
+    mapping = _write_patient_ids(synthetic_dataset_root)
+    del mapping[next(iter(mapping))]  # drop one image
+    (synthetic_dataset_root / "patient_ids.json").write_text(json.dumps(mapping))
+    with pytest.raises(DatasetValidationError, match="missing from patient_ids.json"):
+        build_dataset_bundle(
+            synthetic_dataset_root, image_size=32, validation_fraction=0.25, split_seed=1, batch_size=4
+        )
+
+
+def test_saved_split_that_violates_groups_is_rejected(synthetic_dataset_root: Path, tmp_path: Path):
+    """A split file written before group-aware splitting existed must not be
+    silently reused -- that would train on a leaky split without any signal."""
+    _write_patient_ids(synthetic_dataset_root)
+    split_path = tmp_path / "split_indices.json"
+    targets = [label for _, label in datasets.ImageFolder(str(synthetic_dataset_root / "Training")).samples]
+    leaky_train, leaky_val = stratified_split(targets, 0.25, 1)
+    save_split_indices(leaky_train, leaky_val, split_path)
+
+    with pytest.raises(DatasetValidationError, match="BOTH train and validation"):
+        build_dataset_bundle(
+            synthetic_dataset_root,
+            image_size=32,
+            validation_fraction=0.25,
+            split_seed=1,
+            batch_size=4,
+            split_indices_path=split_path,
+        )
 
 
 def test_resize_longer_side_and_pad_produces_exact_target_size():

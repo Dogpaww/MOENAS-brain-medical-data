@@ -132,6 +132,7 @@ def run_final_training(
         batch_size=config.dataset.batch_size,
         num_workers=config.dataset.num_workers,
         split_indices_path=split_indices_path,  # must already exist -- reuse the search-time split (handoff §3)
+        group_aware_split=config.dataset.group_aware_split,
     )
 
     model_config = dict(

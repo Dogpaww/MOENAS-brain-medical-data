@@ -28,6 +28,12 @@ class DatasetConfig:
     split_seed: int = 42
     batch_size: int = 32
     num_workers: int = 4
+    # Keep every image sharing a patient/study on one side of the train/val
+    # split. Requires a `patient_ids.json` sidecar in `data_root`; datasets
+    # without one are unaffected. Setting this False while the sidecar exists
+    # reproduces the leaky per-image split on purpose, which is the ablation
+    # that measures how much validation score is memorisation.
+    group_aware_split: bool = True
 
 
 @dataclasses.dataclass
