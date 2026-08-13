@@ -66,7 +66,25 @@ def _validate_dataset_root(data_root: Path) -> tuple[Path, Path]:
 
     for split_name, split_dir in ((TRAIN_SPLIT_DIR_NAME, train_dir), (TEST_SPLIT_DIR_NAME, test_dir)):
         if not split_dir.is_dir():
-            raise DatasetValidationError(f"Expected a '{split_name}' folder at {split_dir}, but it does not exist.")
+            hint = ""
+            if not data_root.exists():
+                # Much the most common cause: the repo was cloned/pulled on a new
+                # machine but the dataset was never built there. The folder layout
+                # is generated, not committed (data/ is gitignored).
+                hint = (
+                    f"\n{data_root} does not exist at all. If this is the figshare dataset, build it with:\n"
+                    f"    python scripts/download_figshare.py --output data/figshare_raw\n"
+                    f"    python scripts/prepare_figshare.py --source data/figshare_raw/extracted "
+                    f"--output {data_root}"
+                )
+            elif any(data_root.glob("*.mat")):
+                hint = (
+                    f"\n{data_root} holds raw .mat files. Those need converting first:\n"
+                    f"    python scripts/prepare_figshare.py --source {data_root} --output data/figshare_brain_tumor"
+                )
+            raise DatasetValidationError(
+                f"Expected a '{split_name}' folder at {split_dir}, but it does not exist.{hint}"
+            )
 
     train_classes = _class_subfolders(train_dir)
     test_classes = _class_subfolders(test_dir)
