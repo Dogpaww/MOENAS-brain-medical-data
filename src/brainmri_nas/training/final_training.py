@@ -8,6 +8,12 @@ fresh CPU state-dict snapshot every time validation improves -> reload that
 checkpoint into an independently rebuilt model -> evaluate the test set
 exactly once. Every required output file (handoff §33) is written to
 `output_dir`.
+
+`selected_legacy_policy_path` (branch: fixed_da) selects a fixed 2-op,
+non-adaptive augmentation instead of the sample-adaptive kind
+`selected_policy_path` selects -- see `augment/legacy_policy_search.py`.
+The two are mutually exclusive: which augmentation to apply must be
+unambiguous, not "prefer one if both happen to be passed."
 """
 
 from __future__ import annotations
@@ -20,9 +26,11 @@ from pathlib import Path
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader, Subset
-from torchvision import datasets
+from torchvision import datasets, transforms
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
+from brainmri_nas.augment.legacy_search_space import legacy_steps
+from brainmri_nas.augment.legacy_transform_builder import build_legacy_transform
 from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
 from brainmri_nas.data.loader import build_dataset_bundle, is_real_image_file
 from brainmri_nas.data.transforms import build_train_transform
@@ -74,6 +82,7 @@ def _build_train_loader(
     policy: AugmentationPolicy | None,
     loss_cache: LossCache | None,
     num_workers: int,
+    fixed_transform: transforms.Compose | None = None,
 ) -> DataLoader:
     if policy is not None:
         return build_sample_adaptive_loader(
@@ -85,9 +94,12 @@ def _build_train_loader(
             loss_cache=loss_cache,
             num_workers=num_workers,
         )
-    dataset = datasets.ImageFolder(
-        str(train_dir), transform=build_train_transform(image_size), is_valid_file=is_real_image_file
-    )
+    # fixed_transform (branch: fixed_da) is the legacy 2-op path: same plain
+    # ImageFolder+DataLoader shape as the no-augmentation identity path below,
+    # just with a real (non-identity) transform plugged in -- there is no
+    # LossCache here either way, since neither path is sample-adaptive.
+    transform = fixed_transform if fixed_transform is not None else build_train_transform(image_size)
+    dataset = datasets.ImageFolder(str(train_dir), transform=transform, is_valid_file=is_real_image_file)
     return DataLoader(Subset(dataset, train_indices), batch_size=batch_size, shuffle=True, num_workers=num_workers)
 
 
@@ -98,7 +110,13 @@ def run_final_training(
     split_indices_path: str | Path,
     output_dir: str | Path,
     selected_policy_path: str | Path | None = None,
+    selected_legacy_policy_path: str | Path | None = None,
 ) -> dict:
+    if selected_policy_path is not None and selected_legacy_policy_path is not None:
+        raise ValueError(
+            "selected_policy_path and selected_legacy_policy_path are mutually exclusive "
+            "-- pass at most one, so which augmentation applies is never ambiguous."
+        )
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     logger = _configure_logging(output_dir)
@@ -124,7 +142,21 @@ def run_final_training(
 
     selected_policy_record = load_json(selected_policy_path) if selected_policy_path is not None else None
     policy = AugmentationPolicy.from_dict(selected_policy_record["policy"]) if selected_policy_record else None
-    logger.info("Augmentation policy: %s", "from " + str(selected_policy_path) if policy else "none (identity)")
+
+    selected_legacy_policy_record = (
+        load_json(selected_legacy_policy_path) if selected_legacy_policy_path is not None else None
+    )
+    legacy_ops: tuple[str, str] | None = None
+    if selected_legacy_policy_record is not None:
+        op1, op2 = selected_legacy_policy_record["ops"]
+        legacy_ops = (op1, op2)
+
+    if policy is not None:
+        logger.info("Augmentation policy: sample-adaptive, from %s", selected_policy_path)
+    elif legacy_ops is not None:
+        logger.info("Augmentation policy: legacy fixed ops %s, from %s", legacy_ops, selected_legacy_policy_path)
+    else:
+        logger.info("Augmentation policy: none (identity)")
 
     bundle = build_dataset_bundle(
         config.dataset.data_root,
@@ -169,6 +201,21 @@ def run_final_training(
         else None
     )
 
+    fixed_transform = (
+        build_legacy_transform(legacy_ops[0], legacy_ops[1], config.dataset.image_size)
+        if legacy_ops is not None
+        else None
+    )
+    # Checkpoint metadata stays schema-compatible either way: legacy_steps()
+    # produces the same AugmentationStep shape decode_chromosome does (order,
+    # probability, name), just with inert strength_s/strength_a=0.0 --
+    # there is no per-sample curve to record for a fixed policy.
+    checkpoint_augmentation_policy = (
+        [s.to_dict() for s in legacy_steps(legacy_ops[0], legacy_ops[1])]
+        if legacy_ops is not None
+        else (selected_policy_record["policy"] if selected_policy_record else None)
+    )
+
     train_dir = Path(config.dataset.data_root) / "Training"
     train_loader = _build_train_loader(
         train_dir,
@@ -178,6 +225,7 @@ def run_final_training(
         policy=policy,
         loss_cache=loss_cache,
         num_workers=config.dataset.num_workers,
+        fixed_transform=fixed_transform,
     )
 
     optimizer, scheduler = build_optimizer_and_scheduler(
@@ -240,7 +288,7 @@ def run_final_training(
                 epoch=epoch,
                 validation_metrics=val_metrics,
                 chromosome=selected_architecture.get("chromosome"),
-                augmentation_policy=selected_policy_record["policy"] if selected_policy_record else None,
+                augmentation_policy=checkpoint_augmentation_policy,
             )
             dump_json(val_metrics, output_dir / "validation_metrics.json")
 
@@ -327,6 +375,8 @@ def run_final_training(
     dump_json(selected_architecture, output_dir / "selected_architecture.json")
     if selected_policy_record is not None:
         dump_json(selected_policy_record, output_dir / "selected_policy.json")
+    if selected_legacy_policy_record is not None:
+        dump_json(selected_legacy_policy_record, output_dir / "selected_legacy_policy.json")
     dump_json(get_run_manifest(), output_dir / "run_manifest.json")
 
     return {
