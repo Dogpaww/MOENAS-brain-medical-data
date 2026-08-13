@@ -164,7 +164,33 @@ def main() -> int:
             continue
 
         print(f"  [get ] {name}  ({entry['size'] / 1e6:.1f} MB)")
-        download(entry["download_url"], target, entry["size"])
+        try:
+            download(entry["download_url"], target, entry["size"])
+        except urllib.error.HTTPError as exc:
+            target.unlink(missing_ok=True)
+            if exc.code != 403:
+                raise
+            # Observed on a GCP VM: figshare 403s the whole network, both
+            # api.figshare.com and ndownloader.figshare.com. Nothing in this
+            # script can route around that, so say so instead of retrying
+            # three more times and printing a traceback.
+            print(
+                f"\n  HTTP 403 from {DOWNLOAD_HOST}.\n"
+                "  figshare is refusing this host, not this request -- some cloud IP ranges\n"
+                "  are blocked outright. Confirm with:\n"
+                f"      curl -sI {DOWNLOAD_HOST}/7005344 | head -1\n"
+                "  A 403 there means no download client will work from this machine.\n\n"
+                "  Fetch the dataset on a machine that can reach figshare, run\n"
+                "  prepare_figshare.py there, and copy the prepared folder across\n"
+                "  (~305 MB, versus 880 MB of raw archives):\n"
+                "      tar -cf figshare_brain_tumor.tar figshare_brain_tumor\n"
+                "      scp figshare_brain_tumor.tar <host>:<repo>/data/\n"
+                "      ssh <host> 'cd <repo>/data && tar -xf figshare_brain_tumor.tar'\n"
+                "  The patient split is seeded, so preparing it elsewhere gives an\n"
+                "  identical result to preparing it here.",
+                file=sys.stderr,
+            )
+            return 2
 
         if expected_md5:
             actual = md5_of(target)
