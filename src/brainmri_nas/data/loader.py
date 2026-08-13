@@ -32,6 +32,7 @@ from pathlib import Path
 
 from torch.utils.data import DataLoader, Subset
 from torchvision import datasets
+from torchvision.datasets.folder import IMG_EXTENSIONS
 
 from brainmri_nas.data.bundle import DatasetBundle
 from brainmri_nas.data.split import (
@@ -58,6 +59,23 @@ def _class_subfolders(directory: Path) -> set[str]:
 
 def _count_images(directory: Path) -> int:
     return sum(1 for p in directory.iterdir() if p.is_file() and not p.name.startswith("."))
+
+
+def is_real_image_file(path: str) -> bool:
+    """Image-extension check that also rejects dot-files.
+
+    `ImageFolder`'s default accepts anything with an image extension, which
+    includes the `._name.png` AppleDouble sidecars macOS `tar` writes next to
+    every real file. Extracted on Linux those become genuine files and load as
+    images -- observed doubling a transferred dataset to 6128 "images" and
+    tripping the patient-id completeness check, because no sidecar has a
+    patient id. They are metadata, never data, so exclude them here rather
+    than requiring every transfer to be cleaned by hand.
+    """
+    name = Path(path).name
+    if name.startswith("."):
+        return False
+    return name.lower().endswith(IMG_EXTENSIONS)
 
 
 def _validate_dataset_root(data_root: Path) -> tuple[Path, Path]:
@@ -171,9 +189,9 @@ def build_dataset_bundle(
     train_transform = build_train_transform(image_size)
     eval_transform = build_eval_transform(image_size)
 
-    train_dataset_for_train = datasets.ImageFolder(str(train_dir), transform=train_transform)
-    train_dataset_for_eval = datasets.ImageFolder(str(train_dir), transform=eval_transform)
-    test_dataset = datasets.ImageFolder(str(test_dir), transform=eval_transform)
+    train_dataset_for_train = datasets.ImageFolder(str(train_dir), transform=train_transform, is_valid_file=is_real_image_file)
+    train_dataset_for_eval = datasets.ImageFolder(str(train_dir), transform=eval_transform, is_valid_file=is_real_image_file)
+    test_dataset = datasets.ImageFolder(str(test_dir), transform=eval_transform, is_valid_file=is_real_image_file)
 
     if train_dataset_for_train.class_to_idx != test_dataset.class_to_idx:
         raise DatasetValidationError(

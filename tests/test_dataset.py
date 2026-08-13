@@ -169,6 +169,39 @@ def _write_patient_ids(root: Path, images_per_group: int = 3) -> dict[str, str]:
     return mapping
 
 
+def test_macos_appledouble_sidecars_are_not_loaded_as_images(synthetic_dataset_root: Path):
+    """A dataset tarred on macOS and extracted on Linux gains a `._name.png`
+    sidecar next to every file. Those are metadata, and loading them as images
+    both doubles the dataset and breaks index alignment against patient_ids."""
+    for class_dir in (synthetic_dataset_root / "Training").iterdir():
+        if class_dir.is_dir():
+            for img in list(class_dir.glob("*.png")):
+                (class_dir / f"._{img.name}").write_bytes(b"\x00\x05\x16\x07not an image")
+
+    bundle = build_dataset_bundle(
+        synthetic_dataset_root, image_size=32, validation_fraction=0.2, split_seed=1, batch_size=4
+    )
+    loaded = [Path(p).name for p, _ in bundle.train_loader.dataset.dataset.samples]
+    assert loaded, "no images loaded at all"
+    assert not any(n.startswith("._") for n in loaded)
+    assert len(bundle.train_indices) + len(bundle.val_indices) == sum(TRAIN_COUNTS.values())
+
+
+def test_appledouble_sidecars_do_not_break_group_aware_splitting(synthetic_dataset_root: Path):
+    """The real failure: patient_ids.json covers real files only, so sidecars
+    loaded as images have no group id and the completeness check aborts."""
+    _write_patient_ids(synthetic_dataset_root)
+    for class_dir in (synthetic_dataset_root / "Training").iterdir():
+        if class_dir.is_dir():
+            for img in list(class_dir.glob("[!.]*.png")):
+                (class_dir / f"._{img.name}").write_bytes(b"\x00\x05\x16\x07")
+
+    bundle = build_dataset_bundle(
+        synthetic_dataset_root, image_size=32, validation_fraction=0.25, split_seed=1, batch_size=4
+    )
+    assert len(bundle.train_indices) + len(bundle.val_indices) == sum(TRAIN_COUNTS.values())
+
+
 def test_grouped_split_never_puts_one_group_on_both_sides():
     targets, groups = [], []
     for cls in range(3):

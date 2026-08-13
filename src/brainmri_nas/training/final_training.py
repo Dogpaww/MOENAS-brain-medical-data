@@ -24,7 +24,7 @@ from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
 from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
-from brainmri_nas.data.loader import build_dataset_bundle
+from brainmri_nas.data.loader import build_dataset_bundle, is_real_image_file
 from brainmri_nas.data.transforms import build_train_transform
 from brainmri_nas.model.network import build_model
 from brainmri_nas.proxies.profiling import profile_peak_memory
@@ -85,7 +85,9 @@ def _build_train_loader(
             loss_cache=loss_cache,
             num_workers=num_workers,
         )
-    dataset = datasets.ImageFolder(str(train_dir), transform=build_train_transform(image_size))
+    dataset = datasets.ImageFolder(
+        str(train_dir), transform=build_train_transform(image_size), is_valid_file=is_real_image_file
+    )
     return DataLoader(Subset(dataset, train_indices), batch_size=batch_size, shuffle=True, num_workers=num_workers)
 
 

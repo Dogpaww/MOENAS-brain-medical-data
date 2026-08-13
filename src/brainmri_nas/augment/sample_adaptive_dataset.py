@@ -23,6 +23,7 @@ from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
 from brainmri_nas.augment.transform_builder import build_sample_adaptive_transform
+from brainmri_nas.data.loader import is_real_image_file
 from brainmri_nas.utils.loss_cache import LossCache
 
 
@@ -60,7 +61,7 @@ def build_sample_adaptive_loader(
     loss_cache: LossCache,
     num_workers: int = 0,
 ) -> DataLoader:
-    raw_dataset = datasets.ImageFolder(str(train_dir), transform=None)
+    raw_dataset = datasets.ImageFolder(str(train_dir), transform=None, is_valid_file=is_real_image_file)
     subset = Subset(raw_dataset, train_indices)
     adaptive_dataset = SampleAdaptiveDataset(subset, image_size=image_size, policy=policy, loss_cache=loss_cache)
     return DataLoader(adaptive_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
