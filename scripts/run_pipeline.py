@@ -10,9 +10,18 @@ Each stage is skipped if its output already exists (e.g. re-running after
 final training crashed partway through won't redo the architecture or
 augmentation search) -- pass --force to rerun everything from scratch.
 
+--legacy-augmentation replaces stage 2's sample-adaptive SapAugment search
+with the legacy mechanism instead (branch: fixed_da): a genetic algorithm
+picks 2 of the same 7 MRI-safe ops, applied to every training image at a
+fixed maximum-safe magnitude with no per-sample adaptivity, mirroring the
+original repo's actual (pick-which-2-ops) search rather than its dead-code
+AutoAugment path. Stage 3 is otherwise unaffected -- it just gets the fixed
+policy through selected_legacy_policy_path instead of selected_policy_path.
+
 Usage:
     python -u scripts/run_pipeline.py --config configs/search.yaml 2>&1 | tee run_pipeline.log
     python -u scripts/run_pipeline.py --skip-augmentation   # train with no augmentation policy
+    python -u scripts/run_pipeline.py --legacy-augmentation # fixed 2-op augmentation, not sample-adaptive
     python -u scripts/run_pipeline.py --force                # ignore existing outputs, rerun all stages
 """
 
@@ -21,6 +30,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from brainmri_nas.augment.legacy_policy_search import run_legacy_augmentation_search
 from brainmri_nas.augment.policy_search import run_augmentation_search
 from brainmri_nas.search.nsga2_runner import run_search
 from brainmri_nas.training.final_training import run_final_training
@@ -47,8 +57,16 @@ def main() -> None:
         action="store_true",
         help="Skip augmentation policy search; train with the identity transform only.",
     )
+    parser.add_argument(
+        "--legacy-augmentation",
+        action="store_true",
+        help="Stage 2 searches a fixed 2-op non-adaptive policy instead of sample-adaptive SapAugment (fixed_da).",
+    )
     parser.add_argument("--force", action="store_true", help="Rerun every stage even if its output already exists.")
     args = parser.parse_args()
+
+    if args.skip_augmentation and args.legacy_augmentation:
+        raise SystemExit("--skip-augmentation and --legacy-augmentation are mutually exclusive.")
 
     config = load_config(args.config)
     output_dir = Path(args.output_dir)
@@ -67,8 +85,22 @@ def main() -> None:
 
     # -- Stage 2: augmentation policy search -----------------------------------
     selected_policy_path = None
+    selected_legacy_policy_path = None
     if args.skip_augmentation:
         print("[skip] augmentation search disabled (--skip-augmentation); training with no augmentation policy.")
+    elif args.legacy_augmentation:
+        selected_legacy_policy_path = augmentation_dir / "selected_legacy_policy.json"
+        if args.force or not selected_legacy_policy_path.exists():
+            _banner("STAGE 2/3: legacy (fixed 2-op) augmentation search")
+            result = run_legacy_augmentation_search(
+                config,
+                selected_architecture_path=selected_architecture_path,
+                split_indices_path=search_dir / "split_indices.json",
+                output_dir=augmentation_dir,
+            )
+            print(f"Selected ops {result['selected_policy']['ops']} val_macro_auc={result['selected_policy']['val_macro_auc']:.4f}")
+        else:
+            print(f"[skip] legacy augmentation search already done -> {selected_legacy_policy_path}")
     else:
         selected_policy_path = augmentation_dir / "selected_policy.json"
         if args.force or not selected_policy_path.exists():
@@ -92,6 +124,7 @@ def main() -> None:
             selected_architecture_path=selected_architecture_path,
             split_indices_path=search_dir / "split_indices.json",
             selected_policy_path=selected_policy_path,
+            selected_legacy_policy_path=selected_legacy_policy_path,
             output_dir=training_dir,
         )
         test_metrics = result["test_metrics"]

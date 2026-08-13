@@ -101,7 +101,12 @@ def validate_chromosome(chromosome: Sequence[float]) -> None:
             raise ValueError(f"Augmentation chromosome gene {i} = {gene!r} is outside the required range [0, 1).")
 
 
-def _build_parameters(name: str, magnitude: float) -> dict:
+def build_parameters(name: str, magnitude: float) -> dict:
+    """Map one op's resolved scalar magnitude to the torchvision-ready
+    parameters dict `transform_builder.build_transform_step` consumes.
+    Public: `legacy_search_space.py` reuses this to build fixed-magnitude
+    (non-adaptive) versions of the exact same ops, rather than duplicating
+    the name -> parameters mapping in a second place."""
     if name == "rotation":
         return {"degrees": magnitude}
     if name == "affine_translation":
@@ -175,5 +180,5 @@ def resolve_step(step: AugmentationStep, loss_rank: float) -> ResolvedAugmentati
         order=step.order,
         probability=step.probability,
         magnitude=magnitude,
-        parameters=_build_parameters(step.name, magnitude),
+        parameters=build_parameters(step.name, magnitude),
     )
