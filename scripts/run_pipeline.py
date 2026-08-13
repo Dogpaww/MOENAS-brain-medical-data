@@ -10,10 +10,16 @@ Each stage is skipped if its output already exists (e.g. re-running after
 final training crashed partway through won't redo the architecture or
 augmentation search) -- pass --force to rerun everything from scratch.
 
+--random-architecture replaces stage 1 with a single uniform draw from the
+same chromosome space instead of running NSGA-II -- the random_architecture
+baseline branch. Stages 2 and 3 are unchanged either way: both only ever
+read search_dir/selected_architecture.json, agnostic to how it was produced.
+
 Usage:
     python -u scripts/run_pipeline.py --config configs/search.yaml 2>&1 | tee run_pipeline.log
     python -u scripts/run_pipeline.py --skip-augmentation   # train with no augmentation policy
     python -u scripts/run_pipeline.py --force                # ignore existing outputs, rerun all stages
+    python -u scripts/run_pipeline.py --random-architecture --random-seed 1 --output-dir outputs/random_1
 """
 
 from __future__ import annotations
@@ -23,6 +29,7 @@ from pathlib import Path
 
 from brainmri_nas.augment.policy_search import run_augmentation_search
 from brainmri_nas.search.nsga2_runner import run_search
+from brainmri_nas.search.random_baseline import run_random_baseline
 from brainmri_nas.training.final_training import run_final_training
 from brainmri_nas.utils.config import load_config
 from brainmri_nas.utils.serialization import load_json
@@ -48,6 +55,17 @@ def main() -> None:
         help="Skip augmentation policy search; train with the identity transform only.",
     )
     parser.add_argument("--force", action="store_true", help="Rerun every stage even if its output already exists.")
+    parser.add_argument(
+        "--random-architecture",
+        action="store_true",
+        help="Stage 1 draws one uniform-random chromosome instead of running NSGA-II (random_architecture baseline).",
+    )
+    parser.add_argument(
+        "--random-seed",
+        type=int,
+        default=None,
+        help="Seed for --random-architecture's draw. Defaults to config.nsga2.seed if omitted.",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -59,9 +77,14 @@ def main() -> None:
     # -- Stage 1: architecture search -----------------------------------------
     selected_architecture_path = search_dir / "selected_architecture.json"
     if args.force or not selected_architecture_path.exists():
-        _banner("STAGE 1/3: NSGA-II architecture search")
-        result = run_search(config, search_dir)
-        print(f"Selected architecture: {result['selected_architecture']['candidate_hash']}")
+        if args.random_architecture:
+            _banner("STAGE 1/3: random architecture draw (random_architecture baseline)")
+            result = run_random_baseline(config, search_dir, seed=args.random_seed)
+            print(f"Random architecture: {result['selected_architecture']['candidate_hash']}")
+        else:
+            _banner("STAGE 1/3: NSGA-II architecture search")
+            result = run_search(config, search_dir)
+            print(f"Selected architecture: {result['selected_architecture']['candidate_hash']}")
     else:
         print(f"[skip] architecture search already done -> {selected_architecture_path}")
 
