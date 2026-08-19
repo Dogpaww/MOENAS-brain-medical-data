@@ -20,6 +20,15 @@ pipeline's from-scratch recipe (`TrainingConfig.final_epochs=200`,
 custom network and would either waste most of a fine-tuning run's epochs
 past convergence or actively overfit a pretrained model on ~2,100 images.
 See HANDOFF.md for the fuller rationale.
+
+`image_size` defaults to 96, matching the NAS pipeline's own resolution
+(`DatasetConfig.image_size`) rather than each baseline's typical native
+ImageNet resolution (224) -- a real, measured ResNet-18 run at 224x224
+still scored below the searched architecture at 96x96 despite the pixel
+advantage, but the confound is worth removing rather than explaining away:
+holding resolution constant is what actually makes "only the model
+differs" true. Pass --image-size 224 explicitly for a secondary,
+clearly-labeled "baseline at its native resolution" comparison instead.
 """
 
 from __future__ import annotations
@@ -74,7 +83,7 @@ def run_baseline_training(
     model_name: str,
     split_indices_path: str | Path,
     output_dir: str | Path,
-    image_size: int = 224,
+    image_size: int = 96,
     epochs: int = 50,
     learning_rate: float = 0.001,
     weight_decay: float = 7e-4,

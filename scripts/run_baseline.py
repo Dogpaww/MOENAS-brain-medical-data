@@ -8,16 +8,23 @@ Requires an existing split_indices.json -- this script never computes a
 fresh split, so point it at the searched-architecture run's split (copy it
 in, the same trick used for the `main1` controlled-comparison run itself):
 
-    mkdir -p outputs/baseline_resnet18
-    cp outputs/main1/search_run/split_indices.json outputs/baseline_resnet18/
+    mkdir -p outputs/baseline_resnet18_96
+    cp outputs/main1/search_run/split_indices.json outputs/baseline_resnet18_96/
+
+Default resolution is 96x96, matching the NAS pipeline's own image size, so
+the comparison isn't confounded by baselines seeing more pixels than the
+searched architecture does -- this is the primary number to report. Pass
+--image-size 224 (into a *different* --output-dir, e.g. baseline_resnet18_224,
+so it doesn't overwrite the 96x96 run) for a secondary, clearly-labeled
+"baseline at its native ImageNet resolution" data point.
 
 Usage:
     python -u scripts/run_baseline.py \
         --model resnet18 \
         --config configs/figshare.yaml \
-        --split-indices outputs/baseline_resnet18/split_indices.json \
-        --output-dir outputs/baseline_resnet18 \
-        2>&1 | tee run_baseline_resnet18.log
+        --split-indices outputs/baseline_resnet18_96/split_indices.json \
+        --output-dir outputs/baseline_resnet18_96 \
+        2>&1 | tee run_baseline_resnet18_96.log
 """
 
 from __future__ import annotations
@@ -41,7 +48,13 @@ def main() -> None:
     )
     parser.add_argument("--output-dir", required=True)
     parser.add_argument(
-        "--image-size", type=int, default=224, help="Resize target; 224 matches ImageNet-pretrained weights."
+        "--image-size",
+        type=int,
+        default=96,
+        help="Resize target; defaults to 96 to match the NAS pipeline's own resolution "
+        "(config.dataset.image_size), holding resolution constant so the comparison isn't "
+        "confounded by baselines seeing more pixels than the searched architecture does. "
+        "Pass 224 explicitly for a secondary run at ResNet's native ImageNet resolution.",
     )
     parser.add_argument(
         "--epochs",
