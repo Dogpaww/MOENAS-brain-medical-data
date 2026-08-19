@@ -26,8 +26,24 @@ def _resnet18(num_classes: int) -> nn.Module:
     return model
 
 
+def _resnet34(num_classes: int) -> nn.Module:
+    model = models.resnet34(weights=models.ResNet34_Weights.IMAGENET1K_V1)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    return model
+
+
+def _vgg16(num_classes: int) -> nn.Module:
+    model = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)
+    # classifier[6] is the final 4096->1000 layer; everything before it
+    # (the two 4096-unit hidden layers + their dropout) is left pretrained.
+    model.classifier[6] = nn.Linear(model.classifier[6].in_features, num_classes)
+    return model
+
+
 MODEL_REGISTRY: dict[str, Callable[[int], nn.Module]] = {
     "resnet18": _resnet18,
+    "resnet34": _resnet34,
+    "vgg16": _vgg16,
 }
 
 
