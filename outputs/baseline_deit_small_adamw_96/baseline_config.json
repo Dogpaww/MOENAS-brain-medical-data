@@ -1,0 +1,14 @@
+{
+  "model_name": "deit_small",
+  "image_size": 96,
+  "epochs": 50,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0007,
+  "momentum": 0.9,
+  "optimizer_name": "adamw",
+  "label_smoothing": 0.1,
+  "grad_clip_norm": 5.0,
+  "checkpoint_metric": "macro_auc",
+  "seed": 1,
+  "split_indices_path": "outputs/baseline_deit_small_adamw_96/split_indices.json"
+}

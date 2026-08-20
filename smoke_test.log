@@ -1,0 +1,72 @@
+
+[1/14] Validating dataset folders
+    no valid dataset at data/brain_tumor_mri (Expected a 'Training' folder at data/brain_tumor_mri/Training, but it does not exist.
+data/brain_tumor_mri does not exist at all. If this is the figshare dataset, build it with:
+    python scripts/download_figshare.py --output data/figshare_raw
+    python scripts/prepare_figshare.py --source data/figshare_raw/extracted --output data/brain_tumor_mri)
+    falling back to a small SYNTHETIC dataset -- this is NOT a real-data check.
+    Training: {'glioma_tumor': 24, 'meningioma_tumor': 24, 'no_tumor': 24, 'pituitary_tumor': 24}
+    Testing: {'glioma_tumor': 6, 'meningioma_tumor': 6, 'no_tumor': 6, 'pituitary_tumor': 6}
+
+Using device=cuda
+
+[2/14] Loading a small stratified subset
+    32 train / 8 val samples, classes=('glioma_tumor', 'meningioma_tumor', 'no_tumor', 'pituitary_tumor')
+
+[3/14] Decoding one chromosome
+    normal edges=8, reduction edges=8, number_of_cells=5, initial_channels=28
+
+[4/14] Building the model and running forward + backward
+    logits shape=(2, 4), parameters=402,555
+
+[5/14] Calculating SynFlow
+    synflow=4.71164e+15 log_synflow=15.6732
+
+[6/14] Calculating ZiCO
+    zico=974.779
+
+[7/14] Profiling FLOPs and parameters
+    flops=0.6496B params=0.4026M
+
+[8/14] Running NSGA-II (population=4, generations=2)
+Starting NSGA-II search on device=cuda
+Dataset ready: 4 classes, 32 train / 8 val samples; split=per-image (no patient_ids.json -- validation may share patients with training)
+Fixed 2 proxy batches (8 samples) selected for ZiCO
+==========================================================
+n_gen  |  n_eval  | n_nds  |      eps      |   indicator  
+==========================================================
+     1 |        4 |      2 |             - |             -
+     2 |        8 |      4 |  0.5512097798 |         ideal
+Search finished: 8 evaluations logged, 8 valid, 8 unique candidates cached
+Pareto front: 4 architectures
+Selected architecture 4d7d759ed134 (topsis_score=0.8793)
+Saved 3D Pareto front plot to outputs/smoke_test/search_run/pareto_front_3d.png
+Saved 2D Pareto front plot to outputs/smoke_test/search_run/pareto_front_2d.png
+
+[9/14] Selecting one architecture (TOPSIS)
+    selected candidate_hash=4d7d759ed134 topsis_score=0.8793
+
+[10/14] Testing one augmentation policy
+    one-trial val_macro_auc=0.5000
+
+[11/14] Training one epoch (final training loop)
+Starting final training on device=cuda, amp=True, physical_batch_size=32, accumulation_steps=1, effective_batch_size=32
+Augmentation policy: sample-adaptive, from outputs/smoke_test/selected_policy.json
+Classes: {'glioma_tumor': 0, 'meningioma_tumor': 1, 'no_tumor': 2, 'pituitary_tumor': 3}
+Regularization: weight_decay=7.0e-04 classifier_dropout=0.30 label_smoothing=0.10 drop_path=0.20
+train epoch 1/1 batch 1/1 (100%) running_loss=1.3251
+epoch 1/1 done: train_loss=1.3251 val_loss=1.3863 val_accuracy=0.2500 val_macro_f1=0.1000 val_macro_auc=0.5000 (checkpoint_metric=macro_auc) [new best]
+Training finished. Best epoch=1, smoothed macro_auc=0.5000 (window=3)
+Test set evaluated once: accuracy=0.2500 macro_f1=0.1000 macro_auc=0.5000
+    trained 1 epoch, best_epoch=1
+
+[12/14] Saving and reloading the checkpoint
+    reloaded checkpoint from epoch 1
+
+[13/14] Running validation inference with the reloaded model
+    inference logits shape=(8, 4)
+
+[14/14] Reporting peak VRAM (CUDA only)
+    peak VRAM allocated: 4.744 GB
+
+SMOKE TEST PASSED in 9.8s. Outputs written to outputs/smoke_test

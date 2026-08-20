@@ -1,0 +1,1346 @@
+[
+  {
+    "chromosome": [
+      0.6369616866844926,
+      0.2697867134940836,
+      0.040973523895221166,
+      0.01652763551200146,
+      0.8132702383870022,
+      0.9127555763649662,
+      0.6066357751605441,
+      0.7294965602545018,
+      0.543624990921798,
+      0.9350724228526959,
+      0.8158535533056787,
+      0.002738500167409595,
+      0.8574042757301651,
+      0.03358557527187878,
+      0.7296554457002886,
+      0.17565562042690339,
+      0.8631789214867077,
+      0.5414612197076305,
+      0.2997118902376729,
+      0.42268722077497123,
+      0.028319671117143296,
+      0.12428327637528067,
+      0.6706244140230059,
+      0.6471895109270606,
+      0.6153851108658688,
+      0.3836775538782059,
+      0.9972099347920012,
+      0.9808353377953948,
+      0.6855419837951527,
+      0.6504592756173571,
+      0.6884467298824933,
+      0.3889214235901824,
+      0.13509650488731473,
+      0.7214883394725934,
+      0.5253543219503716,
+      0.31024187524871377,
+      0.4858353583459537,
+      0.8894878334595124,
+      0.9340435150222062,
+      0.35779519635127505,
+      0.5715298301582311,
+      0.3218693907540728,
+      0.5943000296053967,
+      0.33791122516922206,
+      0.3916190001365422,
+      0.890274351114518,
+      0.22715759330622212,
+      0.6231871440628552,
+      0.08401534349836949,
+      0.8326441468207536
+    ],
+    "candidate_hash": "f0463eb05e134cb1383baaa93ee7934b4411ce28858930576e3ea8346c86ad89",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "none",
+            "attention": "CBAM"
+          },
+          {
+            "source": 2,
+            "operation": "sep_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 3,
+            "operation": "skip_connect",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "avg_pool_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 3,
+            "operation": "none",
+            "attention": "SE"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 3,
+            "operation": "max_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 2,
+            "operation": "avg_pool_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "sep_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 3,
+    "initial_channels": 36,
+    "synflow": 14976692302388.244,
+    "log_synflow": 13.175415907259268,
+    "zico": 779.894768547035,
+    "flops": 837408708.0,
+    "flops_billion": 0.837408708,
+    "params": 427846.0,
+    "params_million": 0.427846,
+    "valid": true,
+    "error": null
+  },
+  {
+    "chromosome": [
+      0.7870983067015851,
+      0.2393694427535827,
+      0.8764842299342196,
+      0.058568034746626314,
+      0.3361170602095433,
+      0.1502794667445596,
+      0.4503393661989476,
+      0.79632426949097,
+      0.23064220876310523,
+      0.05202130101238831,
+      0.40455183941697637,
+      0.1985130443107423,
+      0.09075304552836885,
+      0.5803323854065183,
+      0.2986961325202265,
+      0.6719948772843645,
+      0.19951544376869787,
+      0.9421131095643848,
+      0.3651101678797184,
+      0.10549527946473425,
+      0.6291081509106011,
+      0.9271545521407129,
+      0.44037715427540686,
+      0.9545904927361467,
+      0.4998958131877512,
+      0.4252286244238469,
+      0.6202134513951644,
+      0.9950965042402277,
+      0.9489436739888216,
+      0.46004513884905096,
+      0.7577288445505627,
+      0.4974226949901963,
+      0.5293121596674583,
+      0.7857856999280218,
+      0.4146558489410149,
+      0.7344835710542458,
+      0.711142877278607,
+      0.9320596856813186,
+      0.11493263316597256,
+      0.7290151163472943,
+      0.927423927697136,
+      0.9679261889567202,
+      0.014706304950662984,
+      0.8636400893819357,
+      0.9811950390851493,
+      0.9572101786537534,
+      0.1487640120837339,
+      0.9726288128503262,
+      0.8899355548305851,
+      0.8223738267206966
+    ],
+    "candidate_hash": "ddcebe5fe1f72d9863ee24cdd1c2ac701ba714cdcff92398a2fde29ce54f88e1",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 2,
+            "operation": "max_pool_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 2,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "avg_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "max_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 3,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 3,
+            "operation": "sep_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 4,
+            "operation": "none",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 11,
+    "initial_channels": 35,
+    "synflow": 3.904332730582249e+18,
+    "log_synflow": 18.591546821519838,
+    "zico": 1007.8689654372422,
+    "flops": 1967976513.0,
+    "flops_billion": 1.967976513,
+    "params": 1344353.0,
+    "params_million": 1.344353,
+    "valid": true,
+    "error": null
+  },
+  {
+    "chromosome": [
+      0.4799879233278443,
+      0.23237291940693092,
+      0.8018805779164273,
+      0.9235301588599394,
+      0.2661302720261623,
+      0.5389344070832526,
+      0.44275282853177866,
+      0.9310173150501377,
+      0.04051071114792392,
+      0.7320061949245547,
+      0.6143732463346234,
+      0.02836536508515569,
+      0.7192197721075205,
+      0.015991729507580245,
+      0.7579510015984771,
+      0.5127587227493193,
+      0.9291042198679019,
+      0.06608249665799223,
+      0.841317278771066,
+      0.0666900087004114,
+      0.3443099784598152,
+      0.43029873151753456,
+      0.9660620798180082,
+      0.5622318416662252,
+      0.25886459291206765,
+      0.24167571385266925,
+      0.8881183197710616,
+      0.22586942819145495,
+      0.1245547057107288,
+      0.28833075671924685,
+      0.5861230642266098,
+      0.5540905016191774,
+      0.809710775103067,
+      0.5604759514457099,
+      0.28842121414278926,
+      0.4128963422679964,
+      0.8181209701527895,
+      0.6265064617932471,
+      0.9590776417383646,
+      0.3694044107222765,
+      0.5526115099686757,
+      0.5939242010192441,
+      0.8482912074267688,
+      0.14547353804105823,
+      0.4065103363416163,
+      0.9099589607523381,
+      0.043066888525137285,
+      0.8227062793587957,
+      0.41538403695584064,
+      0.8298039844482987
+    ],
+    "candidate_hash": "b51c823907e0158f4128ecb753bb9e5c9318094acc93639cc384d5adde83be4c",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "max_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "max_pool_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 3,
+            "operation": "sep_conv_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 4,
+            "operation": "max_pool_3x3",
+            "attention": "SE"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "avg_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "skip_connect",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 2,
+            "operation": "avg_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 6,
+    "initial_channels": 35,
+    "synflow": 1.0413525834987275e+24,
+    "log_synflow": 24.017597798811465,
+    "zico": 1625.1906595995083,
+    "flops": 1430084918.0,
+    "flops_billion": 1.430084918,
+    "params": 784844.0,
+    "params_million": 0.784844,
+    "valid": true,
+    "error": null
+  },
+  {
+    "chromosome": [
+      0.009954560797337397,
+      0.3650461573932245,
+      0.07863003708700984,
+      0.6526145756840239,
+      0.2738490983257081,
+      0.7026520699571343,
+      0.9438014259982894,
+      0.12681710213443065,
+      0.8647782945359959,
+      0.05946415154087432,
+      0.38077050793011896,
+      0.4297740607488026,
+      0.48884954634461475,
+      0.9764623209595823,
+      0.7756911873261372,
+      0.3088573624104037,
+      0.2698367852309634,
+      0.8631202033261977,
+      0.8813071718563827,
+      0.5107065050329388,
+      0.34429573061802954,
+      0.9949173471660004,
+      0.31594354505175665,
+      0.18271237874385007,
+      0.8800981204239716,
+      0.8123353972989186,
+      0.6678894049034618,
+      0.9584136308195383,
+      0.9257145762887042,
+      0.7482485025535056,
+      0.8607014086869763,
+      0.24714674007496076,
+      0.14124655675978506,
+      0.6700618486448742,
+      0.7146185359401342,
+      0.16705292861521925,
+      0.39555727270931873,
+      0.910255765305799,
+      0.5614007669888222,
+      0.5783359143479367,
+      0.19412977269666382,
+      0.5260222480918529,
+      0.5234347268714852,
+      0.08893564015733635,
+      0.9819426921447636,
+      0.5713955998843788,
+      0.006408882657901285,
+      0.7726492004527394,
+      0.97826571286188,
+      0.5898700277310804
+    ],
+    "candidate_hash": "c227fc7c529c5a5e1342c10b79cb2a62f5f3f32e1df167c90947b73c811b5f76",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "none",
+            "attention": "SE"
+          },
+          {
+            "source": 3,
+            "operation": "max_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "avg_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "identity"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 2,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 3,
+            "operation": "max_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 11,
+    "initial_channels": 23,
+    "synflow": 1.2010241086971931e+26,
+    "log_synflow": 26.0795517252789,
+    "zico": 2349.6336735514615,
+    "flops": 1047412462.0,
+    "flops_billion": 1.047412462,
+    "params": 700232.0,
+    "params_million": 0.700232,
+    "valid": true,
+    "error": null
+  },
+  {
+    "chromosome": [
+      0.009954560797337397,
+      0.3650461573932245,
+      0.07863003708700984,
+      0.6526145756840239,
+      0.2661302720261623,
+      0.5389344070832526,
+      0.44275282853177866,
+      0.9310173150501377,
+      0.04051071114792392,
+      0.7320061949245547,
+      0.6143732463346234,
+      0.02836536508515569,
+      0.7192197721075205,
+      0.015991729507580245,
+      0.7579510015984771,
+      0.5127587227493193,
+      0.9291042198679019,
+      0.06608249665799223,
+      0.841317278771066,
+      0.0666900087004114,
+      0.3443099784598152,
+      0.43029873151753456,
+      0.9660620798180082,
+      0.5622318416662252,
+      0.25886459291206765,
+      0.24167571385266925,
+      0.8881183197710616,
+      0.22586942819145495,
+      0.1245547057107288,
+      0.28833075671924685,
+      0.5861230642266098,
+      0.5540905016191774,
+      0.809710775103067,
+      0.5604759514457099,
+      0.28842121414278926,
+      0.4128963422679964,
+      0.8181209701527895,
+      0.6265064617932471,
+      0.9590776417383646,
+      0.3694044107222765,
+      0.5526115099686757,
+      0.5260222480918529,
+      0.5234347268714852,
+      0.08893564015733635,
+      0.9819426921447636,
+      0.5713955998843788,
+      0.006408882657901285,
+      0.7726492004527394,
+      0.97826571286188,
+      0.5898700277310804
+    ],
+    "candidate_hash": "4d7d759ed134a948f668b881acfc35f41d2fe846574bf23b1631154b35d5b503",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "max_pool_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 3,
+            "operation": "sep_conv_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 4,
+            "operation": "max_pool_3x3",
+            "attention": "SE"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "avg_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "skip_connect",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 2,
+            "operation": "avg_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 11,
+    "initial_channels": 23,
+    "synflow": 8.483464620614208e+41,
+    "log_synflow": 41.928573253002284,
+    "zico": 2792.982887722696,
+    "flops": 1264665103.0,
+    "flops_billion": 1.264665103,
+    "params": 830676.0,
+    "params_million": 0.830676,
+    "valid": true,
+    "error": null
+  },
+  {
+    "chromosome": [
+      0.7870983067015851,
+      0.2393694427535827,
+      0.8764842299342196,
+      0.058568034746626314,
+      0.2738490983257081,
+      0.7026520699571343,
+      0.9438014259982894,
+      0.12681710213443065,
+      0.8647782945359959,
+      0.05946415154087432,
+      0.38077050793011896,
+      0.4297740607488026,
+      0.48884954634461475,
+      0.9764623209595823,
+      0.7756911873261372,
+      0.3088573624104037,
+      0.2698367852309634,
+      0.8631202033261977,
+      0.8813071718563827,
+      0.5107065050329388,
+      0.34429573061802954,
+      0.9949173471660004,
+      0.31594354505175665,
+      0.18271237874385007,
+      0.8800981204239716,
+      0.8123353972989186,
+      0.6678894049034618,
+      0.9584136308195383,
+      0.9257145762887042,
+      0.7482485025535056,
+      0.8607014086869763,
+      0.24714674007496076,
+      0.14124655675978506,
+      0.6700618486448742,
+      0.7146185359401342,
+      0.16705292861521925,
+      0.39555727270931873,
+      0.910255765305799,
+      0.11493263316597256,
+      0.7290151163472943,
+      0.927423927697136,
+      0.9679261889567202,
+      0.014706304950662984,
+      0.8636400893819357,
+      0.9811950390851493,
+      0.9572101786537534,
+      0.1487640120837339,
+      0.9726288128503262,
+      0.8899355548305851,
+      0.8223738267206966
+    ],
+    "candidate_hash": "7ec11bc6399e9c95cb73c88d986ccaa7329db54e20d6874dc8532468e416e8c3",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "none",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "none",
+            "attention": "SE"
+          },
+          {
+            "source": 3,
+            "operation": "max_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "avg_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "identity"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 2,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 3,
+            "operation": "max_pool_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 3,
+            "operation": "sep_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 4,
+            "operation": "none",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 11,
+    "initial_channels": 35,
+    "synflow": 1.988371067852598e+29,
+    "log_synflow": 29.298497435233717,
+    "zico": 2266.7888966707487,
+    "flops": 1980552830.0,
+    "flops_billion": 1.98055283,
+    "params": 1372349.0,
+    "params_million": 1.372349,
+    "valid": true,
+    "error": null
+  },
+  {
+    "chromosome": [
+      0.4799879233278443,
+      0.23237291940693092,
+      0.8018805779164273,
+      0.9235301588599394,
+      0.2738490983257081,
+      0.7026520699571343,
+      0.9438014259982894,
+      0.12681710213443065,
+      0.8647782945359959,
+      0.05946415154087432,
+      0.38077050793011896,
+      0.4297740607488026,
+      0.48884954634461475,
+      0.9764623209595823,
+      0.7756911873261372,
+      0.3088573624104037,
+      0.2698367852309634,
+      0.8631202033261977,
+      0.8813071718563827,
+      0.5107065050329388,
+      0.34429573061802954,
+      0.9949173471660004,
+      0.31594354505175665,
+      0.18271237874385007,
+      0.8800981204239716,
+      0.8123353972989186,
+      0.6678894049034618,
+      0.9584136308195383,
+      0.9257145762887042,
+      0.7482485025535056,
+      0.8607014086869763,
+      0.24714674007496076,
+      0.14124655675978506,
+      0.6700618486448742,
+      0.7146185359401342,
+      0.16705292861521925,
+      0.39555727270931873,
+      0.910255765305799,
+      0.5614007669888222,
+      0.5783359143479367,
+      0.19412977269666382,
+      0.5939242010192441,
+      0.8482912074267688,
+      0.14547353804105823,
+      0.4065103363416163,
+      0.9099589607523381,
+      0.043066888525137285,
+      0.8227062793587957,
+      0.41538403695584064,
+      0.8298039844482987
+    ],
+    "candidate_hash": "5cf3d6ca711613baddd3937604c819a07c1fdbac123916643fcea94306b5e91e",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "max_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "none",
+            "attention": "SE"
+          },
+          {
+            "source": 3,
+            "operation": "max_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "avg_pool_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "identity"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 2,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 3,
+            "operation": "max_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 6,
+    "initial_channels": 35,
+    "synflow": 7.785579417905532e+17,
+    "log_synflow": 17.891290939143722,
+    "zico": 1460.2180366626892,
+    "flops": 1238270310.0,
+    "flops_billion": 1.23827031,
+    "params": 707410.0,
+    "params_million": 0.70741,
+    "valid": true,
+    "error": null
+  },
+  {
+    "chromosome": [
+      0.009954560797337397,
+      0.3650461573932245,
+      0.07863003708700984,
+      0.6526145756840239,
+      0.3361170602095433,
+      0.1502794667445596,
+      0.4503393661989476,
+      0.79632426949097,
+      0.23064220876310523,
+      0.05202130101238831,
+      0.40455183941697637,
+      0.1985130443107423,
+      0.09075304552836885,
+      0.5803323854065183,
+      0.2986961325202265,
+      0.6719948772843645,
+      0.19951544376869787,
+      0.9421131095643848,
+      0.3651101678797184,
+      0.10549527946473425,
+      0.6291081509106011,
+      0.9271545521407129,
+      0.44037715427540686,
+      0.9545904927361467,
+      0.4998958131877512,
+      0.4252286244238469,
+      0.6202134513951644,
+      0.9950965042402277,
+      0.9489436739888216,
+      0.46004513884905096,
+      0.7577288445505627,
+      0.4974226949901963,
+      0.5293121596674583,
+      0.7857856999280218,
+      0.4146558489410149,
+      0.7344835710542458,
+      0.711142877278607,
+      0.9320596856813186,
+      0.5614007669888222,
+      0.5783359143479367,
+      0.19412977269666382,
+      0.5260222480918529,
+      0.5234347268714852,
+      0.08893564015733635,
+      0.9819426921447636,
+      0.5713955998843788,
+      0.006408882657901285,
+      0.7726492004527394,
+      0.97826571286188,
+      0.5898700277310804
+    ],
+    "candidate_hash": "23304f4df4cb09be0a3109d9471b75aef415e686b818a51a9cb6df71c8968902",
+    "genotype": {
+      "normal": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "identity"
+          },
+          {
+            "source": 2,
+            "operation": "max_pool_3x3",
+            "attention": "identity"
+          },
+          {
+            "source": 1,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 2,
+            "operation": "none",
+            "attention": "identity"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_5x5",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "avg_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 2,
+            "operation": "dil_conv_5x5",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "reduction": {
+        "edges": [
+          {
+            "source": 0,
+            "operation": "max_pool_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 1,
+            "operation": "dil_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 3,
+            "operation": "sep_conv_5x5",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "SE"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          },
+          {
+            "source": 0,
+            "operation": "sep_conv_3x3",
+            "attention": "CBAM"
+          }
+        ],
+        "concat_nodes": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "number_of_cells": 11,
+    "initial_channels": 23,
+    "synflow": 6.823835370233401e+21,
+    "log_synflow": 21.834028540629916,
+    "zico": 926.4556979765854,
+    "flops": 1036520215.0,
+    "flops_billion": 1.036520215,
+    "params": 686723.0,
+    "params_million": 0.686723,
+    "valid": true,
+    "error": null
+  }
+]

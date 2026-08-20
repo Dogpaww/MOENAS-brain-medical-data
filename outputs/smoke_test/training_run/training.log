@@ -1,0 +1,8 @@
+2026-08-19 13:50:07,874 INFO Starting final training on device=cuda, amp=True, physical_batch_size=32, accumulation_steps=1, effective_batch_size=32
+2026-08-19 13:50:07,875 INFO Augmentation policy: sample-adaptive, from outputs/smoke_test/selected_policy.json
+2026-08-19 13:50:07,969 INFO Classes: {'glioma_tumor': 0, 'meningioma_tumor': 1, 'no_tumor': 2, 'pituitary_tumor': 3}
+2026-08-19 13:50:07,970 INFO Regularization: weight_decay=7.0e-04 classifier_dropout=0.30 label_smoothing=0.10 drop_path=0.20
+2026-08-19 13:50:09,609 INFO train epoch 1/1 batch 1/1 (100%) running_loss=1.3251
+2026-08-19 13:50:10,165 INFO epoch 1/1 done: train_loss=1.3251 val_loss=1.3863 val_accuracy=0.2500 val_macro_f1=0.1000 val_macro_auc=0.5000 (checkpoint_metric=macro_auc) [new best]
+2026-08-19 13:50:10,508 INFO Training finished. Best epoch=1, smoothed macro_auc=0.5000 (window=3)
+2026-08-19 13:50:11,026 INFO Test set evaluated once: accuracy=0.2500 macro_f1=0.1000 macro_auc=0.5000
