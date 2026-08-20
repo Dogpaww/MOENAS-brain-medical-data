@@ -19,6 +19,8 @@ dependencies = [
     "matplotlib>=3.7",
     "thop>=0.1.1",
     "pymoo>=0.6",
+    # SENet and DeiT baselines (branch: benchmark) aren't in torchvision.
+    "timm>=1.0.28",
     # figshare/Cheng brain-tumour .mat files are MATLAB v7.3, i.e. HDF5,
     # which scipy.io.loadmat cannot read (see scripts/prepare_figshare.py).
     "h5py>=3.8",
