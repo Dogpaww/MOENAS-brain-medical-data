@@ -70,6 +70,16 @@ def main() -> None:
     )
     parser.add_argument("--weight-decay", type=float, default=7e-4)
     parser.add_argument("--momentum", type=float, default=0.9)
+    parser.add_argument(
+        "--optimizer",
+        choices=["sgd", "adamw"],
+        default="sgd",
+        help="Defaults to sgd, matching every other baseline and the NAS pipeline itself "
+        "(see utils/optim.py for why). Pass adamw only for transformer baselines (e.g. "
+        "deit_small) -- SGD is a documented mismatch for fine-tuning ViTs and produces a "
+        "training loss that freezes rather than converges. Always run the sgd version "
+        "first; only fall back to adamw if that run shows the freeze/degrade signature.",
+    )
     parser.add_argument("--label-smoothing", type=float, default=0.1)
     parser.add_argument("--grad-clip-norm", type=float, default=5.0)
     parser.add_argument("--seed", type=int, default=1)
@@ -97,6 +107,7 @@ def main() -> None:
         learning_rate=args.learning_rate,
         weight_decay=args.weight_decay,
         momentum=args.momentum,
+        optimizer_name=args.optimizer,
         label_smoothing=args.label_smoothing,
         grad_clip_norm=args.grad_clip_norm,
         seed=args.seed,

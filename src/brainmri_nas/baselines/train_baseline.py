@@ -88,6 +88,7 @@ def run_baseline_training(
     learning_rate: float = 0.001,
     weight_decay: float = 7e-4,
     momentum: float = 0.9,
+    optimizer_name: str = "sgd",
     label_smoothing: float = 0.1,
     grad_clip_norm: float = 5.0,
     checkpoint_metric: str = "macro_auc",
@@ -102,13 +103,14 @@ def run_baseline_training(
     use_amp = device.type == "cuda"
 
     logger.info(
-        "Starting baseline training: model=%s device=%s amp=%s image_size=%d epochs=%d lr=%g",
+        "Starting baseline training: model=%s device=%s amp=%s image_size=%d epochs=%d lr=%g optimizer=%s",
         model_name,
         device,
         use_amp,
         image_size,
         epochs,
         learning_rate,
+        optimizer_name,
     )
 
     split_indices_path = Path(split_indices_path)
@@ -148,7 +150,12 @@ def run_baseline_training(
     )
 
     optimizer, scheduler = build_optimizer_and_scheduler(
-        model, learning_rate=learning_rate, weight_decay=weight_decay, epochs=epochs, momentum=momentum
+        model,
+        learning_rate=learning_rate,
+        weight_decay=weight_decay,
+        epochs=epochs,
+        momentum=momentum,
+        optimizer_name=optimizer_name,
     )
     scaler = torch.amp.GradScaler(device="cuda") if use_amp else None
 
@@ -282,6 +289,7 @@ def run_baseline_training(
             "learning_rate": learning_rate,
             "weight_decay": weight_decay,
             "momentum": momentum,
+            "optimizer_name": optimizer_name,
             "label_smoothing": label_smoothing,
             "grad_clip_norm": grad_clip_norm,
             "checkpoint_metric": checkpoint_metric,
