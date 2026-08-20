@@ -58,6 +58,12 @@ def _vgg16(num_classes: int) -> nn.Module:
     return model
 
 
+def _densenet121(num_classes: int) -> nn.Module:
+    model = models.densenet121(weights=models.DenseNet121_Weights.IMAGENET1K_V1)
+    model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+    return model
+
+
 def _efficientnet_v2_s(num_classes: int) -> nn.Module:
     model = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.IMAGENET1K_V1)
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, num_classes)
@@ -100,6 +106,7 @@ MODEL_REGISTRY: dict[str, Callable[[int], nn.Module]] = {
     "resnet18": _resnet18,
     "resnet34": _resnet34,
     "vgg16": _vgg16,
+    "densenet121": _densenet121,
     "efficientnet_v2_s": _efficientnet_v2_s,
     "efficientnet_v2_m": _efficientnet_v2_m,
     "senet": _senet,
