@@ -4,14 +4,26 @@ Mirrors `training/final_training.py`'s flow (build data -> train with
 validation-only per-epoch evaluation -> track the best checkpoint via a
 smoothed metric -> reload it independently -> evaluate the test set exactly
 once) but trimmed to what a plain, ImageNet-pretrained torchvision model
-needs: no chromosome/genotype, no selected augmentation policy, no
-LossCache sample-adaptivity. Every lower-level piece this reuses
+needs: no chromosome/genotype. Every lower-level piece this reuses
 (`build_dataset_bundle`, `train_one_epoch`, `evaluate_model`,
 `build_optimizer_and_scheduler`, `profile_flops_and_params`) is the exact
 same code the NAS pipeline itself calls, and is generic on `nn.Module` --
-none of it is NASNetwork-specific -- so this comparison is controlled by
-construction: only the model differs, not the data, split, metrics, or
-profiling method.
+none of it is NASNetwork-specific.
+
+Augmentation is optional and off by default, so existing runs reproduce
+unchanged. Without `selected_policy_path` a baseline trains on resize +
+grayscale + normalize only, while the searched architecture trains under its
+selected sample-adaptive policy -- so "only the model differs" is NOT true of
+that pairing, and the searched model's own ablation shows augmentation alone
+is worth several accuracy points. Pass the searched run's
+`selected_policy.json` to train a baseline under the identical policy and
+the identical LossCache mechanism (`_build_train_loader` in
+`final_training.py`), which is what makes the comparison controlled.
+
+One consequence to report rather than hide: LossCache refreshes ranks every
+max(1, round(epochs/40)) epochs, so a 50-epoch baseline refreshes every
+epoch while the 200-epoch searched model refreshes every 5. That is the same
+rule applied to each run's own length, not a different mechanism.
 
 Deliberately fine-tunes pretrained weights rather than training from
 scratch, and uses far fewer epochs and a lower learning rate than the NAS
@@ -41,6 +53,8 @@ from pathlib import Path
 import pandas as pd
 import torch
 
+from brainmri_nas.augment.genotype import AugmentationPolicy
+from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
 from brainmri_nas.baselines.checkpoint import load_checkpoint, rebuild_model_from_checkpoint, save_checkpoint
 from brainmri_nas.baselines.registry import build_baseline_model
 from brainmri_nas.data.loader import build_dataset_bundle
@@ -51,8 +65,9 @@ from brainmri_nas.utils.config import Config
 from brainmri_nas.utils.determinism import seed_everything
 from brainmri_nas.utils.device import resolve_device
 from brainmri_nas.utils.git_info import get_run_manifest
+from brainmri_nas.utils.loss_cache import LossCache
 from brainmri_nas.utils.optim import build_optimizer_and_scheduler
-from brainmri_nas.utils.serialization import dump_json
+from brainmri_nas.utils.serialization import dump_json, load_json
 
 # Matches final_training.py's CHECKPOINT_SMOOTHING_WINDOW -- same rationale
 # (a single epoch's validation score is a noisy "best" signal), kept equal
@@ -93,6 +108,7 @@ def run_baseline_training(
     grad_clip_norm: float = 5.0,
     checkpoint_metric: str = "macro_auc",
     seed: int = 1,
+    selected_policy_path: str | Path | None = None,
 ) -> dict:
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -139,6 +155,26 @@ def run_baseline_training(
         split_indices_path,
     )
 
+    selected_policy_record = load_json(selected_policy_path) if selected_policy_path is not None else None
+    policy = AugmentationPolicy.from_dict(selected_policy_record["policy"]) if selected_policy_record else None
+    logger.info("Augmentation policy: %s", "from " + str(selected_policy_path) if policy else "none (identity)")
+
+    if policy is not None:
+        # Sized to the full training split, not the batch: one cached loss per sample.
+        loss_cache = LossCache(num_samples=len(bundle.train_indices), total_epochs=epochs)
+        train_loader = build_sample_adaptive_loader(
+            Path(config.dataset.data_root) / "Training",
+            bundle.train_indices,
+            image_size=image_size,
+            batch_size=config.dataset.batch_size,
+            policy=policy,
+            loss_cache=loss_cache,
+            num_workers=config.dataset.num_workers,
+        )
+    else:
+        loss_cache = None
+        train_loader = bundle.train_loader
+
     model = build_baseline_model(model_name, num_classes=bundle.num_classes)
     model.to(device)
     logger.info("Classes: %s", dict(bundle.class_to_idx))
@@ -168,7 +204,7 @@ def run_baseline_training(
     for epoch in range(1, epochs + 1):
         train_loss = train_one_epoch(
             model,
-            bundle.train_loader,
+            train_loader,
             optimizer,
             device=device,
             use_amp=use_amp,
@@ -177,7 +213,7 @@ def run_baseline_training(
             grad_clip_norm=grad_clip_norm,
             epoch=epoch,
             total_epochs=epochs,
-            loss_cache=None,
+            loss_cache=loss_cache,
             label_smoothing=label_smoothing,
             logger=logger,
         )
@@ -295,9 +331,12 @@ def run_baseline_training(
             "checkpoint_metric": checkpoint_metric,
             "seed": seed,
             "split_indices_path": str(split_indices_path),
+            "selected_policy_path": str(selected_policy_path) if selected_policy_path is not None else None,
         },
         output_dir / "baseline_config.json",
     )
+    if selected_policy_record is not None:
+        dump_json(selected_policy_record, output_dir / "selected_policy.json")
     dump_json(get_run_manifest(), output_dir / "run_manifest.json")
 
     return {

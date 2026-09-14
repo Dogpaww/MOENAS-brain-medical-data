@@ -25,6 +25,19 @@ Usage:
         --split-indices outputs/baseline_resnet18_96/split_indices.json \
         --output-dir outputs/baseline_resnet18_96 \
         2>&1 | tee run_baseline_resnet18_96.log
+
+Same baseline under the searched architecture's sample-adaptive augmentation
+policy, so augmentation no longer differs between the compared models:
+
+    mkdir -p outputs/baseline_resnet18_96_aug
+    cp outputs/main1/search_run/split_indices.json outputs/baseline_resnet18_96_aug/
+    python -u scripts/run_baseline.py \
+        --model resnet18 \
+        --config configs/figshare.yaml \
+        --split-indices outputs/baseline_resnet18_96_aug/split_indices.json \
+        --augmentation-policy outputs/main1/augmentation_run/selected_policy.json \
+        --output-dir outputs/baseline_resnet18_96_aug \
+        2>&1 | tee run_baseline_resnet18_96_aug.log
 """
 
 from __future__ import annotations
@@ -83,7 +96,18 @@ def main() -> None:
     parser.add_argument("--label-smoothing", type=float, default=0.1)
     parser.add_argument("--grad-clip-norm", type=float, default=5.0)
     parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument(
+        "--augmentation-policy",
+        default=None,
+        help="Path to a selected_policy.json (e.g. outputs/main1/augmentation_run/selected_policy.json) "
+        "to train this baseline under the same sample-adaptive augmentation as the searched "
+        "architecture. Omit for the unaugmented baseline. Use a separate --output-dir "
+        "(e.g. baseline_resnet18_96_aug) so it doesn't overwrite the unaugmented run.",
+    )
     args = parser.parse_args()
+
+    if args.augmentation_policy is not None and not Path(args.augmentation_policy).exists():
+        raise SystemExit(f"{args.augmentation_policy} does not exist.")
 
     split_indices_path = Path(args.split_indices)
     if not split_indices_path.exists():
@@ -111,6 +135,7 @@ def main() -> None:
         label_smoothing=args.label_smoothing,
         grad_clip_norm=args.grad_clip_norm,
         seed=args.seed,
+        selected_policy_path=args.augmentation_policy,
     )
 
     print(f"\nBest epoch: {result['best_epoch']}")
