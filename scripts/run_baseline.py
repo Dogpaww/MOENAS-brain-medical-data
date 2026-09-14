@@ -29,15 +29,20 @@ Usage:
 Same baseline under the searched architecture's sample-adaptive augmentation
 policy, so augmentation no longer differs between the compared models:
 
-    mkdir -p outputs/baseline_resnet18_96_aug
-    cp outputs/main1/search_run/split_indices.json outputs/baseline_resnet18_96_aug/
+    mkdir -p outputs/baseline_resnet18_96_adaptive
+    cp outputs/main1/search_run/split_indices.json outputs/baseline_resnet18_96_adaptive/
     python -u scripts/run_baseline.py \
         --model resnet18 \
         --config configs/figshare.yaml \
-        --split-indices outputs/baseline_resnet18_96_aug/split_indices.json \
+        --split-indices outputs/baseline_resnet18_96_adaptive/split_indices.json \
         --augmentation-policy outputs/main1/augmentation_run/selected_policy.json \
-        --output-dir outputs/baseline_resnet18_96_aug \
-        2>&1 | tee run_baseline_resnet18_96_aug.log
+        --output-dir outputs/baseline_resnet18_96_adaptive \
+        2>&1 | tee run_baseline_resnet18_96_adaptive.log
+
+Same baseline under the fixed 2-op policy from the searched architecture's
+fixed-augmentation ablation: swap the policy flag for
+--fixed-augmentation-policy outputs/fixedda_run/augmentation_run/selected_legacy_policy.json
+(and use e.g. outputs/baseline_resnet18_96_fixed as the output directory).
 """
 
 from __future__ import annotations
@@ -96,18 +101,28 @@ def main() -> None:
     parser.add_argument("--label-smoothing", type=float, default=0.1)
     parser.add_argument("--grad-clip-norm", type=float, default=5.0)
     parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument(
+    augmentation = parser.add_mutually_exclusive_group()
+    augmentation.add_argument(
         "--augmentation-policy",
         default=None,
         help="Path to a selected_policy.json (e.g. outputs/main1/augmentation_run/selected_policy.json) "
         "to train this baseline under the same sample-adaptive augmentation as the searched "
-        "architecture. Omit for the unaugmented baseline. Use a separate --output-dir "
-        "(e.g. baseline_resnet18_96_aug) so it doesn't overwrite the unaugmented run.",
+        "architecture. Omit both augmentation flags for the unaugmented baseline. Use a separate "
+        "--output-dir (e.g. baseline_resnet18_96_adaptive) so it doesn't overwrite another run.",
+    )
+    augmentation.add_argument(
+        "--fixed-augmentation-policy",
+        default=None,
+        help="Path to a selected_legacy_policy.json (e.g. "
+        "outputs/fixedda_run/augmentation_run/selected_legacy_policy.json) to train this baseline "
+        "under the same fixed 2-op augmentation the searched architecture's fixed-policy ablation "
+        "used. Mutually exclusive with --augmentation-policy.",
     )
     args = parser.parse_args()
 
-    if args.augmentation_policy is not None and not Path(args.augmentation_policy).exists():
-        raise SystemExit(f"{args.augmentation_policy} does not exist.")
+    for policy_arg in (args.augmentation_policy, args.fixed_augmentation_policy):
+        if policy_arg is not None and not Path(policy_arg).exists():
+            raise SystemExit(f"{policy_arg} does not exist.")
 
     split_indices_path = Path(args.split_indices)
     if not split_indices_path.exists():
@@ -136,6 +151,7 @@ def main() -> None:
         grad_clip_norm=args.grad_clip_norm,
         seed=args.seed,
         selected_policy_path=args.augmentation_policy,
+        selected_legacy_policy_path=args.fixed_augmentation_policy,
     )
 
     print(f"\nBest epoch: {result['best_epoch']}")

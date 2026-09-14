@@ -1,11 +1,12 @@
-"""Baselines trained under the searched architecture's sample-adaptive policy.
+"""Baselines trained with no, fixed, or sample-adaptive augmentation.
 
 Without a policy a baseline sees only resize + grayscale + normalize, while
 the searched architecture trains under its selected SapAugment policy, so the
 two differ in augmentation as well as architecture. These tests pin down that
 `selected_policy_path` routes a baseline through the same sample-adaptive
-loader and LossCache as final training, and that omitting it leaves the
-unaugmented path exactly as it was.
+loader and LossCache as final training, that `selected_legacy_policy_path`
+applies the fixed 2-op policy with no LossCache, that the two are mutually
+exclusive, and that omitting both leaves the unaugmented path as it was.
 
 A tiny stand-in model is registered for the duration of each test so nothing
 downloads pretrained ImageNet weights.
@@ -119,7 +120,64 @@ def test_policy_routes_baseline_through_sample_adaptive_loader_and_loss_cache(
 
     baseline_config = json.loads((output_dir / "baseline_config.json").read_text())
     assert baseline_config["selected_policy_path"] == str(policy_path)
+    assert baseline_config["augmentation"] == "sample_adaptive"
     assert json.loads((output_dir / "selected_policy.json").read_text()) == json.loads(policy_path.read_text())
+
+
+def _legacy_policy_file(tmp_path: Path) -> Path:
+    # Same shape as outputs/fixedda_run/augmentation_run/selected_legacy_policy.json.
+    record = {"chromosome": [0.53, 0.02], "ops": ["brightness", "rotation"], "val_macro_auc": 0.5}
+    path = tmp_path / "selected_legacy_policy.json"
+    path.write_text(json.dumps(record))
+    return path
+
+
+def test_fixed_policy_applies_the_legacy_ops_without_a_loss_cache(
+    synthetic_dataset_root: Path, tmp_path: Path, tiny_registry, training_calls
+):
+    policy_path = _legacy_policy_file(tmp_path)
+    output_dir = tmp_path / "baseline_fixed"
+
+    train_baseline.run_baseline_training(
+        _config(synthetic_dataset_root),
+        model_name="tiny",
+        split_indices_path=_saved_split(synthetic_dataset_root, tmp_path),
+        output_dir=output_dir,
+        image_size=IMAGE_SIZE,
+        epochs=EPOCHS,
+        selected_legacy_policy_path=policy_path,
+    )
+
+    assert all(call["loss_cache"] is None for call in training_calls)
+    loader = training_calls[0]["loader"]
+    x, y = next(iter(loader))  # plain (x, y) pairs: fixed augmentation is not sample-adaptive
+    assert x.shape[1:] == (3, IMAGE_SIZE, IMAGE_SIZE)
+
+    # The loader must actually carry the two selected ops, not the identity transform.
+    transform_repr = repr(loader.dataset.dataset.transform)
+    assert "ColorJitter" in transform_repr
+    assert "RandomRotation" in transform_repr
+
+    baseline_config = json.loads((output_dir / "baseline_config.json").read_text())
+    assert baseline_config["augmentation"] == "fixed"
+    assert baseline_config["selected_legacy_policy_path"] == str(policy_path)
+    assert baseline_config["selected_policy_path"] is None
+    assert json.loads((output_dir / "selected_legacy_policy.json").read_text()) == json.loads(policy_path.read_text())
+    assert not (output_dir / "selected_policy.json").exists()
+
+
+def test_passing_both_policies_is_rejected(synthetic_dataset_root: Path, tmp_path: Path, tiny_registry):
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        train_baseline.run_baseline_training(
+            _config(synthetic_dataset_root),
+            model_name="tiny",
+            split_indices_path=_saved_split(synthetic_dataset_root, tmp_path),
+            output_dir=tmp_path / "baseline_both",
+            image_size=IMAGE_SIZE,
+            epochs=EPOCHS,
+            selected_policy_path=_policy_file(tmp_path),
+            selected_legacy_policy_path=_legacy_policy_file(tmp_path),
+        )
 
 
 def test_no_policy_keeps_the_unaugmented_baseline_path(
@@ -142,4 +200,7 @@ def test_no_policy_keeps_the_unaugmented_baseline_path(
 
     baseline_config = json.loads((output_dir / "baseline_config.json").read_text())
     assert baseline_config["selected_policy_path"] is None
+    assert baseline_config["selected_legacy_policy_path"] is None
+    assert baseline_config["augmentation"] == "none"
     assert not (output_dir / "selected_policy.json").exists()
+    assert not (output_dir / "selected_legacy_policy.json").exists()

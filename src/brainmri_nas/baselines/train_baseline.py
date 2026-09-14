@@ -25,6 +25,15 @@ max(1, round(epochs/40)) epochs, so a 50-epoch baseline refreshes every
 epoch while the 200-epoch searched model refreshes every 5. That is the same
 rule applied to each run's own length, not a different mechanism.
 
+`selected_legacy_policy_path` is the fixed-augmentation alternative: the
+legacy 2-op policy (`augment/legacy_search_space.py`), each op applied with
+probability 1.0 with its magnitude sampled up to the op's safe bound, no
+LossCache. Passing the searched run's `selected_legacy_policy.json` gives a
+baseline exactly the fixed policy the searched architecture's own ablation
+used, via the same `build_legacy_transform` as `final_training.py`. So each
+baseline can be trained three ways (none / fixed / sample-adaptive) against
+the same split. The two policy arguments are mutually exclusive.
+
 Deliberately fine-tunes pretrained weights rather than training from
 scratch, and uses far fewer epochs and a lower learning rate than the NAS
 pipeline's from-scratch recipe (`TrainingConfig.final_epochs=200`,
@@ -52,12 +61,15 @@ from pathlib import Path
 
 import pandas as pd
 import torch
+from torch.utils.data import DataLoader, Subset
+from torchvision import datasets
 
 from brainmri_nas.augment.genotype import AugmentationPolicy
+from brainmri_nas.augment.legacy_transform_builder import build_legacy_transform
 from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
 from brainmri_nas.baselines.checkpoint import load_checkpoint, rebuild_model_from_checkpoint, save_checkpoint
 from brainmri_nas.baselines.registry import build_baseline_model
-from brainmri_nas.data.loader import build_dataset_bundle
+from brainmri_nas.data.loader import build_dataset_bundle, is_real_image_file
 from brainmri_nas.proxies.profiling import profile_flops_and_params
 from brainmri_nas.training.engine import train_one_epoch
 from brainmri_nas.training.evaluate import evaluate_model, save_confusion_matrix_plot, save_per_class_metrics_csv
@@ -109,7 +121,13 @@ def run_baseline_training(
     checkpoint_metric: str = "macro_auc",
     seed: int = 1,
     selected_policy_path: str | Path | None = None,
+    selected_legacy_policy_path: str | Path | None = None,
 ) -> dict:
+    if selected_policy_path is not None and selected_legacy_policy_path is not None:
+        raise ValueError(
+            "selected_policy_path and selected_legacy_policy_path are mutually exclusive "
+            "-- pass at most one, so which augmentation applies is never ambiguous."
+        )
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     logger = _configure_logging(output_dir)
@@ -157,9 +175,36 @@ def run_baseline_training(
 
     selected_policy_record = load_json(selected_policy_path) if selected_policy_path is not None else None
     policy = AugmentationPolicy.from_dict(selected_policy_record["policy"]) if selected_policy_record else None
-    logger.info("Augmentation policy: %s", "from " + str(selected_policy_path) if policy else "none (identity)")
+
+    selected_legacy_policy_record = (
+        load_json(selected_legacy_policy_path) if selected_legacy_policy_path is not None else None
+    )
+    legacy_ops: tuple[str, str] | None = None
+    if selected_legacy_policy_record is not None:
+        op1, op2 = selected_legacy_policy_record["ops"]
+        legacy_ops = (op1, op2)
 
     if policy is not None:
+        logger.info("Augmentation policy: sample-adaptive, from %s", selected_policy_path)
+    elif legacy_ops is not None:
+        logger.info("Augmentation policy: legacy fixed ops %s, from %s", legacy_ops, selected_legacy_policy_path)
+    else:
+        logger.info("Augmentation policy: none (identity)")
+
+    if legacy_ops is not None:
+        loss_cache = None
+        fixed_dataset = datasets.ImageFolder(
+            str(Path(config.dataset.data_root) / "Training"),
+            transform=build_legacy_transform(legacy_ops[0], legacy_ops[1], image_size),
+            is_valid_file=is_real_image_file,
+        )
+        train_loader = DataLoader(
+            Subset(fixed_dataset, bundle.train_indices),
+            batch_size=config.dataset.batch_size,
+            shuffle=True,
+            num_workers=config.dataset.num_workers,
+        )
+    elif policy is not None:
         # Sized to the full training split, not the batch: one cached loss per sample.
         loss_cache = LossCache(num_samples=len(bundle.train_indices), total_epochs=epochs)
         train_loader = build_sample_adaptive_loader(
@@ -332,11 +377,17 @@ def run_baseline_training(
             "seed": seed,
             "split_indices_path": str(split_indices_path),
             "selected_policy_path": str(selected_policy_path) if selected_policy_path is not None else None,
+            "selected_legacy_policy_path": (
+                str(selected_legacy_policy_path) if selected_legacy_policy_path is not None else None
+            ),
+            "augmentation": "sample_adaptive" if policy is not None else ("fixed" if legacy_ops else "none"),
         },
         output_dir / "baseline_config.json",
     )
     if selected_policy_record is not None:
         dump_json(selected_policy_record, output_dir / "selected_policy.json")
+    if selected_legacy_policy_record is not None:
+        dump_json(selected_legacy_policy_record, output_dir / "selected_legacy_policy.json")
     dump_json(get_run_manifest(), output_dir / "run_manifest.json")
 
     return {
