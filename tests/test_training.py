@@ -426,6 +426,7 @@ def test_end_to_end_tiny_final_training(synthetic_dataset_root: Path, tmp_path: 
         "validation_metrics.json",
         "test_metrics.json",
         "per_class_metrics.csv",
+        "test_predictions.csv",
         "confusion_matrix.png",
         "memory_profile.json",
         "training.log",
@@ -442,6 +443,10 @@ def test_end_to_end_tiny_final_training(synthetic_dataset_root: Path, tmp_path: 
     history_df = pd.read_csv(training_output_dir / "training_history.csv")
     assert len(history_df) == training_config.training.final_epochs
     assert history_df["is_best"].any()
+
+    predictions_df = pd.read_csv(training_output_dir / "test_predictions.csv")
+    assert len(predictions_df) == result["test_metrics"]["num_samples"]
+    assert predictions_df["correct"].mean() == pytest.approx(result["test_metrics"]["accuracy"])
 
 
 def test_checkpoint_selection_uses_smoothed_score_not_raw_epoch_value(
@@ -474,10 +479,10 @@ def test_checkpoint_selection_uses_smoothed_score_not_raw_epoch_value(
     raw_scores = [0.5, 0.7, 0.9, 0.5, 0.5, 0.5, 0.5]  # last entry: final test-set evaluation call
     call_count = {"n": 0}
 
-    def fake_evaluate_model(model, loader, *, device, num_classes):
+    def fake_evaluate_model(model, loader, *, device, num_classes, return_predictions=False):
         score = raw_scores[call_count["n"]]
         call_count["n"] += 1
-        return {
+        metrics = {
             "num_samples": 1,
             "loss": 1.0 - score,
             "accuracy": score,
@@ -488,6 +493,11 @@ def test_checkpoint_selection_uses_smoothed_score_not_raw_epoch_value(
             "per_class": {"precision": [score] * 4, "recall": [score] * 4, "f1": [score] * 4, "support": [1] * 4},
             "confusion_matrix": [[0] * 4 for _ in range(4)],
         }
+        if not return_predictions:
+            return metrics
+        labels = [label for _, label in loader.dataset.samples]
+        probabilities = [[1.0 if c == label else 0.0 for c in range(num_classes)] for label in labels]
+        return metrics, {"targets": labels, "predicted": labels, "probabilities": probabilities}
 
     monkeypatch.setattr("brainmri_nas.training.final_training.evaluate_model", fake_evaluate_model)
 
