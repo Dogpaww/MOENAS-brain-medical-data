@@ -27,7 +27,17 @@ def evaluate_model(
     device: torch.device,
     num_classes: int,
     loss_fn: nn.Module | None = None,
-) -> dict:
+    return_predictions: bool = False,
+) -> dict | tuple[dict, dict]:
+    """Aggregate metrics over `loader`.
+
+    With `return_predictions=True`, returns `(metrics, predictions)` from the
+    same single pass, where `predictions` holds one entry per sample in loader
+    order: `targets`, `predicted`, and softmax `probabilities`. Paired tests
+    such as McNemar's need these; the aggregates can't say which images two
+    models disagree on. Returned separately so they never end up in
+    test_metrics.json by accident.
+    """
     was_training = model.training
     model.eval()
     loss_fn = loss_fn or nn.CrossEntropyLoss()
@@ -72,7 +82,7 @@ def evaluate_model(
 
     cm = confusion_matrix(targets_np, preds, labels=labels)
 
-    return {
+    metrics = {
         "num_samples": total_samples,
         "loss": total_loss / max(total_samples, 1),
         "accuracy": float((preds == targets_np).mean()),
@@ -88,6 +98,63 @@ def evaluate_model(
         },
         "confusion_matrix": cm.tolist(),
     }
+
+    if not return_predictions:
+        return metrics
+
+    predictions = {
+        "targets": targets_np.tolist(),
+        "predicted": preds.tolist(),
+        "probabilities": probs.tolist(),
+    }
+    return metrics, predictions
+
+
+def save_test_predictions_csv(
+    predictions: dict,
+    samples: list[tuple[str, int]],
+    class_names: list[str],
+    data_root: str | Path,
+    path: str | Path,
+) -> None:
+    """One row per test image: path relative to `data_root` (so the file is
+    the same on any machine), true and predicted class, whether it was
+    correct, and the per-class probabilities.
+
+    `samples` is the evaluated `ImageFolder.samples`. It lines up with
+    `predictions` only because the test loader is never shuffled, so that is
+    checked row by row against the loader's own targets rather than assumed.
+    """
+    import os
+
+    import pandas as pd
+
+    targets = predictions["targets"]
+    if len(samples) != len(targets):
+        raise ValueError(f"{len(samples)} samples but {len(targets)} predictions; loader and dataset disagree.")
+    for (sample_path, sample_label), target in zip(samples, targets):
+        if sample_label != target:
+            raise ValueError(
+                f"{sample_path} has label {sample_label} but the loader yielded {target} at that position; "
+                "predictions are not in dataset order (was the loader shuffled?)."
+            )
+
+    rows = []
+    for (sample_path, _), target, predicted, probabilities in zip(
+        samples, targets, predictions["predicted"], predictions["probabilities"]
+    ):
+        row = {
+            "image": os.path.relpath(sample_path, data_root),
+            "true_label": class_names[target],
+            "predicted_label": class_names[predicted],
+            "correct": int(target == predicted),
+        }
+        row.update({f"prob_{name}": p for name, p in zip(class_names, probabilities)})
+        rows.append(row)
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(rows).to_csv(path, index=False)
 
 
 def save_per_class_metrics_csv(metrics: dict, class_names: list[str], path: str | Path) -> None:

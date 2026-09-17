@@ -72,7 +72,12 @@ from brainmri_nas.baselines.registry import build_baseline_model
 from brainmri_nas.data.loader import build_dataset_bundle, is_real_image_file
 from brainmri_nas.proxies.profiling import profile_flops_and_params
 from brainmri_nas.training.engine import train_one_epoch
-from brainmri_nas.training.evaluate import evaluate_model, save_confusion_matrix_plot, save_per_class_metrics_csv
+from brainmri_nas.training.evaluate import (
+    evaluate_model,
+    save_confusion_matrix_plot,
+    save_per_class_metrics_csv,
+    save_test_predictions_csv,
+)
 from brainmri_nas.utils.config import Config
 from brainmri_nas.utils.determinism import seed_everything
 from brainmri_nas.utils.device import resolve_device
@@ -336,7 +341,9 @@ def run_baseline_training(
     final_model = rebuild_model_from_checkpoint(best_payload)
     final_model.to(device)
 
-    test_metrics = evaluate_model(final_model, bundle.test_loader, device=device, num_classes=bundle.num_classes)
+    test_metrics, test_predictions = evaluate_model(
+        final_model, bundle.test_loader, device=device, num_classes=bundle.num_classes, return_predictions=True
+    )
     dump_json(test_metrics, output_dir / "test_metrics.json")
     logger.info(
         "Test set evaluated once: accuracy=%.4f macro_f1=%.4f macro_auc=%.4f",
@@ -347,6 +354,13 @@ def run_baseline_training(
 
     class_names = list(bundle.classes)
     save_per_class_metrics_csv(test_metrics, class_names, output_dir / "per_class_metrics.csv")
+    save_test_predictions_csv(
+        test_predictions,
+        bundle.test_loader.dataset.samples,
+        class_names,
+        config.dataset.data_root,
+        output_dir / "test_predictions.csv",
+    )
     save_confusion_matrix_plot(test_metrics, class_names, output_dir / "confusion_matrix.png")
     pd.DataFrame(history).to_csv(output_dir / "training_history.csv", index=False)
 
