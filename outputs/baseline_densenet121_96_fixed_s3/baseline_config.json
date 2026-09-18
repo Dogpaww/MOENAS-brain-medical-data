@@ -1,0 +1,17 @@
+{
+  "model_name": "densenet121",
+  "image_size": 96,
+  "epochs": 50,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0007,
+  "momentum": 0.9,
+  "optimizer_name": "sgd",
+  "label_smoothing": 0.1,
+  "grad_clip_norm": 5.0,
+  "checkpoint_metric": "macro_auc",
+  "seed": 3,
+  "split_indices_path": "outputs/baseline_densenet121_96_fixed_s3/split_indices.json",
+  "selected_policy_path": null,
+  "selected_legacy_policy_path": "outputs/fixedda_run/augmentation_run/selected_legacy_policy.json",
+  "augmentation": "fixed"
+}
