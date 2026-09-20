@@ -1,0 +1,171 @@
+{
+  "chromosome": [
+    0.5620515895376578,
+    0.38776911526818486,
+    0.7916562047986844,
+    0.6051365886723779,
+    0.8612666839257275,
+    0.7323608365932437,
+    0.6018234471567415,
+    0.2876156019083801,
+    0.33373243932725255,
+    0.6424195396035697,
+    0.8015446031700039,
+    0.4009949798858962,
+    0.45021604706234825,
+    0.9242973242488512,
+    0.09300369831585201,
+    0.6115797297602418,
+    0.9642256681283294,
+    0.7627660554836715,
+    0.7094140352110978,
+    0.9734592160384319,
+    0.26545543125332227,
+    0.8921068653771952,
+    0.8947158613014576,
+    0.42271690652272037,
+    0.5895020614945461,
+    0.7547914193531992,
+    0.6734598864794791,
+    0.9190886187147339,
+    0.7503299817353087,
+    0.70564893667535,
+    0.18526748179492436,
+    0.826731922128944,
+    0.8009011701814945,
+    0.3327435282924145,
+    0.34028199875002224,
+    0.11057199322368283,
+    0.44548315552841905,
+    0.15292885151281205,
+    0.5434071413783735,
+    0.6245833162464939,
+    0.5819411421267506,
+    0.7191217095319965,
+    0.7706847982123862,
+    0.10898555202750865,
+    0.9459307666078312,
+    0.6745707519419208,
+    0.062495762003072525,
+    0.09771565748667439,
+    0.7409444524972145,
+    0.6506724289489777
+  ],
+  "candidate_hash": "152e370991d481ac653c3ae1a59fb6d2481334d7b4d0208a77be525f5214e496",
+  "genotype": {
+    "normal": {
+      "edges": [
+        {
+          "source": 0,
+          "operation": "sep_conv_3x3",
+          "attention": "CBAM"
+        },
+        {
+          "source": 1,
+          "operation": "sep_conv_3x3",
+          "attention": "CBAM"
+        },
+        {
+          "source": 0,
+          "operation": "sep_conv_3x3",
+          "attention": "SE"
+        },
+        {
+          "source": 2,
+          "operation": "sep_conv_5x5",
+          "attention": "SE"
+        },
+        {
+          "source": 3,
+          "operation": "max_pool_3x3",
+          "attention": "identity"
+        },
+        {
+          "source": 3,
+          "operation": "sep_conv_3x3",
+          "attention": "CBAM"
+        },
+        {
+          "source": 4,
+          "operation": "sep_conv_5x5",
+          "attention": "identity"
+        },
+        {
+          "source": 4,
+          "operation": "dil_conv_5x5",
+          "attention": "SE"
+        }
+      ],
+      "concat_nodes": [
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "reduction": {
+      "edges": [
+        {
+          "source": 1,
+          "operation": "sep_conv_3x3",
+          "attention": "CBAM"
+        },
+        {
+          "source": 1,
+          "operation": "dil_conv_5x5",
+          "attention": "CBAM"
+        },
+        {
+          "source": 2,
+          "operation": "skip_connect",
+          "attention": "CBAM"
+        },
+        {
+          "source": 1,
+          "operation": "avg_pool_3x3",
+          "attention": "identity"
+        },
+        {
+          "source": 0,
+          "operation": "max_pool_3x3",
+          "attention": "SE"
+        },
+        {
+          "source": 2,
+          "operation": "sep_conv_3x3",
+          "attention": "CBAM"
+        },
+        {
+          "source": 0,
+          "operation": "dil_conv_3x3",
+          "attention": "CBAM"
+        },
+        {
+          "source": 0,
+          "operation": "sep_conv_5x5",
+          "attention": "identity"
+        }
+      ],
+      "concat_nodes": [
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  "number_of_cells": 9,
+  "initial_channels": 26,
+  "synflow": 1.7628722353375624e+59,
+  "log_synflow": 59.24622083782481,
+  "zico": 2389.505159581861,
+  "flops": 1519285346.0,
+  "flops_billion": 1.519285346,
+  "params": 891657.0,
+  "params_million": 0.891657,
+  "valid": true,
+  "error": null,
+  "topsis_distance_to_ideal_best": 0.04614599955529334,
+  "topsis_distance_to_ideal_worst": 0.07884657817452902,
+  "topsis_score": 0.6308100817340448
+}

@@ -1,0 +1,1406 @@
+2026-09-18 20:12:07,503 INFO Starting final training on device=cuda, amp=True, physical_batch_size=32, accumulation_steps=1, effective_batch_size=32
+2026-09-18 20:12:07,503 INFO Augmentation policy: legacy fixed ops ('brightness', 'rotation'), from outputs/fixedda_run/augmentation_run/selected_legacy_policy.json
+2026-09-18 20:12:07,963 INFO Classes: {'glioma_tumor': 0, 'meningioma_tumor': 1, 'pituitary_tumor': 2}
+2026-09-18 20:12:07,963 INFO Regularization: weight_decay=7.0e-04 classifier_dropout=0.30 label_smoothing=0.10 drop_path=0.20
+2026-09-18 20:12:13,153 INFO train epoch 1/200 batch 13/66 (20%) running_loss=1.1194
+2026-09-18 20:12:16,715 INFO train epoch 1/200 batch 26/66 (39%) running_loss=1.1167
+2026-09-18 20:12:20,269 INFO train epoch 1/200 batch 39/66 (59%) running_loss=1.1237
+2026-09-18 20:12:23,822 INFO train epoch 1/200 batch 52/66 (79%) running_loss=1.1341
+2026-09-18 20:12:27,368 INFO train epoch 1/200 batch 65/66 (98%) running_loss=1.1546
+2026-09-18 20:12:27,726 INFO train epoch 1/200 batch 66/66 (100%) running_loss=1.1535
+2026-09-18 20:12:30,521 INFO epoch 1/200 done: train_loss=1.1535 val_loss=1.0633 val_accuracy=0.5061 val_macro_f1=0.2240 val_macro_auc=0.5952 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:12:34,556 INFO train epoch 2/200 batch 13/66 (20%) running_loss=1.2081
+2026-09-18 20:12:38,123 INFO train epoch 2/200 batch 26/66 (39%) running_loss=1.2099
+2026-09-18 20:12:41,686 INFO train epoch 2/200 batch 39/66 (59%) running_loss=1.2035
+2026-09-18 20:12:45,242 INFO train epoch 2/200 batch 52/66 (79%) running_loss=1.1840
+2026-09-18 20:12:48,791 INFO train epoch 2/200 batch 65/66 (98%) running_loss=1.1720
+2026-09-18 20:12:49,013 INFO train epoch 2/200 batch 66/66 (100%) running_loss=1.1701
+2026-09-18 20:12:51,622 INFO epoch 2/200 done: train_loss=1.1701 val_loss=0.8857 val_accuracy=0.6025 val_macro_f1=0.3837 val_macro_auc=0.7694 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:12:55,662 INFO train epoch 3/200 batch 13/66 (20%) running_loss=1.1240
+2026-09-18 20:12:59,217 INFO train epoch 3/200 batch 26/66 (39%) running_loss=1.0998
+2026-09-18 20:13:02,938 INFO train epoch 3/200 batch 39/66 (59%) running_loss=1.0880
+2026-09-18 20:13:06,495 INFO train epoch 3/200 batch 52/66 (79%) running_loss=1.0903
+2026-09-18 20:13:10,038 INFO train epoch 3/200 batch 65/66 (98%) running_loss=1.0764
+2026-09-18 20:13:10,262 INFO train epoch 3/200 batch 66/66 (100%) running_loss=1.0746
+2026-09-18 20:13:12,874 INFO epoch 3/200 done: train_loss=1.0746 val_loss=0.9116 val_accuracy=0.6107 val_macro_f1=0.3956 val_macro_auc=0.7633 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:13:16,920 INFO train epoch 4/200 batch 13/66 (20%) running_loss=1.0823
+2026-09-18 20:13:20,456 INFO train epoch 4/200 batch 26/66 (39%) running_loss=1.0359
+2026-09-18 20:13:24,010 INFO train epoch 4/200 batch 39/66 (59%) running_loss=1.0240
+2026-09-18 20:13:27,543 INFO train epoch 4/200 batch 52/66 (79%) running_loss=1.0168
+2026-09-18 20:13:31,075 INFO train epoch 4/200 batch 65/66 (98%) running_loss=1.0068
+2026-09-18 20:13:31,295 INFO train epoch 4/200 batch 66/66 (100%) running_loss=1.0056
+2026-09-18 20:13:33,932 INFO epoch 4/200 done: train_loss=1.0056 val_loss=0.8281 val_accuracy=0.6680 val_macro_f1=0.4733 val_macro_auc=0.7667 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:13:37,950 INFO train epoch 5/200 batch 13/66 (20%) running_loss=0.9606
+2026-09-18 20:13:41,475 INFO train epoch 5/200 batch 26/66 (39%) running_loss=0.9639
+2026-09-18 20:13:45,008 INFO train epoch 5/200 batch 39/66 (59%) running_loss=0.9590
+2026-09-18 20:13:48,542 INFO train epoch 5/200 batch 52/66 (79%) running_loss=0.9523
+2026-09-18 20:13:52,066 INFO train epoch 5/200 batch 65/66 (98%) running_loss=0.9519
+2026-09-18 20:13:52,285 INFO train epoch 5/200 batch 66/66 (100%) running_loss=0.9513
+2026-09-18 20:13:54,807 INFO epoch 5/200 done: train_loss=0.9513 val_loss=0.8059 val_accuracy=0.7029 val_macro_f1=0.5054 val_macro_auc=0.7603 (checkpoint_metric=macro_auc)
+2026-09-18 20:13:58,827 INFO train epoch 6/200 batch 13/66 (20%) running_loss=0.9306
+2026-09-18 20:14:02,360 INFO train epoch 6/200 batch 26/66 (39%) running_loss=0.9214
+2026-09-18 20:14:05,891 INFO train epoch 6/200 batch 39/66 (59%) running_loss=0.9264
+2026-09-18 20:14:09,422 INFO train epoch 6/200 batch 52/66 (79%) running_loss=0.9294
+2026-09-18 20:14:13,034 INFO train epoch 6/200 batch 65/66 (98%) running_loss=0.9167
+2026-09-18 20:14:13,258 INFO train epoch 6/200 batch 66/66 (100%) running_loss=0.9184
+2026-09-18 20:14:15,898 INFO epoch 6/200 done: train_loss=0.9184 val_loss=0.7204 val_accuracy=0.6865 val_macro_f1=0.4934 val_macro_auc=0.7759 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:14:19,947 INFO train epoch 7/200 batch 13/66 (20%) running_loss=0.8561
+2026-09-18 20:14:23,498 INFO train epoch 7/200 batch 26/66 (39%) running_loss=0.8783
+2026-09-18 20:14:27,039 INFO train epoch 7/200 batch 39/66 (59%) running_loss=0.8875
+2026-09-18 20:14:30,586 INFO train epoch 7/200 batch 52/66 (79%) running_loss=0.8997
+2026-09-18 20:14:34,116 INFO train epoch 7/200 batch 65/66 (98%) running_loss=0.8936
+2026-09-18 20:14:34,340 INFO train epoch 7/200 batch 66/66 (100%) running_loss=0.8925
+2026-09-18 20:14:37,011 INFO epoch 7/200 done: train_loss=0.8925 val_loss=0.7774 val_accuracy=0.6865 val_macro_f1=0.4935 val_macro_auc=0.7919 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:14:41,054 INFO train epoch 8/200 batch 13/66 (20%) running_loss=0.9461
+2026-09-18 20:14:44,607 INFO train epoch 8/200 batch 26/66 (39%) running_loss=0.9240
+2026-09-18 20:14:48,160 INFO train epoch 8/200 batch 39/66 (59%) running_loss=0.9154
+2026-09-18 20:14:51,700 INFO train epoch 8/200 batch 52/66 (79%) running_loss=0.8945
+2026-09-18 20:14:55,393 INFO train epoch 8/200 batch 65/66 (98%) running_loss=0.8782
+2026-09-18 20:14:55,614 INFO train epoch 8/200 batch 66/66 (100%) running_loss=0.8784
+2026-09-18 20:14:58,256 INFO epoch 8/200 done: train_loss=0.8784 val_loss=1.2245 val_accuracy=0.4775 val_macro_f1=0.3243 val_macro_auc=0.7942 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:15:02,279 INFO train epoch 9/200 batch 13/66 (20%) running_loss=0.8557
+2026-09-18 20:15:05,825 INFO train epoch 9/200 batch 26/66 (39%) running_loss=0.8358
+2026-09-18 20:15:09,365 INFO train epoch 9/200 batch 39/66 (59%) running_loss=0.8496
+2026-09-18 20:15:12,924 INFO train epoch 9/200 batch 52/66 (79%) running_loss=0.8560
+2026-09-18 20:15:16,472 INFO train epoch 9/200 batch 65/66 (98%) running_loss=0.8616
+2026-09-18 20:15:16,694 INFO train epoch 9/200 batch 66/66 (100%) running_loss=0.8633
+2026-09-18 20:15:19,348 INFO epoch 9/200 done: train_loss=0.8633 val_loss=0.6870 val_accuracy=0.7357 val_macro_f1=0.5306 val_macro_auc=0.8101 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:15:23,322 INFO train epoch 10/200 batch 13/66 (20%) running_loss=0.8784
+2026-09-18 20:15:26,859 INFO train epoch 10/200 batch 26/66 (39%) running_loss=0.8811
+2026-09-18 20:15:30,408 INFO train epoch 10/200 batch 39/66 (59%) running_loss=0.8660
+2026-09-18 20:15:33,958 INFO train epoch 10/200 batch 52/66 (79%) running_loss=0.8572
+2026-09-18 20:15:37,517 INFO train epoch 10/200 batch 65/66 (98%) running_loss=0.8469
+2026-09-18 20:15:37,740 INFO train epoch 10/200 batch 66/66 (100%) running_loss=0.8477
+2026-09-18 20:15:40,519 INFO epoch 10/200 done: train_loss=0.8477 val_loss=0.6795 val_accuracy=0.7295 val_macro_f1=0.5261 val_macro_auc=0.8200 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:15:44,555 INFO train epoch 11/200 batch 13/66 (20%) running_loss=0.8232
+2026-09-18 20:15:48,105 INFO train epoch 11/200 batch 26/66 (39%) running_loss=0.8265
+2026-09-18 20:15:51,645 INFO train epoch 11/200 batch 39/66 (59%) running_loss=0.8184
+2026-09-18 20:15:55,190 INFO train epoch 11/200 batch 52/66 (79%) running_loss=0.8223
+2026-09-18 20:15:58,730 INFO train epoch 11/200 batch 65/66 (98%) running_loss=0.8158
+2026-09-18 20:15:58,951 INFO train epoch 11/200 batch 66/66 (100%) running_loss=0.8152
+2026-09-18 20:16:01,603 INFO epoch 11/200 done: train_loss=0.8152 val_loss=0.7659 val_accuracy=0.6598 val_macro_f1=0.5112 val_macro_auc=0.8297 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:16:05,650 INFO train epoch 12/200 batch 13/66 (20%) running_loss=0.8214
+2026-09-18 20:16:09,193 INFO train epoch 12/200 batch 26/66 (39%) running_loss=0.8352
+2026-09-18 20:16:12,746 INFO train epoch 12/200 batch 39/66 (59%) running_loss=0.8317
+2026-09-18 20:16:16,290 INFO train epoch 12/200 batch 52/66 (79%) running_loss=0.8316
+2026-09-18 20:16:19,834 INFO train epoch 12/200 batch 65/66 (98%) running_loss=0.8288
+2026-09-18 20:16:20,055 INFO train epoch 12/200 batch 66/66 (100%) running_loss=0.8285
+2026-09-18 20:16:22,685 INFO epoch 12/200 done: train_loss=0.8285 val_loss=0.5742 val_accuracy=0.8033 val_macro_f1=0.6183 val_macro_auc=0.8477 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:16:26,738 INFO train epoch 13/200 batch 13/66 (20%) running_loss=0.8112
+2026-09-18 20:16:30,289 INFO train epoch 13/200 batch 26/66 (39%) running_loss=0.8106
+2026-09-18 20:16:33,831 INFO train epoch 13/200 batch 39/66 (59%) running_loss=0.8233
+2026-09-18 20:16:37,386 INFO train epoch 13/200 batch 52/66 (79%) running_loss=0.8165
+2026-09-18 20:16:40,933 INFO train epoch 13/200 batch 65/66 (98%) running_loss=0.8230
+2026-09-18 20:16:41,155 INFO train epoch 13/200 batch 66/66 (100%) running_loss=0.8222
+2026-09-18 20:16:43,776 INFO epoch 13/200 done: train_loss=0.8222 val_loss=0.6848 val_accuracy=0.7213 val_macro_f1=0.5392 val_macro_auc=0.8320 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:16:47,760 INFO train epoch 14/200 batch 13/66 (20%) running_loss=0.7928
+2026-09-18 20:16:51,373 INFO train epoch 14/200 batch 26/66 (39%) running_loss=0.7986
+2026-09-18 20:16:54,905 INFO train epoch 14/200 batch 39/66 (59%) running_loss=0.7933
+2026-09-18 20:16:58,432 INFO train epoch 14/200 batch 52/66 (79%) running_loss=0.7971
+2026-09-18 20:17:01,976 INFO train epoch 14/200 batch 65/66 (98%) running_loss=0.8005
+2026-09-18 20:17:02,197 INFO train epoch 14/200 batch 66/66 (100%) running_loss=0.7989
+2026-09-18 20:17:04,854 INFO epoch 14/200 done: train_loss=0.7989 val_loss=0.6028 val_accuracy=0.7828 val_macro_f1=0.5758 val_macro_auc=0.8539 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:17:08,851 INFO train epoch 15/200 batch 13/66 (20%) running_loss=0.8207
+2026-09-18 20:17:12,380 INFO train epoch 15/200 batch 26/66 (39%) running_loss=0.8113
+2026-09-18 20:17:15,923 INFO train epoch 15/200 batch 39/66 (59%) running_loss=0.7964
+2026-09-18 20:17:19,464 INFO train epoch 15/200 batch 52/66 (79%) running_loss=0.8064
+2026-09-18 20:17:22,994 INFO train epoch 15/200 batch 65/66 (98%) running_loss=0.8032
+2026-09-18 20:17:23,216 INFO train epoch 15/200 batch 66/66 (100%) running_loss=0.8033
+2026-09-18 20:17:25,755 INFO epoch 15/200 done: train_loss=0.8033 val_loss=0.6168 val_accuracy=0.7582 val_macro_f1=0.6293 val_macro_auc=0.8433 (checkpoint_metric=macro_auc)
+2026-09-18 20:17:29,783 INFO train epoch 16/200 batch 13/66 (20%) running_loss=0.7888
+2026-09-18 20:17:33,323 INFO train epoch 16/200 batch 26/66 (39%) running_loss=0.7733
+2026-09-18 20:17:36,867 INFO train epoch 16/200 batch 39/66 (59%) running_loss=0.7843
+2026-09-18 20:17:40,406 INFO train epoch 16/200 batch 52/66 (79%) running_loss=0.7892
+2026-09-18 20:17:44,108 INFO train epoch 16/200 batch 65/66 (98%) running_loss=0.7873
+2026-09-18 20:17:44,332 INFO train epoch 16/200 batch 66/66 (100%) running_loss=0.7881
+2026-09-18 20:17:46,974 INFO epoch 16/200 done: train_loss=0.7881 val_loss=0.5924 val_accuracy=0.8135 val_macro_f1=0.6456 val_macro_auc=0.8762 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:17:50,969 INFO train epoch 17/200 batch 13/66 (20%) running_loss=0.7716
+2026-09-18 20:17:54,529 INFO train epoch 17/200 batch 26/66 (39%) running_loss=0.7709
+2026-09-18 20:17:58,063 INFO train epoch 17/200 batch 39/66 (59%) running_loss=0.7800
+2026-09-18 20:18:01,630 INFO train epoch 17/200 batch 52/66 (79%) running_loss=0.7745
+2026-09-18 20:18:05,177 INFO train epoch 17/200 batch 65/66 (98%) running_loss=0.7773
+2026-09-18 20:18:05,398 INFO train epoch 17/200 batch 66/66 (100%) running_loss=0.7755
+2026-09-18 20:18:08,034 INFO epoch 17/200 done: train_loss=0.7755 val_loss=0.6390 val_accuracy=0.7623 val_macro_f1=0.6639 val_macro_auc=0.8957 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:18:12,100 INFO train epoch 18/200 batch 13/66 (20%) running_loss=0.7728
+2026-09-18 20:18:15,656 INFO train epoch 18/200 batch 26/66 (39%) running_loss=0.7649
+2026-09-18 20:18:19,207 INFO train epoch 18/200 batch 39/66 (59%) running_loss=0.7618
+2026-09-18 20:18:22,762 INFO train epoch 18/200 batch 52/66 (79%) running_loss=0.7586
+2026-09-18 20:18:26,461 INFO train epoch 18/200 batch 65/66 (98%) running_loss=0.7644
+2026-09-18 20:18:26,682 INFO train epoch 18/200 batch 66/66 (100%) running_loss=0.7666
+2026-09-18 20:18:29,327 INFO epoch 18/200 done: train_loss=0.7666 val_loss=0.5522 val_accuracy=0.8135 val_macro_f1=0.6587 val_macro_auc=0.8861 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:18:33,360 INFO train epoch 19/200 batch 13/66 (20%) running_loss=0.7335
+2026-09-18 20:18:36,911 INFO train epoch 19/200 batch 26/66 (39%) running_loss=0.7564
+2026-09-18 20:18:40,468 INFO train epoch 19/200 batch 39/66 (59%) running_loss=0.7627
+2026-09-18 20:18:44,035 INFO train epoch 19/200 batch 52/66 (79%) running_loss=0.7711
+2026-09-18 20:18:47,577 INFO train epoch 19/200 batch 65/66 (98%) running_loss=0.7630
+2026-09-18 20:18:47,799 INFO train epoch 19/200 batch 66/66 (100%) running_loss=0.7611
+2026-09-18 20:18:50,430 INFO epoch 19/200 done: train_loss=0.7611 val_loss=0.5618 val_accuracy=0.7746 val_macro_f1=0.7295 val_macro_auc=0.9189 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:18:54,499 INFO train epoch 20/200 batch 13/66 (20%) running_loss=0.7554
+2026-09-18 20:18:58,040 INFO train epoch 20/200 batch 26/66 (39%) running_loss=0.7572
+2026-09-18 20:19:01,627 INFO train epoch 20/200 batch 39/66 (59%) running_loss=0.7440
+2026-09-18 20:19:05,182 INFO train epoch 20/200 batch 52/66 (79%) running_loss=0.7400
+2026-09-18 20:19:08,731 INFO train epoch 20/200 batch 65/66 (98%) running_loss=0.7411
+2026-09-18 20:19:08,953 INFO train epoch 20/200 batch 66/66 (100%) running_loss=0.7411
+2026-09-18 20:19:11,587 INFO epoch 20/200 done: train_loss=0.7411 val_loss=0.7563 val_accuracy=0.5963 val_macro_f1=0.5719 val_macro_auc=0.9038 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:19:15,649 INFO train epoch 21/200 batch 13/66 (20%) running_loss=0.7504
+2026-09-18 20:19:19,188 INFO train epoch 21/200 batch 26/66 (39%) running_loss=0.7553
+2026-09-18 20:19:22,728 INFO train epoch 21/200 batch 39/66 (59%) running_loss=0.7544
+2026-09-18 20:19:26,280 INFO train epoch 21/200 batch 52/66 (79%) running_loss=0.7462
+2026-09-18 20:19:29,813 INFO train epoch 21/200 batch 65/66 (98%) running_loss=0.7378
+2026-09-18 20:19:30,034 INFO train epoch 21/200 batch 66/66 (100%) running_loss=0.7370
+2026-09-18 20:19:32,678 INFO epoch 21/200 done: train_loss=0.7370 val_loss=0.9052 val_accuracy=0.4918 val_macro_f1=0.4624 val_macro_auc=0.9041 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:19:36,822 INFO train epoch 22/200 batch 13/66 (20%) running_loss=0.7604
+2026-09-18 20:19:40,355 INFO train epoch 22/200 batch 26/66 (39%) running_loss=0.7348
+2026-09-18 20:19:43,893 INFO train epoch 22/200 batch 39/66 (59%) running_loss=0.7419
+2026-09-18 20:19:47,434 INFO train epoch 22/200 batch 52/66 (79%) running_loss=0.7305
+2026-09-18 20:19:50,971 INFO train epoch 22/200 batch 65/66 (98%) running_loss=0.7266
+2026-09-18 20:19:51,193 INFO train epoch 22/200 batch 66/66 (100%) running_loss=0.7279
+2026-09-18 20:19:53,849 INFO epoch 22/200 done: train_loss=0.7279 val_loss=0.4407 val_accuracy=0.8381 val_macro_f1=0.6922 val_macro_auc=0.9330 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:19:57,889 INFO train epoch 23/200 batch 13/66 (20%) running_loss=0.7337
+2026-09-18 20:20:01,453 INFO train epoch 23/200 batch 26/66 (39%) running_loss=0.7376
+2026-09-18 20:20:05,015 INFO train epoch 23/200 batch 39/66 (59%) running_loss=0.7276
+2026-09-18 20:20:08,568 INFO train epoch 23/200 batch 52/66 (79%) running_loss=0.7301
+2026-09-18 20:20:12,101 INFO train epoch 23/200 batch 65/66 (98%) running_loss=0.7260
+2026-09-18 20:20:12,320 INFO train epoch 23/200 batch 66/66 (100%) running_loss=0.7265
+2026-09-18 20:20:14,984 INFO epoch 23/200 done: train_loss=0.7265 val_loss=0.8289 val_accuracy=0.6045 val_macro_f1=0.5833 val_macro_auc=0.9148 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:20:18,995 INFO train epoch 24/200 batch 13/66 (20%) running_loss=0.7158
+2026-09-18 20:20:22,548 INFO train epoch 24/200 batch 26/66 (39%) running_loss=0.6970
+2026-09-18 20:20:26,116 INFO train epoch 24/200 batch 39/66 (59%) running_loss=0.7079
+2026-09-18 20:20:29,663 INFO train epoch 24/200 batch 52/66 (79%) running_loss=0.7084
+2026-09-18 20:20:33,194 INFO train epoch 24/200 batch 65/66 (98%) running_loss=0.7027
+2026-09-18 20:20:33,417 INFO train epoch 24/200 batch 66/66 (100%) running_loss=0.7030
+2026-09-18 20:20:36,191 INFO epoch 24/200 done: train_loss=0.7030 val_loss=0.4641 val_accuracy=0.8402 val_macro_f1=0.8025 val_macro_auc=0.9628 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:20:40,238 INFO train epoch 25/200 batch 13/66 (20%) running_loss=0.7183
+2026-09-18 20:20:43,797 INFO train epoch 25/200 batch 26/66 (39%) running_loss=0.7111
+2026-09-18 20:20:47,359 INFO train epoch 25/200 batch 39/66 (59%) running_loss=0.7153
+2026-09-18 20:20:50,895 INFO train epoch 25/200 batch 52/66 (79%) running_loss=0.7126
+2026-09-18 20:20:54,436 INFO train epoch 25/200 batch 65/66 (98%) running_loss=0.7100
+2026-09-18 20:20:54,660 INFO train epoch 25/200 batch 66/66 (100%) running_loss=0.7100
+2026-09-18 20:20:57,307 INFO epoch 25/200 done: train_loss=0.7100 val_loss=0.5647 val_accuracy=0.7746 val_macro_f1=0.7393 val_macro_auc=0.9412 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:21:01,340 INFO train epoch 26/200 batch 13/66 (20%) running_loss=0.6780
+2026-09-18 20:21:04,895 INFO train epoch 26/200 batch 26/66 (39%) running_loss=0.6971
+2026-09-18 20:21:08,442 INFO train epoch 26/200 batch 39/66 (59%) running_loss=0.6815
+2026-09-18 20:21:11,992 INFO train epoch 26/200 batch 52/66 (79%) running_loss=0.6791
+2026-09-18 20:21:15,520 INFO train epoch 26/200 batch 65/66 (98%) running_loss=0.6854
+2026-09-18 20:21:15,742 INFO train epoch 26/200 batch 66/66 (100%) running_loss=0.6855
+2026-09-18 20:21:18,475 INFO epoch 26/200 done: train_loss=0.6855 val_loss=0.6459 val_accuracy=0.7152 val_macro_f1=0.6967 val_macro_auc=0.9540 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:21:22,513 INFO train epoch 27/200 batch 13/66 (20%) running_loss=0.6867
+2026-09-18 20:21:26,051 INFO train epoch 27/200 batch 26/66 (39%) running_loss=0.6679
+2026-09-18 20:21:29,603 INFO train epoch 27/200 batch 39/66 (59%) running_loss=0.6948
+2026-09-18 20:21:33,151 INFO train epoch 27/200 batch 52/66 (79%) running_loss=0.6980
+2026-09-18 20:21:36,685 INFO train epoch 27/200 batch 65/66 (98%) running_loss=0.7013
+2026-09-18 20:21:36,908 INFO train epoch 27/200 batch 66/66 (100%) running_loss=0.7005
+2026-09-18 20:21:39,424 INFO epoch 27/200 done: train_loss=0.7005 val_loss=0.5807 val_accuracy=0.7582 val_macro_f1=0.7384 val_macro_auc=0.9573 (checkpoint_metric=macro_auc)
+2026-09-18 20:21:43,494 INFO train epoch 28/200 batch 13/66 (20%) running_loss=0.6870
+2026-09-18 20:21:47,050 INFO train epoch 28/200 batch 26/66 (39%) running_loss=0.6920
+2026-09-18 20:21:50,693 INFO train epoch 28/200 batch 39/66 (59%) running_loss=0.7023
+2026-09-18 20:21:54,261 INFO train epoch 28/200 batch 52/66 (79%) running_loss=0.6868
+2026-09-18 20:21:57,796 INFO train epoch 28/200 batch 65/66 (98%) running_loss=0.6826
+2026-09-18 20:21:58,020 INFO train epoch 28/200 batch 66/66 (100%) running_loss=0.6845
+2026-09-18 20:22:00,535 INFO epoch 28/200 done: train_loss=0.6845 val_loss=1.0668 val_accuracy=0.4734 val_macro_f1=0.4171 val_macro_auc=0.8751 (checkpoint_metric=macro_auc)
+2026-09-18 20:22:04,563 INFO train epoch 29/200 batch 13/66 (20%) running_loss=0.6947
+2026-09-18 20:22:08,098 INFO train epoch 29/200 batch 26/66 (39%) running_loss=0.6827
+2026-09-18 20:22:11,641 INFO train epoch 29/200 batch 39/66 (59%) running_loss=0.6738
+2026-09-18 20:22:15,200 INFO train epoch 29/200 batch 52/66 (79%) running_loss=0.6779
+2026-09-18 20:22:18,740 INFO train epoch 29/200 batch 65/66 (98%) running_loss=0.6742
+2026-09-18 20:22:18,961 INFO train epoch 29/200 batch 66/66 (100%) running_loss=0.6735
+2026-09-18 20:22:21,485 INFO epoch 29/200 done: train_loss=0.6735 val_loss=0.4903 val_accuracy=0.8361 val_macro_f1=0.8058 val_macro_auc=0.9621 (checkpoint_metric=macro_auc)
+2026-09-18 20:22:25,529 INFO train epoch 30/200 batch 13/66 (20%) running_loss=0.6937
+2026-09-18 20:22:29,237 INFO train epoch 30/200 batch 26/66 (39%) running_loss=0.6802
+2026-09-18 20:22:32,782 INFO train epoch 30/200 batch 39/66 (59%) running_loss=0.6795
+2026-09-18 20:22:36,324 INFO train epoch 30/200 batch 52/66 (79%) running_loss=0.6653
+2026-09-18 20:22:39,860 INFO train epoch 30/200 batch 65/66 (98%) running_loss=0.6707
+2026-09-18 20:22:40,082 INFO train epoch 30/200 batch 66/66 (100%) running_loss=0.6710
+2026-09-18 20:22:42,624 INFO epoch 30/200 done: train_loss=0.6710 val_loss=0.3875 val_accuracy=0.8709 val_macro_f1=0.8291 val_macro_auc=0.9693 (checkpoint_metric=macro_auc)
+2026-09-18 20:22:46,674 INFO train epoch 31/200 batch 13/66 (20%) running_loss=0.6818
+2026-09-18 20:22:50,217 INFO train epoch 31/200 batch 26/66 (39%) running_loss=0.6802
+2026-09-18 20:22:53,769 INFO train epoch 31/200 batch 39/66 (59%) running_loss=0.6784
+2026-09-18 20:22:57,302 INFO train epoch 31/200 batch 52/66 (79%) running_loss=0.6696
+2026-09-18 20:23:00,861 INFO train epoch 31/200 batch 65/66 (98%) running_loss=0.6682
+2026-09-18 20:23:01,085 INFO train epoch 31/200 batch 66/66 (100%) running_loss=0.6685
+2026-09-18 20:23:03,717 INFO epoch 31/200 done: train_loss=0.6685 val_loss=0.5543 val_accuracy=0.7848 val_macro_f1=0.7574 val_macro_auc=0.9575 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:23:07,778 INFO train epoch 32/200 batch 13/66 (20%) running_loss=0.6421
+2026-09-18 20:23:11,332 INFO train epoch 32/200 batch 26/66 (39%) running_loss=0.6596
+2026-09-18 20:23:14,886 INFO train epoch 32/200 batch 39/66 (59%) running_loss=0.6723
+2026-09-18 20:23:18,433 INFO train epoch 32/200 batch 52/66 (79%) running_loss=0.6748
+2026-09-18 20:23:22,053 INFO train epoch 32/200 batch 65/66 (98%) running_loss=0.6642
+2026-09-18 20:23:22,274 INFO train epoch 32/200 batch 66/66 (100%) running_loss=0.6636
+2026-09-18 20:23:24,797 INFO epoch 32/200 done: train_loss=0.6636 val_loss=0.6462 val_accuracy=0.7254 val_macro_f1=0.7041 val_macro_auc=0.9526 (checkpoint_metric=macro_auc)
+2026-09-18 20:23:28,820 INFO train epoch 33/200 batch 13/66 (20%) running_loss=0.6969
+2026-09-18 20:23:32,363 INFO train epoch 33/200 batch 26/66 (39%) running_loss=0.6772
+2026-09-18 20:23:35,915 INFO train epoch 33/200 batch 39/66 (59%) running_loss=0.6612
+2026-09-18 20:23:39,447 INFO train epoch 33/200 batch 52/66 (79%) running_loss=0.6635
+2026-09-18 20:23:42,977 INFO train epoch 33/200 batch 65/66 (98%) running_loss=0.6580
+2026-09-18 20:23:43,197 INFO train epoch 33/200 batch 66/66 (100%) running_loss=0.6581
+2026-09-18 20:23:45,724 INFO epoch 33/200 done: train_loss=0.6581 val_loss=0.4111 val_accuracy=0.8504 val_macro_f1=0.8171 val_macro_auc=0.9738 (checkpoint_metric=macro_auc)
+2026-09-18 20:23:49,760 INFO train epoch 34/200 batch 13/66 (20%) running_loss=0.6497
+2026-09-18 20:23:53,315 INFO train epoch 34/200 batch 26/66 (39%) running_loss=0.6557
+2026-09-18 20:23:56,865 INFO train epoch 34/200 batch 39/66 (59%) running_loss=0.6503
+2026-09-18 20:24:00,415 INFO train epoch 34/200 batch 52/66 (79%) running_loss=0.6355
+2026-09-18 20:24:03,969 INFO train epoch 34/200 batch 65/66 (98%) running_loss=0.6418
+2026-09-18 20:24:04,190 INFO train epoch 34/200 batch 66/66 (100%) running_loss=0.6431
+2026-09-18 20:24:06,829 INFO epoch 34/200 done: train_loss=0.6431 val_loss=0.4469 val_accuracy=0.8381 val_macro_f1=0.8027 val_macro_auc=0.9747 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:24:10,871 INFO train epoch 35/200 batch 13/66 (20%) running_loss=0.6572
+2026-09-18 20:24:14,408 INFO train epoch 35/200 batch 26/66 (39%) running_loss=0.6396
+2026-09-18 20:24:17,943 INFO train epoch 35/200 batch 39/66 (59%) running_loss=0.6433
+2026-09-18 20:24:21,480 INFO train epoch 35/200 batch 52/66 (79%) running_loss=0.6520
+2026-09-18 20:24:25,025 INFO train epoch 35/200 batch 65/66 (98%) running_loss=0.6521
+2026-09-18 20:24:25,247 INFO train epoch 35/200 batch 66/66 (100%) running_loss=0.6518
+2026-09-18 20:24:27,775 INFO epoch 35/200 done: train_loss=0.6518 val_loss=0.6702 val_accuracy=0.6906 val_macro_f1=0.6815 val_macro_auc=0.9499 (checkpoint_metric=macro_auc)
+2026-09-18 20:24:31,908 INFO train epoch 36/200 batch 13/66 (20%) running_loss=0.6249
+2026-09-18 20:24:35,452 INFO train epoch 36/200 batch 26/66 (39%) running_loss=0.6439
+2026-09-18 20:24:38,978 INFO train epoch 36/200 batch 39/66 (59%) running_loss=0.6494
+2026-09-18 20:24:42,504 INFO train epoch 36/200 batch 52/66 (79%) running_loss=0.6532
+2026-09-18 20:24:46,026 INFO train epoch 36/200 batch 65/66 (98%) running_loss=0.6446
+2026-09-18 20:24:46,248 INFO train epoch 36/200 batch 66/66 (100%) running_loss=0.6448
+2026-09-18 20:24:48,788 INFO epoch 36/200 done: train_loss=0.6448 val_loss=0.7657 val_accuracy=0.6209 val_macro_f1=0.6007 val_macro_auc=0.9223 (checkpoint_metric=macro_auc)
+2026-09-18 20:24:52,790 INFO train epoch 37/200 batch 13/66 (20%) running_loss=0.6360
+2026-09-18 20:24:56,342 INFO train epoch 37/200 batch 26/66 (39%) running_loss=0.6356
+2026-09-18 20:24:59,883 INFO train epoch 37/200 batch 39/66 (59%) running_loss=0.6449
+2026-09-18 20:25:03,417 INFO train epoch 37/200 batch 52/66 (79%) running_loss=0.6357
+2026-09-18 20:25:06,955 INFO train epoch 37/200 batch 65/66 (98%) running_loss=0.6301
+2026-09-18 20:25:07,178 INFO train epoch 37/200 batch 66/66 (100%) running_loss=0.6299
+2026-09-18 20:25:09,720 INFO epoch 37/200 done: train_loss=0.6299 val_loss=0.6367 val_accuracy=0.7131 val_macro_f1=0.6938 val_macro_auc=0.9537 (checkpoint_metric=macro_auc)
+2026-09-18 20:25:13,738 INFO train epoch 38/200 batch 13/66 (20%) running_loss=0.6333
+2026-09-18 20:25:17,302 INFO train epoch 38/200 batch 26/66 (39%) running_loss=0.6327
+2026-09-18 20:25:20,861 INFO train epoch 38/200 batch 39/66 (59%) running_loss=0.6475
+2026-09-18 20:25:24,428 INFO train epoch 38/200 batch 52/66 (79%) running_loss=0.6498
+2026-09-18 20:25:27,963 INFO train epoch 38/200 batch 65/66 (98%) running_loss=0.6423
+2026-09-18 20:25:28,186 INFO train epoch 38/200 batch 66/66 (100%) running_loss=0.6432
+2026-09-18 20:25:30,695 INFO epoch 38/200 done: train_loss=0.6432 val_loss=0.3509 val_accuracy=0.8689 val_macro_f1=0.8305 val_macro_auc=0.9767 (checkpoint_metric=macro_auc)
+2026-09-18 20:25:34,720 INFO train epoch 39/200 batch 13/66 (20%) running_loss=0.6014
+2026-09-18 20:25:38,412 INFO train epoch 39/200 batch 26/66 (39%) running_loss=0.6288
+2026-09-18 20:25:41,952 INFO train epoch 39/200 batch 39/66 (59%) running_loss=0.6199
+2026-09-18 20:25:45,485 INFO train epoch 39/200 batch 52/66 (79%) running_loss=0.6228
+2026-09-18 20:25:49,037 INFO train epoch 39/200 batch 65/66 (98%) running_loss=0.6287
+2026-09-18 20:25:49,260 INFO train epoch 39/200 batch 66/66 (100%) running_loss=0.6295
+2026-09-18 20:25:51,807 INFO epoch 39/200 done: train_loss=0.6295 val_loss=0.7234 val_accuracy=0.6148 val_macro_f1=0.6111 val_macro_auc=0.9490 (checkpoint_metric=macro_auc)
+2026-09-18 20:25:55,814 INFO train epoch 40/200 batch 13/66 (20%) running_loss=0.6447
+2026-09-18 20:25:59,380 INFO train epoch 40/200 batch 26/66 (39%) running_loss=0.6270
+2026-09-18 20:26:02,954 INFO train epoch 40/200 batch 39/66 (59%) running_loss=0.6216
+2026-09-18 20:26:06,520 INFO train epoch 40/200 batch 52/66 (79%) running_loss=0.6227
+2026-09-18 20:26:10,066 INFO train epoch 40/200 batch 65/66 (98%) running_loss=0.6304
+2026-09-18 20:26:10,286 INFO train epoch 40/200 batch 66/66 (100%) running_loss=0.6309
+2026-09-18 20:26:12,798 INFO epoch 40/200 done: train_loss=0.6309 val_loss=0.6762 val_accuracy=0.7090 val_macro_f1=0.6809 val_macro_auc=0.9412 (checkpoint_metric=macro_auc)
+2026-09-18 20:26:16,823 INFO train epoch 41/200 batch 13/66 (20%) running_loss=0.6386
+2026-09-18 20:26:20,363 INFO train epoch 41/200 batch 26/66 (39%) running_loss=0.6156
+2026-09-18 20:26:23,898 INFO train epoch 41/200 batch 39/66 (59%) running_loss=0.6148
+2026-09-18 20:26:27,447 INFO train epoch 41/200 batch 52/66 (79%) running_loss=0.6100
+2026-09-18 20:26:31,001 INFO train epoch 41/200 batch 65/66 (98%) running_loss=0.6168
+2026-09-18 20:26:31,224 INFO train epoch 41/200 batch 66/66 (100%) running_loss=0.6161
+2026-09-18 20:26:33,746 INFO epoch 41/200 done: train_loss=0.6161 val_loss=0.3066 val_accuracy=0.9098 val_macro_f1=0.8726 val_macro_auc=0.9776 (checkpoint_metric=macro_auc)
+2026-09-18 20:26:37,780 INFO train epoch 42/200 batch 13/66 (20%) running_loss=0.5995
+2026-09-18 20:26:41,400 INFO train epoch 42/200 batch 26/66 (39%) running_loss=0.6127
+2026-09-18 20:26:44,940 INFO train epoch 42/200 batch 39/66 (59%) running_loss=0.6174
+2026-09-18 20:26:48,480 INFO train epoch 42/200 batch 52/66 (79%) running_loss=0.6259
+2026-09-18 20:26:52,022 INFO train epoch 42/200 batch 65/66 (98%) running_loss=0.6253
+2026-09-18 20:26:52,243 INFO train epoch 42/200 batch 66/66 (100%) running_loss=0.6237
+2026-09-18 20:26:54,767 INFO epoch 42/200 done: train_loss=0.6237 val_loss=0.3891 val_accuracy=0.8791 val_macro_f1=0.8466 val_macro_auc=0.9755 (checkpoint_metric=macro_auc)
+2026-09-18 20:26:58,790 INFO train epoch 43/200 batch 13/66 (20%) running_loss=0.6124
+2026-09-18 20:27:02,327 INFO train epoch 43/200 batch 26/66 (39%) running_loss=0.6494
+2026-09-18 20:27:05,868 INFO train epoch 43/200 batch 39/66 (59%) running_loss=0.6312
+2026-09-18 20:27:09,413 INFO train epoch 43/200 batch 52/66 (79%) running_loss=0.6293
+2026-09-18 20:27:12,953 INFO train epoch 43/200 batch 65/66 (98%) running_loss=0.6313
+2026-09-18 20:27:13,173 INFO train epoch 43/200 batch 66/66 (100%) running_loss=0.6303
+2026-09-18 20:27:15,807 INFO epoch 43/200 done: train_loss=0.6303 val_loss=0.4236 val_accuracy=0.8668 val_macro_f1=0.8378 val_macro_auc=0.9741 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:27:19,843 INFO train epoch 44/200 batch 13/66 (20%) running_loss=0.6184
+2026-09-18 20:27:23,378 INFO train epoch 44/200 batch 26/66 (39%) running_loss=0.6102
+2026-09-18 20:27:26,918 INFO train epoch 44/200 batch 39/66 (59%) running_loss=0.6065
+2026-09-18 20:27:30,446 INFO train epoch 44/200 batch 52/66 (79%) running_loss=0.6110
+2026-09-18 20:27:33,976 INFO train epoch 44/200 batch 65/66 (98%) running_loss=0.6157
+2026-09-18 20:27:34,198 INFO train epoch 44/200 batch 66/66 (100%) running_loss=0.6147
+2026-09-18 20:27:36,859 INFO epoch 44/200 done: train_loss=0.6147 val_loss=0.4708 val_accuracy=0.8053 val_macro_f1=0.7781 val_macro_auc=0.9789 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:27:41,099 INFO train epoch 45/200 batch 13/66 (20%) running_loss=0.6515
+2026-09-18 20:27:44,663 INFO train epoch 45/200 batch 26/66 (39%) running_loss=0.6299
+2026-09-18 20:27:48,224 INFO train epoch 45/200 batch 39/66 (59%) running_loss=0.6209
+2026-09-18 20:27:51,756 INFO train epoch 45/200 batch 52/66 (79%) running_loss=0.6142
+2026-09-18 20:27:55,293 INFO train epoch 45/200 batch 65/66 (98%) running_loss=0.6079
+2026-09-18 20:27:55,515 INFO train epoch 45/200 batch 66/66 (100%) running_loss=0.6061
+2026-09-18 20:27:58,031 INFO epoch 45/200 done: train_loss=0.6061 val_loss=0.5745 val_accuracy=0.7541 val_macro_f1=0.7295 val_macro_auc=0.9482 (checkpoint_metric=macro_auc)
+2026-09-18 20:28:02,076 INFO train epoch 46/200 batch 13/66 (20%) running_loss=0.6011
+2026-09-18 20:28:05,629 INFO train epoch 46/200 batch 26/66 (39%) running_loss=0.6272
+2026-09-18 20:28:09,171 INFO train epoch 46/200 batch 39/66 (59%) running_loss=0.6279
+2026-09-18 20:28:12,728 INFO train epoch 46/200 batch 52/66 (79%) running_loss=0.6289
+2026-09-18 20:28:16,256 INFO train epoch 46/200 batch 65/66 (98%) running_loss=0.6204
+2026-09-18 20:28:16,476 INFO train epoch 46/200 batch 66/66 (100%) running_loss=0.6205
+2026-09-18 20:28:18,999 INFO epoch 46/200 done: train_loss=0.6205 val_loss=0.6345 val_accuracy=0.7459 val_macro_f1=0.7228 val_macro_auc=0.9547 (checkpoint_metric=macro_auc)
+2026-09-18 20:28:23,018 INFO train epoch 47/200 batch 13/66 (20%) running_loss=0.5785
+2026-09-18 20:28:26,567 INFO train epoch 47/200 batch 26/66 (39%) running_loss=0.5916
+2026-09-18 20:28:30,115 INFO train epoch 47/200 batch 39/66 (59%) running_loss=0.6060
+2026-09-18 20:28:33,740 INFO train epoch 47/200 batch 52/66 (79%) running_loss=0.6046
+2026-09-18 20:28:37,286 INFO train epoch 47/200 batch 65/66 (98%) running_loss=0.6034
+2026-09-18 20:28:37,509 INFO train epoch 47/200 batch 66/66 (100%) running_loss=0.6037
+2026-09-18 20:28:40,022 INFO epoch 47/200 done: train_loss=0.6037 val_loss=0.4857 val_accuracy=0.8361 val_macro_f1=0.8100 val_macro_auc=0.9732 (checkpoint_metric=macro_auc)
+2026-09-18 20:28:44,060 INFO train epoch 48/200 batch 13/66 (20%) running_loss=0.5871
+2026-09-18 20:28:47,615 INFO train epoch 48/200 batch 26/66 (39%) running_loss=0.6038
+2026-09-18 20:28:51,162 INFO train epoch 48/200 batch 39/66 (59%) running_loss=0.6085
+2026-09-18 20:28:54,707 INFO train epoch 48/200 batch 52/66 (79%) running_loss=0.6188
+2026-09-18 20:28:58,233 INFO train epoch 48/200 batch 65/66 (98%) running_loss=0.6183
+2026-09-18 20:28:58,456 INFO train epoch 48/200 batch 66/66 (100%) running_loss=0.6183
+2026-09-18 20:29:00,980 INFO epoch 48/200 done: train_loss=0.6183 val_loss=0.5110 val_accuracy=0.7971 val_macro_f1=0.7736 val_macro_auc=0.9696 (checkpoint_metric=macro_auc)
+2026-09-18 20:29:05,004 INFO train epoch 49/200 batch 13/66 (20%) running_loss=0.6018
+2026-09-18 20:29:08,549 INFO train epoch 49/200 batch 26/66 (39%) running_loss=0.6121
+2026-09-18 20:29:12,094 INFO train epoch 49/200 batch 39/66 (59%) running_loss=0.6134
+2026-09-18 20:29:15,652 INFO train epoch 49/200 batch 52/66 (79%) running_loss=0.6185
+2026-09-18 20:29:19,200 INFO train epoch 49/200 batch 65/66 (98%) running_loss=0.6135
+2026-09-18 20:29:19,422 INFO train epoch 49/200 batch 66/66 (100%) running_loss=0.6123
+2026-09-18 20:29:21,934 INFO epoch 49/200 done: train_loss=0.6123 val_loss=0.3939 val_accuracy=0.8709 val_macro_f1=0.8362 val_macro_auc=0.9841 (checkpoint_metric=macro_auc)
+2026-09-18 20:29:25,988 INFO train epoch 50/200 batch 13/66 (20%) running_loss=0.5932
+2026-09-18 20:29:29,534 INFO train epoch 50/200 batch 26/66 (39%) running_loss=0.5913
+2026-09-18 20:29:33,089 INFO train epoch 50/200 batch 39/66 (59%) running_loss=0.5896
+2026-09-18 20:29:36,617 INFO train epoch 50/200 batch 52/66 (79%) running_loss=0.5974
+2026-09-18 20:29:40,143 INFO train epoch 50/200 batch 65/66 (98%) running_loss=0.6014
+2026-09-18 20:29:40,364 INFO train epoch 50/200 batch 66/66 (100%) running_loss=0.6014
+2026-09-18 20:29:43,131 INFO epoch 50/200 done: train_loss=0.6014 val_loss=0.5299 val_accuracy=0.7766 val_macro_f1=0.7584 val_macro_auc=0.9770 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:29:47,162 INFO train epoch 51/200 batch 13/66 (20%) running_loss=0.5768
+2026-09-18 20:29:50,708 INFO train epoch 51/200 batch 26/66 (39%) running_loss=0.5955
+2026-09-18 20:29:54,258 INFO train epoch 51/200 batch 39/66 (59%) running_loss=0.6032
+2026-09-18 20:29:57,804 INFO train epoch 51/200 batch 52/66 (79%) running_loss=0.5979
+2026-09-18 20:30:01,345 INFO train epoch 51/200 batch 65/66 (98%) running_loss=0.5989
+2026-09-18 20:30:01,567 INFO train epoch 51/200 batch 66/66 (100%) running_loss=0.5994
+2026-09-18 20:30:04,205 INFO epoch 51/200 done: train_loss=0.5994 val_loss=0.4876 val_accuracy=0.8238 val_macro_f1=0.7980 val_macro_auc=0.9818 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:30:08,189 INFO train epoch 52/200 batch 13/66 (20%) running_loss=0.5999
+2026-09-18 20:30:11,776 INFO train epoch 52/200 batch 26/66 (39%) running_loss=0.5910
+2026-09-18 20:30:15,334 INFO train epoch 52/200 batch 39/66 (59%) running_loss=0.5828
+2026-09-18 20:30:18,899 INFO train epoch 52/200 batch 52/66 (79%) running_loss=0.5845
+2026-09-18 20:30:22,449 INFO train epoch 52/200 batch 65/66 (98%) running_loss=0.5920
+2026-09-18 20:30:22,673 INFO train epoch 52/200 batch 66/66 (100%) running_loss=0.5903
+2026-09-18 20:30:25,204 INFO epoch 52/200 done: train_loss=0.5903 val_loss=0.3929 val_accuracy=0.8668 val_macro_f1=0.8234 val_macro_auc=0.9816 (checkpoint_metric=macro_auc)
+2026-09-18 20:30:29,314 INFO train epoch 53/200 batch 13/66 (20%) running_loss=0.5767
+2026-09-18 20:30:32,854 INFO train epoch 53/200 batch 26/66 (39%) running_loss=0.5807
+2026-09-18 20:30:36,421 INFO train epoch 53/200 batch 39/66 (59%) running_loss=0.5785
+2026-09-18 20:30:39,990 INFO train epoch 53/200 batch 52/66 (79%) running_loss=0.5851
+2026-09-18 20:30:43,529 INFO train epoch 53/200 batch 65/66 (98%) running_loss=0.5848
+2026-09-18 20:30:43,752 INFO train epoch 53/200 batch 66/66 (100%) running_loss=0.5853
+2026-09-18 20:30:46,377 INFO epoch 53/200 done: train_loss=0.5853 val_loss=0.3685 val_accuracy=0.8852 val_macro_f1=0.8555 val_macro_auc=0.9847 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:30:50,387 INFO train epoch 54/200 batch 13/66 (20%) running_loss=0.5861
+2026-09-18 20:30:53,927 INFO train epoch 54/200 batch 26/66 (39%) running_loss=0.5735
+2026-09-18 20:30:57,483 INFO train epoch 54/200 batch 39/66 (59%) running_loss=0.5839
+2026-09-18 20:31:01,039 INFO train epoch 54/200 batch 52/66 (79%) running_loss=0.5759
+2026-09-18 20:31:04,581 INFO train epoch 54/200 batch 65/66 (98%) running_loss=0.5880
+2026-09-18 20:31:04,805 INFO train epoch 54/200 batch 66/66 (100%) running_loss=0.5868
+2026-09-18 20:31:07,318 INFO epoch 54/200 done: train_loss=0.5868 val_loss=0.5385 val_accuracy=0.8156 val_macro_f1=0.7917 val_macro_auc=0.9704 (checkpoint_metric=macro_auc)
+2026-09-18 20:31:11,358 INFO train epoch 55/200 batch 13/66 (20%) running_loss=0.5871
+2026-09-18 20:31:14,908 INFO train epoch 55/200 batch 26/66 (39%) running_loss=0.5760
+2026-09-18 20:31:18,446 INFO train epoch 55/200 batch 39/66 (59%) running_loss=0.5744
+2026-09-18 20:31:22,142 INFO train epoch 55/200 batch 52/66 (79%) running_loss=0.5821
+2026-09-18 20:31:25,673 INFO train epoch 55/200 batch 65/66 (98%) running_loss=0.5763
+2026-09-18 20:31:25,895 INFO train epoch 55/200 batch 66/66 (100%) running_loss=0.5751
+2026-09-18 20:31:28,428 INFO epoch 55/200 done: train_loss=0.5751 val_loss=0.2959 val_accuracy=0.9139 val_macro_f1=0.8741 val_macro_auc=0.9787 (checkpoint_metric=macro_auc)
+2026-09-18 20:31:32,451 INFO train epoch 56/200 batch 13/66 (20%) running_loss=0.5868
+2026-09-18 20:31:36,027 INFO train epoch 56/200 batch 26/66 (39%) running_loss=0.5846
+2026-09-18 20:31:39,564 INFO train epoch 56/200 batch 39/66 (59%) running_loss=0.5716
+2026-09-18 20:31:43,105 INFO train epoch 56/200 batch 52/66 (79%) running_loss=0.5780
+2026-09-18 20:31:46,643 INFO train epoch 56/200 batch 65/66 (98%) running_loss=0.5844
+2026-09-18 20:31:46,864 INFO train epoch 56/200 batch 66/66 (100%) running_loss=0.5847
+2026-09-18 20:31:49,400 INFO epoch 56/200 done: train_loss=0.5847 val_loss=0.4392 val_accuracy=0.8402 val_macro_f1=0.8119 val_macro_auc=0.9886 (checkpoint_metric=macro_auc)
+2026-09-18 20:31:53,464 INFO train epoch 57/200 batch 13/66 (20%) running_loss=0.5925
+2026-09-18 20:31:56,997 INFO train epoch 57/200 batch 26/66 (39%) running_loss=0.5852
+2026-09-18 20:32:00,550 INFO train epoch 57/200 batch 39/66 (59%) running_loss=0.5822
+2026-09-18 20:32:04,111 INFO train epoch 57/200 batch 52/66 (79%) running_loss=0.5865
+2026-09-18 20:32:07,651 INFO train epoch 57/200 batch 65/66 (98%) running_loss=0.5835
+2026-09-18 20:32:07,873 INFO train epoch 57/200 batch 66/66 (100%) running_loss=0.5828
+2026-09-18 20:32:10,616 INFO epoch 57/200 done: train_loss=0.5828 val_loss=0.3094 val_accuracy=0.9098 val_macro_f1=0.8744 val_macro_auc=0.9856 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:32:14,677 INFO train epoch 58/200 batch 13/66 (20%) running_loss=0.6033
+2026-09-18 20:32:18,216 INFO train epoch 58/200 batch 26/66 (39%) running_loss=0.5874
+2026-09-18 20:32:21,749 INFO train epoch 58/200 batch 39/66 (59%) running_loss=0.5916
+2026-09-18 20:32:25,331 INFO train epoch 58/200 batch 52/66 (79%) running_loss=0.5887
+2026-09-18 20:32:28,890 INFO train epoch 58/200 batch 65/66 (98%) running_loss=0.5807
+2026-09-18 20:32:29,112 INFO train epoch 58/200 batch 66/66 (100%) running_loss=0.5814
+2026-09-18 20:32:31,739 INFO epoch 58/200 done: train_loss=0.5814 val_loss=0.3796 val_accuracy=0.8811 val_macro_f1=0.8548 val_macro_auc=0.9824 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:32:35,774 INFO train epoch 59/200 batch 13/66 (20%) running_loss=0.5616
+2026-09-18 20:32:39,321 INFO train epoch 59/200 batch 26/66 (39%) running_loss=0.5557
+2026-09-18 20:32:42,853 INFO train epoch 59/200 batch 39/66 (59%) running_loss=0.5545
+2026-09-18 20:32:46,390 INFO train epoch 59/200 batch 52/66 (79%) running_loss=0.5541
+2026-09-18 20:32:49,939 INFO train epoch 59/200 batch 65/66 (98%) running_loss=0.5634
+2026-09-18 20:32:50,159 INFO train epoch 59/200 batch 66/66 (100%) running_loss=0.5621
+2026-09-18 20:32:52,692 INFO epoch 59/200 done: train_loss=0.5621 val_loss=0.3258 val_accuracy=0.9016 val_macro_f1=0.8697 val_macro_auc=0.9834 (checkpoint_metric=macro_auc)
+2026-09-18 20:32:56,724 INFO train epoch 60/200 batch 13/66 (20%) running_loss=0.5719
+2026-09-18 20:33:00,289 INFO train epoch 60/200 batch 26/66 (39%) running_loss=0.5812
+2026-09-18 20:33:03,832 INFO train epoch 60/200 batch 39/66 (59%) running_loss=0.5755
+2026-09-18 20:33:07,377 INFO train epoch 60/200 batch 52/66 (79%) running_loss=0.5802
+2026-09-18 20:33:10,914 INFO train epoch 60/200 batch 65/66 (98%) running_loss=0.5748
+2026-09-18 20:33:11,136 INFO train epoch 60/200 batch 66/66 (100%) running_loss=0.5735
+2026-09-18 20:33:13,657 INFO epoch 60/200 done: train_loss=0.5735 val_loss=0.3829 val_accuracy=0.8770 val_macro_f1=0.8542 val_macro_auc=0.9803 (checkpoint_metric=macro_auc)
+2026-09-18 20:33:17,621 INFO train epoch 61/200 batch 13/66 (20%) running_loss=0.5770
+2026-09-18 20:33:21,153 INFO train epoch 61/200 batch 26/66 (39%) running_loss=0.5895
+2026-09-18 20:33:24,712 INFO train epoch 61/200 batch 39/66 (59%) running_loss=0.5876
+2026-09-18 20:33:28,422 INFO train epoch 61/200 batch 52/66 (79%) running_loss=0.5767
+2026-09-18 20:33:31,954 INFO train epoch 61/200 batch 65/66 (98%) running_loss=0.5710
+2026-09-18 20:33:32,175 INFO train epoch 61/200 batch 66/66 (100%) running_loss=0.5713
+2026-09-18 20:33:34,703 INFO epoch 61/200 done: train_loss=0.5713 val_loss=0.3140 val_accuracy=0.9221 val_macro_f1=0.9036 val_macro_auc=0.9857 (checkpoint_metric=macro_auc)
+2026-09-18 20:33:38,727 INFO train epoch 62/200 batch 13/66 (20%) running_loss=0.5153
+2026-09-18 20:33:42,270 INFO train epoch 62/200 batch 26/66 (39%) running_loss=0.5369
+2026-09-18 20:33:45,819 INFO train epoch 62/200 batch 39/66 (59%) running_loss=0.5599
+2026-09-18 20:33:49,356 INFO train epoch 62/200 batch 52/66 (79%) running_loss=0.5507
+2026-09-18 20:33:52,889 INFO train epoch 62/200 batch 65/66 (98%) running_loss=0.5516
+2026-09-18 20:33:53,110 INFO train epoch 62/200 batch 66/66 (100%) running_loss=0.5498
+2026-09-18 20:33:55,629 INFO epoch 62/200 done: train_loss=0.5498 val_loss=0.3021 val_accuracy=0.9221 val_macro_f1=0.8949 val_macro_auc=0.9876 (checkpoint_metric=macro_auc)
+2026-09-18 20:33:59,657 INFO train epoch 63/200 batch 13/66 (20%) running_loss=0.5359
+2026-09-18 20:34:03,201 INFO train epoch 63/200 batch 26/66 (39%) running_loss=0.5263
+2026-09-18 20:34:06,744 INFO train epoch 63/200 batch 39/66 (59%) running_loss=0.5356
+2026-09-18 20:34:10,284 INFO train epoch 63/200 batch 52/66 (79%) running_loss=0.5518
+2026-09-18 20:34:13,820 INFO train epoch 63/200 batch 65/66 (98%) running_loss=0.5496
+2026-09-18 20:34:14,041 INFO train epoch 63/200 batch 66/66 (100%) running_loss=0.5510
+2026-09-18 20:34:16,825 INFO epoch 63/200 done: train_loss=0.5510 val_loss=0.4182 val_accuracy=0.8586 val_macro_f1=0.8304 val_macro_auc=0.9836 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:34:20,881 INFO train epoch 64/200 batch 13/66 (20%) running_loss=0.6128
+2026-09-18 20:34:24,427 INFO train epoch 64/200 batch 26/66 (39%) running_loss=0.5954
+2026-09-18 20:34:27,987 INFO train epoch 64/200 batch 39/66 (59%) running_loss=0.5845
+2026-09-18 20:34:31,534 INFO train epoch 64/200 batch 52/66 (79%) running_loss=0.5856
+2026-09-18 20:34:35,090 INFO train epoch 64/200 batch 65/66 (98%) running_loss=0.5811
+2026-09-18 20:34:35,312 INFO train epoch 64/200 batch 66/66 (100%) running_loss=0.5817
+2026-09-18 20:34:37,967 INFO epoch 64/200 done: train_loss=0.5817 val_loss=0.3430 val_accuracy=0.8955 val_macro_f1=0.8654 val_macro_auc=0.9859 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:34:42,009 INFO train epoch 65/200 batch 13/66 (20%) running_loss=0.5498
+2026-09-18 20:34:45,549 INFO train epoch 65/200 batch 26/66 (39%) running_loss=0.5759
+2026-09-18 20:34:49,091 INFO train epoch 65/200 batch 39/66 (59%) running_loss=0.5631
+2026-09-18 20:34:52,637 INFO train epoch 65/200 batch 52/66 (79%) running_loss=0.5612
+2026-09-18 20:34:56,170 INFO train epoch 65/200 batch 65/66 (98%) running_loss=0.5541
+2026-09-18 20:34:56,390 INFO train epoch 65/200 batch 66/66 (100%) running_loss=0.5525
+2026-09-18 20:34:58,910 INFO epoch 65/200 done: train_loss=0.5525 val_loss=0.4453 val_accuracy=0.8176 val_macro_f1=0.7937 val_macro_auc=0.9740 (checkpoint_metric=macro_auc)
+2026-09-18 20:35:02,941 INFO train epoch 66/200 batch 13/66 (20%) running_loss=0.5838
+2026-09-18 20:35:06,484 INFO train epoch 66/200 batch 26/66 (39%) running_loss=0.5713
+2026-09-18 20:35:10,023 INFO train epoch 66/200 batch 39/66 (59%) running_loss=0.5765
+2026-09-18 20:35:13,566 INFO train epoch 66/200 batch 52/66 (79%) running_loss=0.5702
+2026-09-18 20:35:17,101 INFO train epoch 66/200 batch 65/66 (98%) running_loss=0.5692
+2026-09-18 20:35:17,321 INFO train epoch 66/200 batch 66/66 (100%) running_loss=0.5684
+2026-09-18 20:35:19,851 INFO epoch 66/200 done: train_loss=0.5684 val_loss=0.4461 val_accuracy=0.8402 val_macro_f1=0.8139 val_macro_auc=0.9747 (checkpoint_metric=macro_auc)
+2026-09-18 20:35:23,885 INFO train epoch 67/200 batch 13/66 (20%) running_loss=0.5860
+2026-09-18 20:35:27,428 INFO train epoch 67/200 batch 26/66 (39%) running_loss=0.5716
+2026-09-18 20:35:30,986 INFO train epoch 67/200 batch 39/66 (59%) running_loss=0.5703
+2026-09-18 20:35:34,684 INFO train epoch 67/200 batch 52/66 (79%) running_loss=0.5603
+2026-09-18 20:35:38,223 INFO train epoch 67/200 batch 65/66 (98%) running_loss=0.5584
+2026-09-18 20:35:38,444 INFO train epoch 67/200 batch 66/66 (100%) running_loss=0.5609
+2026-09-18 20:35:40,956 INFO epoch 67/200 done: train_loss=0.5609 val_loss=0.3309 val_accuracy=0.9139 val_macro_f1=0.8863 val_macro_auc=0.9911 (checkpoint_metric=macro_auc)
+2026-09-18 20:35:45,023 INFO train epoch 68/200 batch 13/66 (20%) running_loss=0.5786
+2026-09-18 20:35:48,589 INFO train epoch 68/200 batch 26/66 (39%) running_loss=0.5591
+2026-09-18 20:35:52,123 INFO train epoch 68/200 batch 39/66 (59%) running_loss=0.5579
+2026-09-18 20:35:55,673 INFO train epoch 68/200 batch 52/66 (79%) running_loss=0.5553
+2026-09-18 20:35:59,232 INFO train epoch 68/200 batch 65/66 (98%) running_loss=0.5554
+2026-09-18 20:35:59,455 INFO train epoch 68/200 batch 66/66 (100%) running_loss=0.5557
+2026-09-18 20:36:01,993 INFO epoch 68/200 done: train_loss=0.5557 val_loss=0.3041 val_accuracy=0.9098 val_macro_f1=0.8845 val_macro_auc=0.9854 (checkpoint_metric=macro_auc)
+2026-09-18 20:36:06,016 INFO train epoch 69/200 batch 13/66 (20%) running_loss=0.5869
+2026-09-18 20:36:09,600 INFO train epoch 69/200 batch 26/66 (39%) running_loss=0.5680
+2026-09-18 20:36:13,150 INFO train epoch 69/200 batch 39/66 (59%) running_loss=0.5547
+2026-09-18 20:36:16,698 INFO train epoch 69/200 batch 52/66 (79%) running_loss=0.5554
+2026-09-18 20:36:20,247 INFO train epoch 69/200 batch 65/66 (98%) running_loss=0.5445
+2026-09-18 20:36:20,471 INFO train epoch 69/200 batch 66/66 (100%) running_loss=0.5429
+2026-09-18 20:36:23,110 INFO epoch 69/200 done: train_loss=0.5429 val_loss=0.3320 val_accuracy=0.9078 val_macro_f1=0.8764 val_macro_auc=0.9829 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:36:27,240 INFO train epoch 70/200 batch 13/66 (20%) running_loss=0.5159
+2026-09-18 20:36:30,793 INFO train epoch 70/200 batch 26/66 (39%) running_loss=0.5328
+2026-09-18 20:36:34,315 INFO train epoch 70/200 batch 39/66 (59%) running_loss=0.5247
+2026-09-18 20:36:37,861 INFO train epoch 70/200 batch 52/66 (79%) running_loss=0.5286
+2026-09-18 20:36:41,398 INFO train epoch 70/200 batch 65/66 (98%) running_loss=0.5351
+2026-09-18 20:36:41,623 INFO train epoch 70/200 batch 66/66 (100%) running_loss=0.5353
+2026-09-18 20:36:44,159 INFO epoch 70/200 done: train_loss=0.5353 val_loss=0.5258 val_accuracy=0.7746 val_macro_f1=0.7526 val_macro_auc=0.9696 (checkpoint_metric=macro_auc)
+2026-09-18 20:36:48,169 INFO train epoch 71/200 batch 13/66 (20%) running_loss=0.5310
+2026-09-18 20:36:51,699 INFO train epoch 71/200 batch 26/66 (39%) running_loss=0.5217
+2026-09-18 20:36:55,254 INFO train epoch 71/200 batch 39/66 (59%) running_loss=0.5242
+2026-09-18 20:36:58,790 INFO train epoch 71/200 batch 52/66 (79%) running_loss=0.5270
+2026-09-18 20:37:02,331 INFO train epoch 71/200 batch 65/66 (98%) running_loss=0.5374
+2026-09-18 20:37:02,552 INFO train epoch 71/200 batch 66/66 (100%) running_loss=0.5375
+2026-09-18 20:37:05,089 INFO epoch 71/200 done: train_loss=0.5375 val_loss=0.3831 val_accuracy=0.8770 val_macro_f1=0.8539 val_macro_auc=0.9821 (checkpoint_metric=macro_auc)
+2026-09-18 20:37:09,097 INFO train epoch 72/200 batch 13/66 (20%) running_loss=0.5655
+2026-09-18 20:37:12,643 INFO train epoch 72/200 batch 26/66 (39%) running_loss=0.5522
+2026-09-18 20:37:16,188 INFO train epoch 72/200 batch 39/66 (59%) running_loss=0.5473
+2026-09-18 20:37:19,729 INFO train epoch 72/200 batch 52/66 (79%) running_loss=0.5477
+2026-09-18 20:37:23,271 INFO train epoch 72/200 batch 65/66 (98%) running_loss=0.5457
+2026-09-18 20:37:23,495 INFO train epoch 72/200 batch 66/66 (100%) running_loss=0.5463
+2026-09-18 20:37:26,018 INFO epoch 72/200 done: train_loss=0.5463 val_loss=0.2909 val_accuracy=0.9467 val_macro_f1=0.9209 val_macro_auc=0.9880 (checkpoint_metric=macro_auc)
+2026-09-18 20:37:30,059 INFO train epoch 73/200 batch 13/66 (20%) running_loss=0.5159
+2026-09-18 20:37:33,772 INFO train epoch 73/200 batch 26/66 (39%) running_loss=0.5180
+2026-09-18 20:37:37,317 INFO train epoch 73/200 batch 39/66 (59%) running_loss=0.5203
+2026-09-18 20:37:40,861 INFO train epoch 73/200 batch 52/66 (79%) running_loss=0.5214
+2026-09-18 20:37:44,401 INFO train epoch 73/200 batch 65/66 (98%) running_loss=0.5217
+2026-09-18 20:37:44,624 INFO train epoch 73/200 batch 66/66 (100%) running_loss=0.5216
+2026-09-18 20:37:47,136 INFO epoch 73/200 done: train_loss=0.5216 val_loss=0.3703 val_accuracy=0.8791 val_macro_f1=0.8479 val_macro_auc=0.9837 (checkpoint_metric=macro_auc)
+2026-09-18 20:37:51,105 INFO train epoch 74/200 batch 13/66 (20%) running_loss=0.5211
+2026-09-18 20:37:54,644 INFO train epoch 74/200 batch 26/66 (39%) running_loss=0.5077
+2026-09-18 20:37:58,187 INFO train epoch 74/200 batch 39/66 (59%) running_loss=0.5124
+2026-09-18 20:38:01,736 INFO train epoch 74/200 batch 52/66 (79%) running_loss=0.5150
+2026-09-18 20:38:05,278 INFO train epoch 74/200 batch 65/66 (98%) running_loss=0.5319
+2026-09-18 20:38:05,503 INFO train epoch 74/200 batch 66/66 (100%) running_loss=0.5308
+2026-09-18 20:38:08,013 INFO epoch 74/200 done: train_loss=0.5308 val_loss=0.3128 val_accuracy=0.9488 val_macro_f1=0.9250 val_macro_auc=0.9849 (checkpoint_metric=macro_auc)
+2026-09-18 20:38:12,072 INFO train epoch 75/200 batch 13/66 (20%) running_loss=0.5630
+2026-09-18 20:38:15,620 INFO train epoch 75/200 batch 26/66 (39%) running_loss=0.5647
+2026-09-18 20:38:19,154 INFO train epoch 75/200 batch 39/66 (59%) running_loss=0.5558
+2026-09-18 20:38:22,693 INFO train epoch 75/200 batch 52/66 (79%) running_loss=0.5417
+2026-09-18 20:38:26,233 INFO train epoch 75/200 batch 65/66 (98%) running_loss=0.5358
+2026-09-18 20:38:26,453 INFO train epoch 75/200 batch 66/66 (100%) running_loss=0.5357
+2026-09-18 20:38:28,978 INFO epoch 75/200 done: train_loss=0.5357 val_loss=0.4861 val_accuracy=0.8238 val_macro_f1=0.7996 val_macro_auc=0.9786 (checkpoint_metric=macro_auc)
+2026-09-18 20:38:33,013 INFO train epoch 76/200 batch 13/66 (20%) running_loss=0.5062
+2026-09-18 20:38:36,634 INFO train epoch 76/200 batch 26/66 (39%) running_loss=0.5175
+2026-09-18 20:38:40,192 INFO train epoch 76/200 batch 39/66 (59%) running_loss=0.5076
+2026-09-18 20:38:43,739 INFO train epoch 76/200 batch 52/66 (79%) running_loss=0.5158
+2026-09-18 20:38:47,276 INFO train epoch 76/200 batch 65/66 (98%) running_loss=0.5105
+2026-09-18 20:38:47,497 INFO train epoch 76/200 batch 66/66 (100%) running_loss=0.5119
+2026-09-18 20:38:50,023 INFO epoch 76/200 done: train_loss=0.5119 val_loss=0.2916 val_accuracy=0.9057 val_macro_f1=0.8667 val_macro_auc=0.9844 (checkpoint_metric=macro_auc)
+2026-09-18 20:38:54,056 INFO train epoch 77/200 batch 13/66 (20%) running_loss=0.5380
+2026-09-18 20:38:57,602 INFO train epoch 77/200 batch 26/66 (39%) running_loss=0.5341
+2026-09-18 20:39:01,166 INFO train epoch 77/200 batch 39/66 (59%) running_loss=0.5350
+2026-09-18 20:39:04,712 INFO train epoch 77/200 batch 52/66 (79%) running_loss=0.5275
+2026-09-18 20:39:08,256 INFO train epoch 77/200 batch 65/66 (98%) running_loss=0.5331
+2026-09-18 20:39:08,481 INFO train epoch 77/200 batch 66/66 (100%) running_loss=0.5333
+2026-09-18 20:39:11,000 INFO epoch 77/200 done: train_loss=0.5333 val_loss=0.3260 val_accuracy=0.9139 val_macro_f1=0.8887 val_macro_auc=0.9882 (checkpoint_metric=macro_auc)
+2026-09-18 20:39:15,040 INFO train epoch 78/200 batch 13/66 (20%) running_loss=0.5118
+2026-09-18 20:39:18,597 INFO train epoch 78/200 batch 26/66 (39%) running_loss=0.5166
+2026-09-18 20:39:22,160 INFO train epoch 78/200 batch 39/66 (59%) running_loss=0.5230
+2026-09-18 20:39:25,701 INFO train epoch 78/200 batch 52/66 (79%) running_loss=0.5300
+2026-09-18 20:39:29,245 INFO train epoch 78/200 batch 65/66 (98%) running_loss=0.5308
+2026-09-18 20:39:29,470 INFO train epoch 78/200 batch 66/66 (100%) running_loss=0.5320
+2026-09-18 20:39:31,991 INFO epoch 78/200 done: train_loss=0.5320 val_loss=0.3961 val_accuracy=0.8566 val_macro_f1=0.8280 val_macro_auc=0.9790 (checkpoint_metric=macro_auc)
+2026-09-18 20:39:36,057 INFO train epoch 79/200 batch 13/66 (20%) running_loss=0.5078
+2026-09-18 20:39:39,614 INFO train epoch 79/200 batch 26/66 (39%) running_loss=0.5244
+2026-09-18 20:39:43,342 INFO train epoch 79/200 batch 39/66 (59%) running_loss=0.5360
+2026-09-18 20:39:46,926 INFO train epoch 79/200 batch 52/66 (79%) running_loss=0.5266
+2026-09-18 20:39:50,473 INFO train epoch 79/200 batch 65/66 (98%) running_loss=0.5194
+2026-09-18 20:39:50,696 INFO train epoch 79/200 batch 66/66 (100%) running_loss=0.5186
+2026-09-18 20:39:53,217 INFO epoch 79/200 done: train_loss=0.5186 val_loss=0.2750 val_accuracy=0.9201 val_macro_f1=0.8915 val_macro_auc=0.9862 (checkpoint_metric=macro_auc)
+2026-09-18 20:39:57,206 INFO train epoch 80/200 batch 13/66 (20%) running_loss=0.5472
+2026-09-18 20:40:00,759 INFO train epoch 80/200 batch 26/66 (39%) running_loss=0.5223
+2026-09-18 20:40:04,306 INFO train epoch 80/200 batch 39/66 (59%) running_loss=0.5185
+2026-09-18 20:40:07,852 INFO train epoch 80/200 batch 52/66 (79%) running_loss=0.5249
+2026-09-18 20:40:11,397 INFO train epoch 80/200 batch 65/66 (98%) running_loss=0.5232
+2026-09-18 20:40:11,619 INFO train epoch 80/200 batch 66/66 (100%) running_loss=0.5218
+2026-09-18 20:40:14,132 INFO epoch 80/200 done: train_loss=0.5218 val_loss=0.2798 val_accuracy=0.9406 val_macro_f1=0.9217 val_macro_auc=0.9891 (checkpoint_metric=macro_auc)
+2026-09-18 20:40:18,179 INFO train epoch 81/200 batch 13/66 (20%) running_loss=0.4909
+2026-09-18 20:40:21,722 INFO train epoch 81/200 batch 26/66 (39%) running_loss=0.5177
+2026-09-18 20:40:25,260 INFO train epoch 81/200 batch 39/66 (59%) running_loss=0.5256
+2026-09-18 20:40:28,806 INFO train epoch 81/200 batch 52/66 (79%) running_loss=0.5271
+2026-09-18 20:40:32,345 INFO train epoch 81/200 batch 65/66 (98%) running_loss=0.5240
+2026-09-18 20:40:32,567 INFO train epoch 81/200 batch 66/66 (100%) running_loss=0.5254
+2026-09-18 20:40:35,189 INFO epoch 81/200 done: train_loss=0.5254 val_loss=0.2499 val_accuracy=0.9262 val_macro_f1=0.8981 val_macro_auc=0.9876 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:40:39,332 INFO train epoch 82/200 batch 13/66 (20%) running_loss=0.5194
+2026-09-18 20:40:42,878 INFO train epoch 82/200 batch 26/66 (39%) running_loss=0.5106
+2026-09-18 20:40:46,425 INFO train epoch 82/200 batch 39/66 (59%) running_loss=0.5144
+2026-09-18 20:40:49,972 INFO train epoch 82/200 batch 52/66 (79%) running_loss=0.5139
+2026-09-18 20:40:53,514 INFO train epoch 82/200 batch 65/66 (98%) running_loss=0.5080
+2026-09-18 20:40:53,751 INFO train epoch 82/200 batch 66/66 (100%) running_loss=0.5067
+2026-09-18 20:40:56,402 INFO epoch 82/200 done: train_loss=0.5067 val_loss=0.2432 val_accuracy=0.9365 val_macro_f1=0.9118 val_macro_auc=0.9901 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:41:00,426 INFO train epoch 83/200 batch 13/66 (20%) running_loss=0.4809
+2026-09-18 20:41:03,965 INFO train epoch 83/200 batch 26/66 (39%) running_loss=0.4821
+2026-09-18 20:41:07,505 INFO train epoch 83/200 batch 39/66 (59%) running_loss=0.4837
+2026-09-18 20:41:11,044 INFO train epoch 83/200 batch 52/66 (79%) running_loss=0.4959
+2026-09-18 20:41:14,587 INFO train epoch 83/200 batch 65/66 (98%) running_loss=0.5002
+2026-09-18 20:41:14,809 INFO train epoch 83/200 batch 66/66 (100%) running_loss=0.5006
+2026-09-18 20:41:17,447 INFO epoch 83/200 done: train_loss=0.5006 val_loss=0.3114 val_accuracy=0.9242 val_macro_f1=0.8995 val_macro_auc=0.9892 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:41:21,515 INFO train epoch 84/200 batch 13/66 (20%) running_loss=0.5184
+2026-09-18 20:41:25,055 INFO train epoch 84/200 batch 26/66 (39%) running_loss=0.4931
+2026-09-18 20:41:28,762 INFO train epoch 84/200 batch 39/66 (59%) running_loss=0.4905
+2026-09-18 20:41:32,309 INFO train epoch 84/200 batch 52/66 (79%) running_loss=0.4968
+2026-09-18 20:41:35,854 INFO train epoch 84/200 batch 65/66 (98%) running_loss=0.4959
+2026-09-18 20:41:36,076 INFO train epoch 84/200 batch 66/66 (100%) running_loss=0.4962
+2026-09-18 20:41:38,599 INFO epoch 84/200 done: train_loss=0.4962 val_loss=0.4285 val_accuracy=0.8463 val_macro_f1=0.8221 val_macro_auc=0.9864 (checkpoint_metric=macro_auc)
+2026-09-18 20:41:42,630 INFO train epoch 85/200 batch 13/66 (20%) running_loss=0.5069
+2026-09-18 20:41:46,155 INFO train epoch 85/200 batch 26/66 (39%) running_loss=0.5020
+2026-09-18 20:41:49,733 INFO train epoch 85/200 batch 39/66 (59%) running_loss=0.4953
+2026-09-18 20:41:53,287 INFO train epoch 85/200 batch 52/66 (79%) running_loss=0.4938
+2026-09-18 20:41:56,851 INFO train epoch 85/200 batch 65/66 (98%) running_loss=0.4986
+2026-09-18 20:41:57,072 INFO train epoch 85/200 batch 66/66 (100%) running_loss=0.4989
+2026-09-18 20:41:59,600 INFO epoch 85/200 done: train_loss=0.4989 val_loss=0.2921 val_accuracy=0.9078 val_macro_f1=0.8825 val_macro_auc=0.9865 (checkpoint_metric=macro_auc)
+2026-09-18 20:42:03,629 INFO train epoch 86/200 batch 13/66 (20%) running_loss=0.4967
+2026-09-18 20:42:07,173 INFO train epoch 86/200 batch 26/66 (39%) running_loss=0.4901
+2026-09-18 20:42:10,716 INFO train epoch 86/200 batch 39/66 (59%) running_loss=0.4948
+2026-09-18 20:42:14,260 INFO train epoch 86/200 batch 52/66 (79%) running_loss=0.5013
+2026-09-18 20:42:17,801 INFO train epoch 86/200 batch 65/66 (98%) running_loss=0.4963
+2026-09-18 20:42:18,024 INFO train epoch 86/200 batch 66/66 (100%) running_loss=0.4954
+2026-09-18 20:42:20,542 INFO epoch 86/200 done: train_loss=0.4954 val_loss=0.2625 val_accuracy=0.9344 val_macro_f1=0.9067 val_macro_auc=0.9887 (checkpoint_metric=macro_auc)
+2026-09-18 20:42:24,583 INFO train epoch 87/200 batch 13/66 (20%) running_loss=0.4943
+2026-09-18 20:42:28,128 INFO train epoch 87/200 batch 26/66 (39%) running_loss=0.4898
+2026-09-18 20:42:31,674 INFO train epoch 87/200 batch 39/66 (59%) running_loss=0.4827
+2026-09-18 20:42:35,293 INFO train epoch 87/200 batch 52/66 (79%) running_loss=0.4874
+2026-09-18 20:42:38,822 INFO train epoch 87/200 batch 65/66 (98%) running_loss=0.4867
+2026-09-18 20:42:39,043 INFO train epoch 87/200 batch 66/66 (100%) running_loss=0.4861
+2026-09-18 20:42:41,565 INFO epoch 87/200 done: train_loss=0.4861 val_loss=0.4014 val_accuracy=0.8402 val_macro_f1=0.8100 val_macro_auc=0.9761 (checkpoint_metric=macro_auc)
+2026-09-18 20:42:45,617 INFO train epoch 88/200 batch 13/66 (20%) running_loss=0.4974
+2026-09-18 20:42:49,171 INFO train epoch 88/200 batch 26/66 (39%) running_loss=0.5050
+2026-09-18 20:42:52,749 INFO train epoch 88/200 batch 39/66 (59%) running_loss=0.4972
+2026-09-18 20:42:56,292 INFO train epoch 88/200 batch 52/66 (79%) running_loss=0.4953
+2026-09-18 20:42:59,811 INFO train epoch 88/200 batch 65/66 (98%) running_loss=0.4891
+2026-09-18 20:43:00,032 INFO train epoch 88/200 batch 66/66 (100%) running_loss=0.4901
+2026-09-18 20:43:02,558 INFO epoch 88/200 done: train_loss=0.4901 val_loss=0.2997 val_accuracy=0.9037 val_macro_f1=0.8794 val_macro_auc=0.9883 (checkpoint_metric=macro_auc)
+2026-09-18 20:43:06,595 INFO train epoch 89/200 batch 13/66 (20%) running_loss=0.4716
+2026-09-18 20:43:10,142 INFO train epoch 89/200 batch 26/66 (39%) running_loss=0.4759
+2026-09-18 20:43:13,706 INFO train epoch 89/200 batch 39/66 (59%) running_loss=0.4799
+2026-09-18 20:43:17,285 INFO train epoch 89/200 batch 52/66 (79%) running_loss=0.4808
+2026-09-18 20:43:20,843 INFO train epoch 89/200 batch 65/66 (98%) running_loss=0.4856
+2026-09-18 20:43:21,065 INFO train epoch 89/200 batch 66/66 (100%) running_loss=0.4860
+2026-09-18 20:43:23,572 INFO epoch 89/200 done: train_loss=0.4860 val_loss=0.3080 val_accuracy=0.9180 val_macro_f1=0.8877 val_macro_auc=0.9851 (checkpoint_metric=macro_auc)
+2026-09-18 20:43:27,615 INFO train epoch 90/200 batch 13/66 (20%) running_loss=0.4840
+2026-09-18 20:43:31,174 INFO train epoch 90/200 batch 26/66 (39%) running_loss=0.4735
+2026-09-18 20:43:34,733 INFO train epoch 90/200 batch 39/66 (59%) running_loss=0.4804
+2026-09-18 20:43:38,439 INFO train epoch 90/200 batch 52/66 (79%) running_loss=0.4837
+2026-09-18 20:43:41,973 INFO train epoch 90/200 batch 65/66 (98%) running_loss=0.4814
+2026-09-18 20:43:42,194 INFO train epoch 90/200 batch 66/66 (100%) running_loss=0.4818
+2026-09-18 20:43:44,713 INFO epoch 90/200 done: train_loss=0.4818 val_loss=0.2765 val_accuracy=0.9242 val_macro_f1=0.9013 val_macro_auc=0.9885 (checkpoint_metric=macro_auc)
+2026-09-18 20:43:48,752 INFO train epoch 91/200 batch 13/66 (20%) running_loss=0.4594
+2026-09-18 20:43:52,305 INFO train epoch 91/200 batch 26/66 (39%) running_loss=0.4903
+2026-09-18 20:43:55,839 INFO train epoch 91/200 batch 39/66 (59%) running_loss=0.4931
+2026-09-18 20:43:59,383 INFO train epoch 91/200 batch 52/66 (79%) running_loss=0.4852
+2026-09-18 20:44:02,934 INFO train epoch 91/200 batch 65/66 (98%) running_loss=0.4872
+2026-09-18 20:44:03,157 INFO train epoch 91/200 batch 66/66 (100%) running_loss=0.4870
+2026-09-18 20:44:05,670 INFO epoch 91/200 done: train_loss=0.4870 val_loss=0.2881 val_accuracy=0.9119 val_macro_f1=0.8795 val_macro_auc=0.9882 (checkpoint_metric=macro_auc)
+2026-09-18 20:44:09,706 INFO train epoch 92/200 batch 13/66 (20%) running_loss=0.4769
+2026-09-18 20:44:13,230 INFO train epoch 92/200 batch 26/66 (39%) running_loss=0.4833
+2026-09-18 20:44:16,769 INFO train epoch 92/200 batch 39/66 (59%) running_loss=0.4880
+2026-09-18 20:44:20,315 INFO train epoch 92/200 batch 52/66 (79%) running_loss=0.4868
+2026-09-18 20:44:23,854 INFO train epoch 92/200 batch 65/66 (98%) running_loss=0.4840
+2026-09-18 20:44:24,074 INFO train epoch 92/200 batch 66/66 (100%) running_loss=0.4831
+2026-09-18 20:44:26,710 INFO epoch 92/200 done: train_loss=0.4831 val_loss=0.2450 val_accuracy=0.9283 val_macro_f1=0.9094 val_macro_auc=0.9915 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:44:30,745 INFO train epoch 93/200 batch 13/66 (20%) running_loss=0.4503
+2026-09-18 20:44:34,434 INFO train epoch 93/200 batch 26/66 (39%) running_loss=0.4512
+2026-09-18 20:44:37,999 INFO train epoch 93/200 batch 39/66 (59%) running_loss=0.4685
+2026-09-18 20:44:41,564 INFO train epoch 93/200 batch 52/66 (79%) running_loss=0.4647
+2026-09-18 20:44:45,112 INFO train epoch 93/200 batch 65/66 (98%) running_loss=0.4672
+2026-09-18 20:44:45,332 INFO train epoch 93/200 batch 66/66 (100%) running_loss=0.4667
+2026-09-18 20:44:47,855 INFO epoch 93/200 done: train_loss=0.4667 val_loss=0.2944 val_accuracy=0.9180 val_macro_f1=0.8907 val_macro_auc=0.9878 (checkpoint_metric=macro_auc)
+2026-09-18 20:44:51,900 INFO train epoch 94/200 batch 13/66 (20%) running_loss=0.4411
+2026-09-18 20:44:55,451 INFO train epoch 94/200 batch 26/66 (39%) running_loss=0.4450
+2026-09-18 20:44:58,991 INFO train epoch 94/200 batch 39/66 (59%) running_loss=0.4595
+2026-09-18 20:45:02,547 INFO train epoch 94/200 batch 52/66 (79%) running_loss=0.4706
+2026-09-18 20:45:06,090 INFO train epoch 94/200 batch 65/66 (98%) running_loss=0.4709
+2026-09-18 20:45:06,309 INFO train epoch 94/200 batch 66/66 (100%) running_loss=0.4700
+2026-09-18 20:45:08,932 INFO epoch 94/200 done: train_loss=0.4700 val_loss=0.2552 val_accuracy=0.9324 val_macro_f1=0.9078 val_macro_auc=0.9900 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:45:13,001 INFO train epoch 95/200 batch 13/66 (20%) running_loss=0.4540
+2026-09-18 20:45:16,570 INFO train epoch 95/200 batch 26/66 (39%) running_loss=0.4597
+2026-09-18 20:45:20,125 INFO train epoch 95/200 batch 39/66 (59%) running_loss=0.4698
+2026-09-18 20:45:23,655 INFO train epoch 95/200 batch 52/66 (79%) running_loss=0.4698
+2026-09-18 20:45:27,183 INFO train epoch 95/200 batch 65/66 (98%) running_loss=0.4693
+2026-09-18 20:45:27,403 INFO train epoch 95/200 batch 66/66 (100%) running_loss=0.4684
+2026-09-18 20:45:29,922 INFO epoch 95/200 done: train_loss=0.4684 val_loss=0.3079 val_accuracy=0.8975 val_macro_f1=0.8721 val_macro_auc=0.9891 (checkpoint_metric=macro_auc)
+2026-09-18 20:45:33,950 INFO train epoch 96/200 batch 13/66 (20%) running_loss=0.4585
+2026-09-18 20:45:37,582 INFO train epoch 96/200 batch 26/66 (39%) running_loss=0.4594
+2026-09-18 20:45:41,120 INFO train epoch 96/200 batch 39/66 (59%) running_loss=0.4660
+2026-09-18 20:45:44,661 INFO train epoch 96/200 batch 52/66 (79%) running_loss=0.4590
+2026-09-18 20:45:48,204 INFO train epoch 96/200 batch 65/66 (98%) running_loss=0.4639
+2026-09-18 20:45:48,425 INFO train epoch 96/200 batch 66/66 (100%) running_loss=0.4647
+2026-09-18 20:45:50,934 INFO epoch 96/200 done: train_loss=0.4647 val_loss=0.3087 val_accuracy=0.9180 val_macro_f1=0.8951 val_macro_auc=0.9892 (checkpoint_metric=macro_auc)
+2026-09-18 20:45:54,971 INFO train epoch 97/200 batch 13/66 (20%) running_loss=0.4758
+2026-09-18 20:45:58,504 INFO train epoch 97/200 batch 26/66 (39%) running_loss=0.4723
+2026-09-18 20:46:02,064 INFO train epoch 97/200 batch 39/66 (59%) running_loss=0.4631
+2026-09-18 20:46:05,615 INFO train epoch 97/200 batch 52/66 (79%) running_loss=0.4705
+2026-09-18 20:46:09,162 INFO train epoch 97/200 batch 65/66 (98%) running_loss=0.4716
+2026-09-18 20:46:09,384 INFO train epoch 97/200 batch 66/66 (100%) running_loss=0.4716
+2026-09-18 20:46:11,903 INFO epoch 97/200 done: train_loss=0.4716 val_loss=0.2641 val_accuracy=0.9262 val_macro_f1=0.8989 val_macro_auc=0.9881 (checkpoint_metric=macro_auc)
+2026-09-18 20:46:15,925 INFO train epoch 98/200 batch 13/66 (20%) running_loss=0.4839
+2026-09-18 20:46:19,463 INFO train epoch 98/200 batch 26/66 (39%) running_loss=0.4724
+2026-09-18 20:46:23,001 INFO train epoch 98/200 batch 39/66 (59%) running_loss=0.4855
+2026-09-18 20:46:26,540 INFO train epoch 98/200 batch 52/66 (79%) running_loss=0.4903
+2026-09-18 20:46:30,062 INFO train epoch 98/200 batch 65/66 (98%) running_loss=0.4861
+2026-09-18 20:46:30,282 INFO train epoch 98/200 batch 66/66 (100%) running_loss=0.4846
+2026-09-18 20:46:32,805 INFO epoch 98/200 done: train_loss=0.4846 val_loss=0.2614 val_accuracy=0.9262 val_macro_f1=0.9039 val_macro_auc=0.9903 (checkpoint_metric=macro_auc)
+2026-09-18 20:46:36,852 INFO train epoch 99/200 batch 13/66 (20%) running_loss=0.4560
+2026-09-18 20:46:40,423 INFO train epoch 99/200 batch 26/66 (39%) running_loss=0.4620
+2026-09-18 20:46:44,131 INFO train epoch 99/200 batch 39/66 (59%) running_loss=0.4750
+2026-09-18 20:46:47,672 INFO train epoch 99/200 batch 52/66 (79%) running_loss=0.4712
+2026-09-18 20:46:51,207 INFO train epoch 99/200 batch 65/66 (98%) running_loss=0.4726
+2026-09-18 20:46:51,431 INFO train epoch 99/200 batch 66/66 (100%) running_loss=0.4723
+2026-09-18 20:46:53,945 INFO epoch 99/200 done: train_loss=0.4723 val_loss=0.3002 val_accuracy=0.9078 val_macro_f1=0.8867 val_macro_auc=0.9872 (checkpoint_metric=macro_auc)
+2026-09-18 20:46:57,995 INFO train epoch 100/200 batch 13/66 (20%) running_loss=0.4838
+2026-09-18 20:47:01,542 INFO train epoch 100/200 batch 26/66 (39%) running_loss=0.4680
+2026-09-18 20:47:05,095 INFO train epoch 100/200 batch 39/66 (59%) running_loss=0.4558
+2026-09-18 20:47:08,649 INFO train epoch 100/200 batch 52/66 (79%) running_loss=0.4633
+2026-09-18 20:47:12,190 INFO train epoch 100/200 batch 65/66 (98%) running_loss=0.4703
+2026-09-18 20:47:12,412 INFO train epoch 100/200 batch 66/66 (100%) running_loss=0.4702
+2026-09-18 20:47:14,932 INFO epoch 100/200 done: train_loss=0.4702 val_loss=0.2604 val_accuracy=0.9385 val_macro_f1=0.9165 val_macro_auc=0.9916 (checkpoint_metric=macro_auc)
+2026-09-18 20:47:18,952 INFO train epoch 101/200 batch 13/66 (20%) running_loss=0.4642
+2026-09-18 20:47:22,485 INFO train epoch 101/200 batch 26/66 (39%) running_loss=0.4651
+2026-09-18 20:47:26,018 INFO train epoch 101/200 batch 39/66 (59%) running_loss=0.4680
+2026-09-18 20:47:29,561 INFO train epoch 101/200 batch 52/66 (79%) running_loss=0.4675
+2026-09-18 20:47:33,094 INFO train epoch 101/200 batch 65/66 (98%) running_loss=0.4644
+2026-09-18 20:47:33,314 INFO train epoch 101/200 batch 66/66 (100%) running_loss=0.4660
+2026-09-18 20:47:35,857 INFO epoch 101/200 done: train_loss=0.4660 val_loss=0.3522 val_accuracy=0.8791 val_macro_f1=0.8618 val_macro_auc=0.9834 (checkpoint_metric=macro_auc)
+2026-09-18 20:47:39,861 INFO train epoch 102/200 batch 13/66 (20%) running_loss=0.4623
+2026-09-18 20:47:43,542 INFO train epoch 102/200 batch 26/66 (39%) running_loss=0.4645
+2026-09-18 20:47:47,088 INFO train epoch 102/200 batch 39/66 (59%) running_loss=0.4563
+2026-09-18 20:47:50,627 INFO train epoch 102/200 batch 52/66 (79%) running_loss=0.4598
+2026-09-18 20:47:54,175 INFO train epoch 102/200 batch 65/66 (98%) running_loss=0.4616
+2026-09-18 20:47:54,397 INFO train epoch 102/200 batch 66/66 (100%) running_loss=0.4617
+2026-09-18 20:47:56,929 INFO epoch 102/200 done: train_loss=0.4617 val_loss=0.3221 val_accuracy=0.9119 val_macro_f1=0.8880 val_macro_auc=0.9884 (checkpoint_metric=macro_auc)
+2026-09-18 20:48:00,940 INFO train epoch 103/200 batch 13/66 (20%) running_loss=0.4777
+2026-09-18 20:48:04,493 INFO train epoch 103/200 batch 26/66 (39%) running_loss=0.4690
+2026-09-18 20:48:08,039 INFO train epoch 103/200 batch 39/66 (59%) running_loss=0.4587
+2026-09-18 20:48:11,581 INFO train epoch 103/200 batch 52/66 (79%) running_loss=0.4604
+2026-09-18 20:48:15,128 INFO train epoch 103/200 batch 65/66 (98%) running_loss=0.4597
+2026-09-18 20:48:15,349 INFO train epoch 103/200 batch 66/66 (100%) running_loss=0.4593
+2026-09-18 20:48:17,908 INFO epoch 103/200 done: train_loss=0.4593 val_loss=0.2841 val_accuracy=0.9221 val_macro_f1=0.8981 val_macro_auc=0.9895 (checkpoint_metric=macro_auc)
+2026-09-18 20:48:21,942 INFO train epoch 104/200 batch 13/66 (20%) running_loss=0.4603
+2026-09-18 20:48:25,489 INFO train epoch 104/200 batch 26/66 (39%) running_loss=0.4659
+2026-09-18 20:48:29,037 INFO train epoch 104/200 batch 39/66 (59%) running_loss=0.4645
+2026-09-18 20:48:32,575 INFO train epoch 104/200 batch 52/66 (79%) running_loss=0.4651
+2026-09-18 20:48:36,114 INFO train epoch 104/200 batch 65/66 (98%) running_loss=0.4608
+2026-09-18 20:48:36,335 INFO train epoch 104/200 batch 66/66 (100%) running_loss=0.4615
+2026-09-18 20:48:38,861 INFO epoch 104/200 done: train_loss=0.4615 val_loss=0.2519 val_accuracy=0.9406 val_macro_f1=0.9178 val_macro_auc=0.9901 (checkpoint_metric=macro_auc)
+2026-09-18 20:48:42,896 INFO train epoch 105/200 batch 13/66 (20%) running_loss=0.4819
+2026-09-18 20:48:46,530 INFO train epoch 105/200 batch 26/66 (39%) running_loss=0.4861
+2026-09-18 20:48:50,068 INFO train epoch 105/200 batch 39/66 (59%) running_loss=0.4681
+2026-09-18 20:48:53,611 INFO train epoch 105/200 batch 52/66 (79%) running_loss=0.4696
+2026-09-18 20:48:57,140 INFO train epoch 105/200 batch 65/66 (98%) running_loss=0.4641
+2026-09-18 20:48:57,362 INFO train epoch 105/200 batch 66/66 (100%) running_loss=0.4654
+2026-09-18 20:49:00,014 INFO epoch 105/200 done: train_loss=0.4654 val_loss=0.2933 val_accuracy=0.9180 val_macro_f1=0.8953 val_macro_auc=0.9916 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:49:04,070 INFO train epoch 106/200 batch 13/66 (20%) running_loss=0.4692
+2026-09-18 20:49:07,613 INFO train epoch 106/200 batch 26/66 (39%) running_loss=0.4748
+2026-09-18 20:49:11,169 INFO train epoch 106/200 batch 39/66 (59%) running_loss=0.4733
+2026-09-18 20:49:14,721 INFO train epoch 106/200 batch 52/66 (79%) running_loss=0.4688
+2026-09-18 20:49:18,262 INFO train epoch 106/200 batch 65/66 (98%) running_loss=0.4677
+2026-09-18 20:49:18,483 INFO train epoch 106/200 batch 66/66 (100%) running_loss=0.4673
+2026-09-18 20:49:20,988 INFO epoch 106/200 done: train_loss=0.4673 val_loss=0.2721 val_accuracy=0.9406 val_macro_f1=0.9188 val_macro_auc=0.9888 (checkpoint_metric=macro_auc)
+2026-09-18 20:49:25,027 INFO train epoch 107/200 batch 13/66 (20%) running_loss=0.4824
+2026-09-18 20:49:28,582 INFO train epoch 107/200 batch 26/66 (39%) running_loss=0.4701
+2026-09-18 20:49:32,130 INFO train epoch 107/200 batch 39/66 (59%) running_loss=0.4576
+2026-09-18 20:49:35,853 INFO train epoch 107/200 batch 52/66 (79%) running_loss=0.4631
+2026-09-18 20:49:39,405 INFO train epoch 107/200 batch 65/66 (98%) running_loss=0.4580
+2026-09-18 20:49:39,628 INFO train epoch 107/200 batch 66/66 (100%) running_loss=0.4623
+2026-09-18 20:49:42,169 INFO epoch 107/200 done: train_loss=0.4623 val_loss=0.2483 val_accuracy=0.9426 val_macro_f1=0.9195 val_macro_auc=0.9885 (checkpoint_metric=macro_auc)
+2026-09-18 20:49:46,165 INFO train epoch 108/200 batch 13/66 (20%) running_loss=0.4536
+2026-09-18 20:49:49,713 INFO train epoch 108/200 batch 26/66 (39%) running_loss=0.4547
+2026-09-18 20:49:53,257 INFO train epoch 108/200 batch 39/66 (59%) running_loss=0.4550
+2026-09-18 20:49:56,794 INFO train epoch 108/200 batch 52/66 (79%) running_loss=0.4537
+2026-09-18 20:50:00,330 INFO train epoch 108/200 batch 65/66 (98%) running_loss=0.4501
+2026-09-18 20:50:00,551 INFO train epoch 108/200 batch 66/66 (100%) running_loss=0.4505
+2026-09-18 20:50:03,054 INFO epoch 108/200 done: train_loss=0.4505 val_loss=0.3291 val_accuracy=0.9119 val_macro_f1=0.8884 val_macro_auc=0.9904 (checkpoint_metric=macro_auc)
+2026-09-18 20:50:07,064 INFO train epoch 109/200 batch 13/66 (20%) running_loss=0.4353
+2026-09-18 20:50:10,624 INFO train epoch 109/200 batch 26/66 (39%) running_loss=0.4353
+2026-09-18 20:50:14,182 INFO train epoch 109/200 batch 39/66 (59%) running_loss=0.4380
+2026-09-18 20:50:17,737 INFO train epoch 109/200 batch 52/66 (79%) running_loss=0.4383
+2026-09-18 20:50:21,279 INFO train epoch 109/200 batch 65/66 (98%) running_loss=0.4391
+2026-09-18 20:50:21,503 INFO train epoch 109/200 batch 66/66 (100%) running_loss=0.4384
+2026-09-18 20:50:24,039 INFO epoch 109/200 done: train_loss=0.4384 val_loss=0.2585 val_accuracy=0.9365 val_macro_f1=0.9167 val_macro_auc=0.9897 (checkpoint_metric=macro_auc)
+2026-09-18 20:50:28,085 INFO train epoch 110/200 batch 13/66 (20%) running_loss=0.4170
+2026-09-18 20:50:31,646 INFO train epoch 110/200 batch 26/66 (39%) running_loss=0.4313
+2026-09-18 20:50:35,197 INFO train epoch 110/200 batch 39/66 (59%) running_loss=0.4400
+2026-09-18 20:50:38,753 INFO train epoch 110/200 batch 52/66 (79%) running_loss=0.4426
+2026-09-18 20:50:42,296 INFO train epoch 110/200 batch 65/66 (98%) running_loss=0.4472
+2026-09-18 20:50:42,519 INFO train epoch 110/200 batch 66/66 (100%) running_loss=0.4472
+2026-09-18 20:50:45,041 INFO epoch 110/200 done: train_loss=0.4472 val_loss=0.2614 val_accuracy=0.9406 val_macro_f1=0.9198 val_macro_auc=0.9908 (checkpoint_metric=macro_auc)
+2026-09-18 20:50:49,243 INFO train epoch 111/200 batch 13/66 (20%) running_loss=0.4158
+2026-09-18 20:50:52,792 INFO train epoch 111/200 batch 26/66 (39%) running_loss=0.4544
+2026-09-18 20:50:56,330 INFO train epoch 111/200 batch 39/66 (59%) running_loss=0.4508
+2026-09-18 20:50:59,887 INFO train epoch 111/200 batch 52/66 (79%) running_loss=0.4554
+2026-09-18 20:51:03,435 INFO train epoch 111/200 batch 65/66 (98%) running_loss=0.4589
+2026-09-18 20:51:03,656 INFO train epoch 111/200 batch 66/66 (100%) running_loss=0.4611
+2026-09-18 20:51:06,315 INFO epoch 111/200 done: train_loss=0.4611 val_loss=0.2751 val_accuracy=0.9242 val_macro_f1=0.8958 val_macro_auc=0.9910 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:51:10,363 INFO train epoch 112/200 batch 13/66 (20%) running_loss=0.4330
+2026-09-18 20:51:13,913 INFO train epoch 112/200 batch 26/66 (39%) running_loss=0.4380
+2026-09-18 20:51:17,461 INFO train epoch 112/200 batch 39/66 (59%) running_loss=0.4519
+2026-09-18 20:51:21,009 INFO train epoch 112/200 batch 52/66 (79%) running_loss=0.4505
+2026-09-18 20:51:24,557 INFO train epoch 112/200 batch 65/66 (98%) running_loss=0.4498
+2026-09-18 20:51:24,778 INFO train epoch 112/200 batch 66/66 (100%) running_loss=0.4502
+2026-09-18 20:51:27,421 INFO epoch 112/200 done: train_loss=0.4502 val_loss=0.2445 val_accuracy=0.9385 val_macro_f1=0.9147 val_macro_auc=0.9898 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:51:31,426 INFO train epoch 113/200 batch 13/66 (20%) running_loss=0.4449
+2026-09-18 20:51:34,961 INFO train epoch 113/200 batch 26/66 (39%) running_loss=0.4298
+2026-09-18 20:51:38,681 INFO train epoch 113/200 batch 39/66 (59%) running_loss=0.4228
+2026-09-18 20:51:42,238 INFO train epoch 113/200 batch 52/66 (79%) running_loss=0.4219
+2026-09-18 20:51:45,777 INFO train epoch 113/200 batch 65/66 (98%) running_loss=0.4241
+2026-09-18 20:51:45,998 INFO train epoch 113/200 batch 66/66 (100%) running_loss=0.4236
+2026-09-18 20:51:48,539 INFO epoch 113/200 done: train_loss=0.4236 val_loss=0.2504 val_accuracy=0.9303 val_macro_f1=0.9062 val_macro_auc=0.9890 (checkpoint_metric=macro_auc)
+2026-09-18 20:51:52,690 INFO train epoch 114/200 batch 13/66 (20%) running_loss=0.4385
+2026-09-18 20:51:56,238 INFO train epoch 114/200 batch 26/66 (39%) running_loss=0.4418
+2026-09-18 20:51:59,793 INFO train epoch 114/200 batch 39/66 (59%) running_loss=0.4343
+2026-09-18 20:52:03,339 INFO train epoch 114/200 batch 52/66 (79%) running_loss=0.4313
+2026-09-18 20:52:06,884 INFO train epoch 114/200 batch 65/66 (98%) running_loss=0.4347
+2026-09-18 20:52:07,105 INFO train epoch 114/200 batch 66/66 (100%) running_loss=0.4359
+2026-09-18 20:52:09,624 INFO epoch 114/200 done: train_loss=0.4359 val_loss=0.3156 val_accuracy=0.9057 val_macro_f1=0.8858 val_macro_auc=0.9856 (checkpoint_metric=macro_auc)
+2026-09-18 20:52:13,647 INFO train epoch 115/200 batch 13/66 (20%) running_loss=0.4142
+2026-09-18 20:52:17,184 INFO train epoch 115/200 batch 26/66 (39%) running_loss=0.4170
+2026-09-18 20:52:20,731 INFO train epoch 115/200 batch 39/66 (59%) running_loss=0.4241
+2026-09-18 20:52:24,275 INFO train epoch 115/200 batch 52/66 (79%) running_loss=0.4261
+2026-09-18 20:52:27,810 INFO train epoch 115/200 batch 65/66 (98%) running_loss=0.4255
+2026-09-18 20:52:28,032 INFO train epoch 115/200 batch 66/66 (100%) running_loss=0.4261
+2026-09-18 20:52:30,554 INFO epoch 115/200 done: train_loss=0.4261 val_loss=0.2567 val_accuracy=0.9303 val_macro_f1=0.9051 val_macro_auc=0.9897 (checkpoint_metric=macro_auc)
+2026-09-18 20:52:34,528 INFO train epoch 116/200 batch 13/66 (20%) running_loss=0.4093
+2026-09-18 20:52:38,067 INFO train epoch 116/200 batch 26/66 (39%) running_loss=0.4169
+2026-09-18 20:52:41,614 INFO train epoch 116/200 batch 39/66 (59%) running_loss=0.4235
+2026-09-18 20:52:45,233 INFO train epoch 116/200 batch 52/66 (79%) running_loss=0.4199
+2026-09-18 20:52:48,758 INFO train epoch 116/200 batch 65/66 (98%) running_loss=0.4250
+2026-09-18 20:52:48,979 INFO train epoch 116/200 batch 66/66 (100%) running_loss=0.4257
+2026-09-18 20:52:51,487 INFO epoch 116/200 done: train_loss=0.4257 val_loss=0.2866 val_accuracy=0.9242 val_macro_f1=0.9001 val_macro_auc=0.9906 (checkpoint_metric=macro_auc)
+2026-09-18 20:52:55,508 INFO train epoch 117/200 batch 13/66 (20%) running_loss=0.4300
+2026-09-18 20:52:59,068 INFO train epoch 117/200 batch 26/66 (39%) running_loss=0.4287
+2026-09-18 20:53:02,618 INFO train epoch 117/200 batch 39/66 (59%) running_loss=0.4436
+2026-09-18 20:53:06,154 INFO train epoch 117/200 batch 52/66 (79%) running_loss=0.4392
+2026-09-18 20:53:09,684 INFO train epoch 117/200 batch 65/66 (98%) running_loss=0.4434
+2026-09-18 20:53:09,905 INFO train epoch 117/200 batch 66/66 (100%) running_loss=0.4427
+2026-09-18 20:53:12,429 INFO epoch 117/200 done: train_loss=0.4427 val_loss=0.2939 val_accuracy=0.9119 val_macro_f1=0.8902 val_macro_auc=0.9878 (checkpoint_metric=macro_auc)
+2026-09-18 20:53:16,476 INFO train epoch 118/200 batch 13/66 (20%) running_loss=0.4130
+2026-09-18 20:53:20,021 INFO train epoch 118/200 batch 26/66 (39%) running_loss=0.4262
+2026-09-18 20:53:23,550 INFO train epoch 118/200 batch 39/66 (59%) running_loss=0.4250
+2026-09-18 20:53:27,073 INFO train epoch 118/200 batch 52/66 (79%) running_loss=0.4258
+2026-09-18 20:53:30,597 INFO train epoch 118/200 batch 65/66 (98%) running_loss=0.4244
+2026-09-18 20:53:30,819 INFO train epoch 118/200 batch 66/66 (100%) running_loss=0.4241
+2026-09-18 20:53:33,332 INFO epoch 118/200 done: train_loss=0.4241 val_loss=0.2760 val_accuracy=0.9344 val_macro_f1=0.9123 val_macro_auc=0.9876 (checkpoint_metric=macro_auc)
+2026-09-18 20:53:37,293 INFO train epoch 119/200 batch 13/66 (20%) running_loss=0.4452
+2026-09-18 20:53:40,841 INFO train epoch 119/200 batch 26/66 (39%) running_loss=0.4235
+2026-09-18 20:53:44,407 INFO train epoch 119/200 batch 39/66 (59%) running_loss=0.4253
+2026-09-18 20:53:48,115 INFO train epoch 119/200 batch 52/66 (79%) running_loss=0.4269
+2026-09-18 20:53:51,657 INFO train epoch 119/200 batch 65/66 (98%) running_loss=0.4314
+2026-09-18 20:53:51,880 INFO train epoch 119/200 batch 66/66 (100%) running_loss=0.4305
+2026-09-18 20:53:54,420 INFO epoch 119/200 done: train_loss=0.4305 val_loss=0.2410 val_accuracy=0.9467 val_macro_f1=0.9263 val_macro_auc=0.9899 (checkpoint_metric=macro_auc)
+2026-09-18 20:53:58,488 INFO train epoch 120/200 batch 13/66 (20%) running_loss=0.4320
+2026-09-18 20:54:02,027 INFO train epoch 120/200 batch 26/66 (39%) running_loss=0.4275
+2026-09-18 20:54:05,576 INFO train epoch 120/200 batch 39/66 (59%) running_loss=0.4300
+2026-09-18 20:54:09,115 INFO train epoch 120/200 batch 52/66 (79%) running_loss=0.4324
+2026-09-18 20:54:12,655 INFO train epoch 120/200 batch 65/66 (98%) running_loss=0.4278
+2026-09-18 20:54:12,878 INFO train epoch 120/200 batch 66/66 (100%) running_loss=0.4274
+2026-09-18 20:54:15,406 INFO epoch 120/200 done: train_loss=0.4274 val_loss=0.2522 val_accuracy=0.9406 val_macro_f1=0.9188 val_macro_auc=0.9910 (checkpoint_metric=macro_auc)
+2026-09-18 20:54:19,445 INFO train epoch 121/200 batch 13/66 (20%) running_loss=0.4313
+2026-09-18 20:54:22,993 INFO train epoch 121/200 batch 26/66 (39%) running_loss=0.4327
+2026-09-18 20:54:26,540 INFO train epoch 121/200 batch 39/66 (59%) running_loss=0.4228
+2026-09-18 20:54:30,088 INFO train epoch 121/200 batch 52/66 (79%) running_loss=0.4161
+2026-09-18 20:54:33,630 INFO train epoch 121/200 batch 65/66 (98%) running_loss=0.4194
+2026-09-18 20:54:33,850 INFO train epoch 121/200 batch 66/66 (100%) running_loss=0.4190
+2026-09-18 20:54:36,468 INFO epoch 121/200 done: train_loss=0.4190 val_loss=0.2371 val_accuracy=0.9488 val_macro_f1=0.9291 val_macro_auc=0.9916 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:54:40,508 INFO train epoch 122/200 batch 13/66 (20%) running_loss=0.4265
+2026-09-18 20:54:44,209 INFO train epoch 122/200 batch 26/66 (39%) running_loss=0.4320
+2026-09-18 20:54:47,755 INFO train epoch 122/200 batch 39/66 (59%) running_loss=0.4304
+2026-09-18 20:54:51,298 INFO train epoch 122/200 batch 52/66 (79%) running_loss=0.4321
+2026-09-18 20:54:54,843 INFO train epoch 122/200 batch 65/66 (98%) running_loss=0.4310
+2026-09-18 20:54:55,066 INFO train epoch 122/200 batch 66/66 (100%) running_loss=0.4301
+2026-09-18 20:54:57,726 INFO epoch 122/200 done: train_loss=0.4301 val_loss=0.2468 val_accuracy=0.9447 val_macro_f1=0.9223 val_macro_auc=0.9901 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 20:55:01,748 INFO train epoch 123/200 batch 13/66 (20%) running_loss=0.4047
+2026-09-18 20:55:05,296 INFO train epoch 123/200 batch 26/66 (39%) running_loss=0.4089
+2026-09-18 20:55:08,840 INFO train epoch 123/200 batch 39/66 (59%) running_loss=0.4057
+2026-09-18 20:55:12,380 INFO train epoch 123/200 batch 52/66 (79%) running_loss=0.4111
+2026-09-18 20:55:15,928 INFO train epoch 123/200 batch 65/66 (98%) running_loss=0.4086
+2026-09-18 20:55:16,150 INFO train epoch 123/200 batch 66/66 (100%) running_loss=0.4082
+2026-09-18 20:55:18,659 INFO epoch 123/200 done: train_loss=0.4082 val_loss=0.3214 val_accuracy=0.9016 val_macro_f1=0.8797 val_macro_auc=0.9875 (checkpoint_metric=macro_auc)
+2026-09-18 20:55:22,699 INFO train epoch 124/200 batch 13/66 (20%) running_loss=0.3980
+2026-09-18 20:55:26,237 INFO train epoch 124/200 batch 26/66 (39%) running_loss=0.4044
+2026-09-18 20:55:29,782 INFO train epoch 124/200 batch 39/66 (59%) running_loss=0.4119
+2026-09-18 20:55:33,327 INFO train epoch 124/200 batch 52/66 (79%) running_loss=0.4165
+2026-09-18 20:55:36,865 INFO train epoch 124/200 batch 65/66 (98%) running_loss=0.4129
+2026-09-18 20:55:37,084 INFO train epoch 124/200 batch 66/66 (100%) running_loss=0.4125
+2026-09-18 20:55:39,612 INFO epoch 124/200 done: train_loss=0.4125 val_loss=0.2128 val_accuracy=0.9467 val_macro_f1=0.9235 val_macro_auc=0.9920 (checkpoint_metric=macro_auc)
+2026-09-18 20:55:43,653 INFO train epoch 125/200 batch 13/66 (20%) running_loss=0.3802
+2026-09-18 20:55:47,193 INFO train epoch 125/200 batch 26/66 (39%) running_loss=0.3937
+2026-09-18 20:55:50,821 INFO train epoch 125/200 batch 39/66 (59%) running_loss=0.3979
+2026-09-18 20:55:54,370 INFO train epoch 125/200 batch 52/66 (79%) running_loss=0.4043
+2026-09-18 20:55:57,913 INFO train epoch 125/200 batch 65/66 (98%) running_loss=0.4112
+2026-09-18 20:55:58,137 INFO train epoch 125/200 batch 66/66 (100%) running_loss=0.4111
+2026-09-18 20:56:00,660 INFO epoch 125/200 done: train_loss=0.4111 val_loss=0.2532 val_accuracy=0.9447 val_macro_f1=0.9240 val_macro_auc=0.9907 (checkpoint_metric=macro_auc)
+2026-09-18 20:56:04,686 INFO train epoch 126/200 batch 13/66 (20%) running_loss=0.4284
+2026-09-18 20:56:08,235 INFO train epoch 126/200 batch 26/66 (39%) running_loss=0.4143
+2026-09-18 20:56:11,782 INFO train epoch 126/200 batch 39/66 (59%) running_loss=0.4170
+2026-09-18 20:56:15,333 INFO train epoch 126/200 batch 52/66 (79%) running_loss=0.4266
+2026-09-18 20:56:18,869 INFO train epoch 126/200 batch 65/66 (98%) running_loss=0.4284
+2026-09-18 20:56:19,091 INFO train epoch 126/200 batch 66/66 (100%) running_loss=0.4288
+2026-09-18 20:56:21,610 INFO epoch 126/200 done: train_loss=0.4288 val_loss=0.2751 val_accuracy=0.9344 val_macro_f1=0.9129 val_macro_auc=0.9892 (checkpoint_metric=macro_auc)
+2026-09-18 20:56:25,643 INFO train epoch 127/200 batch 13/66 (20%) running_loss=0.3977
+2026-09-18 20:56:29,198 INFO train epoch 127/200 batch 26/66 (39%) running_loss=0.4008
+2026-09-18 20:56:32,732 INFO train epoch 127/200 batch 39/66 (59%) running_loss=0.4053
+2026-09-18 20:56:36,277 INFO train epoch 127/200 batch 52/66 (79%) running_loss=0.4104
+2026-09-18 20:56:39,820 INFO train epoch 127/200 batch 65/66 (98%) running_loss=0.4093
+2026-09-18 20:56:40,042 INFO train epoch 127/200 batch 66/66 (100%) running_loss=0.4085
+2026-09-18 20:56:42,574 INFO epoch 127/200 done: train_loss=0.4085 val_loss=0.2739 val_accuracy=0.9344 val_macro_f1=0.9139 val_macro_auc=0.9902 (checkpoint_metric=macro_auc)
+2026-09-18 20:56:46,636 INFO train epoch 128/200 batch 13/66 (20%) running_loss=0.3947
+2026-09-18 20:56:50,216 INFO train epoch 128/200 batch 26/66 (39%) running_loss=0.4124
+2026-09-18 20:56:53,909 INFO train epoch 128/200 batch 39/66 (59%) running_loss=0.4135
+2026-09-18 20:56:57,470 INFO train epoch 128/200 batch 52/66 (79%) running_loss=0.4089
+2026-09-18 20:57:01,023 INFO train epoch 128/200 batch 65/66 (98%) running_loss=0.4100
+2026-09-18 20:57:01,244 INFO train epoch 128/200 batch 66/66 (100%) running_loss=0.4101
+2026-09-18 20:57:03,764 INFO epoch 128/200 done: train_loss=0.4101 val_loss=0.2764 val_accuracy=0.9324 val_macro_f1=0.9113 val_macro_auc=0.9882 (checkpoint_metric=macro_auc)
+2026-09-18 20:57:07,738 INFO train epoch 129/200 batch 13/66 (20%) running_loss=0.4117
+2026-09-18 20:57:11,267 INFO train epoch 129/200 batch 26/66 (39%) running_loss=0.4061
+2026-09-18 20:57:14,814 INFO train epoch 129/200 batch 39/66 (59%) running_loss=0.4115
+2026-09-18 20:57:18,382 INFO train epoch 129/200 batch 52/66 (79%) running_loss=0.4132
+2026-09-18 20:57:21,923 INFO train epoch 129/200 batch 65/66 (98%) running_loss=0.4129
+2026-09-18 20:57:22,146 INFO train epoch 129/200 batch 66/66 (100%) running_loss=0.4133
+2026-09-18 20:57:24,651 INFO epoch 129/200 done: train_loss=0.4133 val_loss=0.2180 val_accuracy=0.9529 val_macro_f1=0.9332 val_macro_auc=0.9916 (checkpoint_metric=macro_auc)
+2026-09-18 20:57:28,700 INFO train epoch 130/200 batch 13/66 (20%) running_loss=0.4143
+2026-09-18 20:57:32,250 INFO train epoch 130/200 batch 26/66 (39%) running_loss=0.4005
+2026-09-18 20:57:35,803 INFO train epoch 130/200 batch 39/66 (59%) running_loss=0.3948
+2026-09-18 20:57:39,354 INFO train epoch 130/200 batch 52/66 (79%) running_loss=0.3956
+2026-09-18 20:57:42,888 INFO train epoch 130/200 batch 65/66 (98%) running_loss=0.3976
+2026-09-18 20:57:43,109 INFO train epoch 130/200 batch 66/66 (100%) running_loss=0.3976
+2026-09-18 20:57:45,608 INFO epoch 130/200 done: train_loss=0.3976 val_loss=0.2393 val_accuracy=0.9406 val_macro_f1=0.9211 val_macro_auc=0.9900 (checkpoint_metric=macro_auc)
+2026-09-18 20:57:49,639 INFO train epoch 131/200 batch 13/66 (20%) running_loss=0.4167
+2026-09-18 20:57:53,184 INFO train epoch 131/200 batch 26/66 (39%) running_loss=0.4199
+2026-09-18 20:57:56,729 INFO train epoch 131/200 batch 39/66 (59%) running_loss=0.4155
+2026-09-18 20:58:00,358 INFO train epoch 131/200 batch 52/66 (79%) running_loss=0.4072
+2026-09-18 20:58:03,894 INFO train epoch 131/200 batch 65/66 (98%) running_loss=0.4063
+2026-09-18 20:58:04,117 INFO train epoch 131/200 batch 66/66 (100%) running_loss=0.4058
+2026-09-18 20:58:06,636 INFO epoch 131/200 done: train_loss=0.4058 val_loss=0.2922 val_accuracy=0.9283 val_macro_f1=0.9072 val_macro_auc=0.9876 (checkpoint_metric=macro_auc)
+2026-09-18 20:58:10,665 INFO train epoch 132/200 batch 13/66 (20%) running_loss=0.3925
+2026-09-18 20:58:14,211 INFO train epoch 132/200 batch 26/66 (39%) running_loss=0.3881
+2026-09-18 20:58:17,759 INFO train epoch 132/200 batch 39/66 (59%) running_loss=0.3988
+2026-09-18 20:58:21,312 INFO train epoch 132/200 batch 52/66 (79%) running_loss=0.4006
+2026-09-18 20:58:24,854 INFO train epoch 132/200 batch 65/66 (98%) running_loss=0.4024
+2026-09-18 20:58:25,074 INFO train epoch 132/200 batch 66/66 (100%) running_loss=0.4022
+2026-09-18 20:58:27,589 INFO epoch 132/200 done: train_loss=0.4022 val_loss=0.2876 val_accuracy=0.9385 val_macro_f1=0.9196 val_macro_auc=0.9871 (checkpoint_metric=macro_auc)
+2026-09-18 20:58:31,611 INFO train epoch 133/200 batch 13/66 (20%) running_loss=0.3778
+2026-09-18 20:58:35,153 INFO train epoch 133/200 batch 26/66 (39%) running_loss=0.3871
+2026-09-18 20:58:38,689 INFO train epoch 133/200 batch 39/66 (59%) running_loss=0.3829
+2026-09-18 20:58:42,235 INFO train epoch 133/200 batch 52/66 (79%) running_loss=0.3851
+2026-09-18 20:58:45,773 INFO train epoch 133/200 batch 65/66 (98%) running_loss=0.3914
+2026-09-18 20:58:45,996 INFO train epoch 133/200 batch 66/66 (100%) running_loss=0.3914
+2026-09-18 20:58:48,500 INFO epoch 133/200 done: train_loss=0.3914 val_loss=0.2574 val_accuracy=0.9447 val_macro_f1=0.9258 val_macro_auc=0.9903 (checkpoint_metric=macro_auc)
+2026-09-18 20:58:52,517 INFO train epoch 134/200 batch 13/66 (20%) running_loss=0.3880
+2026-09-18 20:58:56,061 INFO train epoch 134/200 batch 26/66 (39%) running_loss=0.3896
+2026-09-18 20:58:59,628 INFO train epoch 134/200 batch 39/66 (59%) running_loss=0.3957
+2026-09-18 20:59:03,350 INFO train epoch 134/200 batch 52/66 (79%) running_loss=0.3972
+2026-09-18 20:59:06,901 INFO train epoch 134/200 batch 65/66 (98%) running_loss=0.3982
+2026-09-18 20:59:07,124 INFO train epoch 134/200 batch 66/66 (100%) running_loss=0.3984
+2026-09-18 20:59:09,648 INFO epoch 134/200 done: train_loss=0.3984 val_loss=0.2446 val_accuracy=0.9406 val_macro_f1=0.9191 val_macro_auc=0.9887 (checkpoint_metric=macro_auc)
+2026-09-18 20:59:13,688 INFO train epoch 135/200 batch 13/66 (20%) running_loss=0.4207
+2026-09-18 20:59:17,222 INFO train epoch 135/200 batch 26/66 (39%) running_loss=0.4107
+2026-09-18 20:59:20,769 INFO train epoch 135/200 batch 39/66 (59%) running_loss=0.3982
+2026-09-18 20:59:24,320 INFO train epoch 135/200 batch 52/66 (79%) running_loss=0.3920
+2026-09-18 20:59:27,862 INFO train epoch 135/200 batch 65/66 (98%) running_loss=0.3945
+2026-09-18 20:59:28,085 INFO train epoch 135/200 batch 66/66 (100%) running_loss=0.3940
+2026-09-18 20:59:30,617 INFO epoch 135/200 done: train_loss=0.3940 val_loss=0.2594 val_accuracy=0.9406 val_macro_f1=0.9194 val_macro_auc=0.9895 (checkpoint_metric=macro_auc)
+2026-09-18 20:59:34,655 INFO train epoch 136/200 batch 13/66 (20%) running_loss=0.3892
+2026-09-18 20:59:38,198 INFO train epoch 136/200 batch 26/66 (39%) running_loss=0.3921
+2026-09-18 20:59:41,753 INFO train epoch 136/200 batch 39/66 (59%) running_loss=0.3916
+2026-09-18 20:59:45,325 INFO train epoch 136/200 batch 52/66 (79%) running_loss=0.3954
+2026-09-18 20:59:48,874 INFO train epoch 136/200 batch 65/66 (98%) running_loss=0.3991
+2026-09-18 20:59:49,095 INFO train epoch 136/200 batch 66/66 (100%) running_loss=0.3990
+2026-09-18 20:59:51,608 INFO epoch 136/200 done: train_loss=0.3990 val_loss=0.2521 val_accuracy=0.9426 val_macro_f1=0.9201 val_macro_auc=0.9889 (checkpoint_metric=macro_auc)
+2026-09-18 20:59:55,642 INFO train epoch 137/200 batch 13/66 (20%) running_loss=0.3904
+2026-09-18 20:59:59,197 INFO train epoch 137/200 batch 26/66 (39%) running_loss=0.3971
+2026-09-18 21:00:02,761 INFO train epoch 137/200 batch 39/66 (59%) running_loss=0.3985
+2026-09-18 21:00:06,315 INFO train epoch 137/200 batch 52/66 (79%) running_loss=0.4015
+2026-09-18 21:00:09,950 INFO train epoch 137/200 batch 65/66 (98%) running_loss=0.4001
+2026-09-18 21:00:10,175 INFO train epoch 137/200 batch 66/66 (100%) running_loss=0.3998
+2026-09-18 21:00:12,705 INFO epoch 137/200 done: train_loss=0.3998 val_loss=0.2140 val_accuracy=0.9426 val_macro_f1=0.9192 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:00:16,699 INFO train epoch 138/200 batch 13/66 (20%) running_loss=0.3991
+2026-09-18 21:00:20,245 INFO train epoch 138/200 batch 26/66 (39%) running_loss=0.3997
+2026-09-18 21:00:23,788 INFO train epoch 138/200 batch 39/66 (59%) running_loss=0.3997
+2026-09-18 21:00:27,336 INFO train epoch 138/200 batch 52/66 (79%) running_loss=0.3992
+2026-09-18 21:00:30,876 INFO train epoch 138/200 batch 65/66 (98%) running_loss=0.3955
+2026-09-18 21:00:31,097 INFO train epoch 138/200 batch 66/66 (100%) running_loss=0.3947
+2026-09-18 21:00:33,612 INFO epoch 138/200 done: train_loss=0.3947 val_loss=0.2161 val_accuracy=0.9426 val_macro_f1=0.9245 val_macro_auc=0.9918 (checkpoint_metric=macro_auc)
+2026-09-18 21:00:37,660 INFO train epoch 139/200 batch 13/66 (20%) running_loss=0.4092
+2026-09-18 21:00:41,225 INFO train epoch 139/200 batch 26/66 (39%) running_loss=0.3904
+2026-09-18 21:00:44,778 INFO train epoch 139/200 batch 39/66 (59%) running_loss=0.3911
+2026-09-18 21:00:48,324 INFO train epoch 139/200 batch 52/66 (79%) running_loss=0.3854
+2026-09-18 21:00:51,863 INFO train epoch 139/200 batch 65/66 (98%) running_loss=0.3909
+2026-09-18 21:00:52,085 INFO train epoch 139/200 batch 66/66 (100%) running_loss=0.3907
+2026-09-18 21:00:54,705 INFO epoch 139/200 done: train_loss=0.3907 val_loss=0.2133 val_accuracy=0.9467 val_macro_f1=0.9233 val_macro_auc=0.9916 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 21:00:58,724 INFO train epoch 140/200 batch 13/66 (20%) running_loss=0.3886
+2026-09-18 21:01:02,268 INFO train epoch 140/200 batch 26/66 (39%) running_loss=0.3923
+2026-09-18 21:01:05,836 INFO train epoch 140/200 batch 39/66 (59%) running_loss=0.3841
+2026-09-18 21:01:09,390 INFO train epoch 140/200 batch 52/66 (79%) running_loss=0.3927
+2026-09-18 21:01:12,926 INFO train epoch 140/200 batch 65/66 (98%) running_loss=0.3934
+2026-09-18 21:01:13,147 INFO train epoch 140/200 batch 66/66 (100%) running_loss=0.3941
+2026-09-18 21:01:15,883 INFO epoch 140/200 done: train_loss=0.3941 val_loss=0.2359 val_accuracy=0.9426 val_macro_f1=0.9235 val_macro_auc=0.9925 (checkpoint_metric=macro_auc) [new best]
+2026-09-18 21:01:19,924 INFO train epoch 141/200 batch 13/66 (20%) running_loss=0.4179
+2026-09-18 21:01:23,468 INFO train epoch 141/200 batch 26/66 (39%) running_loss=0.4067
+2026-09-18 21:01:26,997 INFO train epoch 141/200 batch 39/66 (59%) running_loss=0.4028
+2026-09-18 21:01:30,527 INFO train epoch 141/200 batch 52/66 (79%) running_loss=0.4000
+2026-09-18 21:01:34,067 INFO train epoch 141/200 batch 65/66 (98%) running_loss=0.3981
+2026-09-18 21:01:34,290 INFO train epoch 141/200 batch 66/66 (100%) running_loss=0.3978
+2026-09-18 21:01:36,818 INFO epoch 141/200 done: train_loss=0.3978 val_loss=0.2447 val_accuracy=0.9406 val_macro_f1=0.9226 val_macro_auc=0.9910 (checkpoint_metric=macro_auc)
+2026-09-18 21:01:40,847 INFO train epoch 142/200 batch 13/66 (20%) running_loss=0.3822
+2026-09-18 21:01:44,391 INFO train epoch 142/200 batch 26/66 (39%) running_loss=0.3809
+2026-09-18 21:01:47,958 INFO train epoch 142/200 batch 39/66 (59%) running_loss=0.3852
+2026-09-18 21:01:51,520 INFO train epoch 142/200 batch 52/66 (79%) running_loss=0.3851
+2026-09-18 21:01:55,052 INFO train epoch 142/200 batch 65/66 (98%) running_loss=0.3867
+2026-09-18 21:01:55,272 INFO train epoch 142/200 batch 66/66 (100%) running_loss=0.3860
+2026-09-18 21:01:57,798 INFO epoch 142/200 done: train_loss=0.3860 val_loss=0.2753 val_accuracy=0.9283 val_macro_f1=0.9058 val_macro_auc=0.9885 (checkpoint_metric=macro_auc)
+2026-09-18 21:02:01,838 INFO train epoch 143/200 batch 13/66 (20%) running_loss=0.4130
+2026-09-18 21:02:05,377 INFO train epoch 143/200 batch 26/66 (39%) running_loss=0.3996
+2026-09-18 21:02:08,927 INFO train epoch 143/200 batch 39/66 (59%) running_loss=0.4007
+2026-09-18 21:02:12,479 INFO train epoch 143/200 batch 52/66 (79%) running_loss=0.3952
+2026-09-18 21:02:16,025 INFO train epoch 143/200 batch 65/66 (98%) running_loss=0.3919
+2026-09-18 21:02:16,246 INFO train epoch 143/200 batch 66/66 (100%) running_loss=0.3926
+2026-09-18 21:02:18,778 INFO epoch 143/200 done: train_loss=0.3926 val_loss=0.2648 val_accuracy=0.9139 val_macro_f1=0.8903 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:02:22,801 INFO train epoch 144/200 batch 13/66 (20%) running_loss=0.3927
+2026-09-18 21:02:26,485 INFO train epoch 144/200 batch 26/66 (39%) running_loss=0.3924
+2026-09-18 21:02:30,017 INFO train epoch 144/200 batch 39/66 (59%) running_loss=0.3862
+2026-09-18 21:02:33,554 INFO train epoch 144/200 batch 52/66 (79%) running_loss=0.3868
+2026-09-18 21:02:37,084 INFO train epoch 144/200 batch 65/66 (98%) running_loss=0.3855
+2026-09-18 21:02:37,304 INFO train epoch 144/200 batch 66/66 (100%) running_loss=0.3859
+2026-09-18 21:02:39,817 INFO epoch 144/200 done: train_loss=0.3859 val_loss=0.2709 val_accuracy=0.9262 val_macro_f1=0.9041 val_macro_auc=0.9896 (checkpoint_metric=macro_auc)
+2026-09-18 21:02:43,871 INFO train epoch 145/200 batch 13/66 (20%) running_loss=0.3807
+2026-09-18 21:02:47,439 INFO train epoch 145/200 batch 26/66 (39%) running_loss=0.3861
+2026-09-18 21:02:50,980 INFO train epoch 145/200 batch 39/66 (59%) running_loss=0.3851
+2026-09-18 21:02:54,520 INFO train epoch 145/200 batch 52/66 (79%) running_loss=0.3844
+2026-09-18 21:02:58,054 INFO train epoch 145/200 batch 65/66 (98%) running_loss=0.3859
+2026-09-18 21:02:58,275 INFO train epoch 145/200 batch 66/66 (100%) running_loss=0.3868
+2026-09-18 21:03:00,805 INFO epoch 145/200 done: train_loss=0.3868 val_loss=0.2090 val_accuracy=0.9447 val_macro_f1=0.9240 val_macro_auc=0.9923 (checkpoint_metric=macro_auc)
+2026-09-18 21:03:04,814 INFO train epoch 146/200 batch 13/66 (20%) running_loss=0.3822
+2026-09-18 21:03:08,363 INFO train epoch 146/200 batch 26/66 (39%) running_loss=0.3953
+2026-09-18 21:03:11,952 INFO train epoch 146/200 batch 39/66 (59%) running_loss=0.3895
+2026-09-18 21:03:15,509 INFO train epoch 146/200 batch 52/66 (79%) running_loss=0.3891
+2026-09-18 21:03:19,222 INFO train epoch 146/200 batch 65/66 (98%) running_loss=0.3895
+2026-09-18 21:03:19,447 INFO train epoch 146/200 batch 66/66 (100%) running_loss=0.3892
+2026-09-18 21:03:21,990 INFO epoch 146/200 done: train_loss=0.3892 val_loss=0.2604 val_accuracy=0.9262 val_macro_f1=0.9038 val_macro_auc=0.9893 (checkpoint_metric=macro_auc)
+2026-09-18 21:03:26,050 INFO train epoch 147/200 batch 13/66 (20%) running_loss=0.3892
+2026-09-18 21:03:29,600 INFO train epoch 147/200 batch 26/66 (39%) running_loss=0.3888
+2026-09-18 21:03:33,148 INFO train epoch 147/200 batch 39/66 (59%) running_loss=0.3885
+2026-09-18 21:03:36,695 INFO train epoch 147/200 batch 52/66 (79%) running_loss=0.3848
+2026-09-18 21:03:40,240 INFO train epoch 147/200 batch 65/66 (98%) running_loss=0.3822
+2026-09-18 21:03:40,459 INFO train epoch 147/200 batch 66/66 (100%) running_loss=0.3821
+2026-09-18 21:03:42,975 INFO epoch 147/200 done: train_loss=0.3821 val_loss=0.2249 val_accuracy=0.9426 val_macro_f1=0.9210 val_macro_auc=0.9921 (checkpoint_metric=macro_auc)
+2026-09-18 21:03:47,004 INFO train epoch 148/200 batch 13/66 (20%) running_loss=0.3851
+2026-09-18 21:03:50,579 INFO train epoch 148/200 batch 26/66 (39%) running_loss=0.3831
+2026-09-18 21:03:54,155 INFO train epoch 148/200 batch 39/66 (59%) running_loss=0.3900
+2026-09-18 21:03:57,695 INFO train epoch 148/200 batch 52/66 (79%) running_loss=0.3895
+2026-09-18 21:04:01,241 INFO train epoch 148/200 batch 65/66 (98%) running_loss=0.3843
+2026-09-18 21:04:01,463 INFO train epoch 148/200 batch 66/66 (100%) running_loss=0.3841
+2026-09-18 21:04:03,985 INFO epoch 148/200 done: train_loss=0.3841 val_loss=0.2351 val_accuracy=0.9344 val_macro_f1=0.9148 val_macro_auc=0.9915 (checkpoint_metric=macro_auc)
+2026-09-18 21:04:08,036 INFO train epoch 149/200 batch 13/66 (20%) running_loss=0.3999
+2026-09-18 21:04:11,579 INFO train epoch 149/200 batch 26/66 (39%) running_loss=0.3779
+2026-09-18 21:04:15,116 INFO train epoch 149/200 batch 39/66 (59%) running_loss=0.3714
+2026-09-18 21:04:18,661 INFO train epoch 149/200 batch 52/66 (79%) running_loss=0.3747
+2026-09-18 21:04:22,198 INFO train epoch 149/200 batch 65/66 (98%) running_loss=0.3726
+2026-09-18 21:04:22,418 INFO train epoch 149/200 batch 66/66 (100%) running_loss=0.3721
+2026-09-18 21:04:24,937 INFO epoch 149/200 done: train_loss=0.3721 val_loss=0.2315 val_accuracy=0.9426 val_macro_f1=0.9235 val_macro_auc=0.9915 (checkpoint_metric=macro_auc)
+2026-09-18 21:04:29,002 INFO train epoch 150/200 batch 13/66 (20%) running_loss=0.3584
+2026-09-18 21:04:32,721 INFO train epoch 150/200 batch 26/66 (39%) running_loss=0.3597
+2026-09-18 21:04:36,284 INFO train epoch 150/200 batch 39/66 (59%) running_loss=0.3640
+2026-09-18 21:04:39,842 INFO train epoch 150/200 batch 52/66 (79%) running_loss=0.3703
+2026-09-18 21:04:43,393 INFO train epoch 150/200 batch 65/66 (98%) running_loss=0.3683
+2026-09-18 21:04:43,617 INFO train epoch 150/200 batch 66/66 (100%) running_loss=0.3689
+2026-09-18 21:04:46,138 INFO epoch 150/200 done: train_loss=0.3689 val_loss=0.2540 val_accuracy=0.9344 val_macro_f1=0.9120 val_macro_auc=0.9899 (checkpoint_metric=macro_auc)
+2026-09-18 21:04:50,119 INFO train epoch 151/200 batch 13/66 (20%) running_loss=0.3649
+2026-09-18 21:04:53,660 INFO train epoch 151/200 batch 26/66 (39%) running_loss=0.3769
+2026-09-18 21:04:57,199 INFO train epoch 151/200 batch 39/66 (59%) running_loss=0.3751
+2026-09-18 21:05:00,744 INFO train epoch 151/200 batch 52/66 (79%) running_loss=0.3760
+2026-09-18 21:05:04,279 INFO train epoch 151/200 batch 65/66 (98%) running_loss=0.3778
+2026-09-18 21:05:04,500 INFO train epoch 151/200 batch 66/66 (100%) running_loss=0.3808
+2026-09-18 21:05:07,017 INFO epoch 151/200 done: train_loss=0.3808 val_loss=0.2515 val_accuracy=0.9344 val_macro_f1=0.9145 val_macro_auc=0.9913 (checkpoint_metric=macro_auc)
+2026-09-18 21:05:11,052 INFO train epoch 152/200 batch 13/66 (20%) running_loss=0.3746
+2026-09-18 21:05:14,592 INFO train epoch 152/200 batch 26/66 (39%) running_loss=0.3779
+2026-09-18 21:05:18,137 INFO train epoch 152/200 batch 39/66 (59%) running_loss=0.3762
+2026-09-18 21:05:21,676 INFO train epoch 152/200 batch 52/66 (79%) running_loss=0.3721
+2026-09-18 21:05:25,376 INFO train epoch 152/200 batch 65/66 (98%) running_loss=0.3725
+2026-09-18 21:05:25,596 INFO train epoch 152/200 batch 66/66 (100%) running_loss=0.3732
+2026-09-18 21:05:28,113 INFO epoch 152/200 done: train_loss=0.3732 val_loss=0.2181 val_accuracy=0.9447 val_macro_f1=0.9252 val_macro_auc=0.9915 (checkpoint_metric=macro_auc)
+2026-09-18 21:05:32,071 INFO train epoch 153/200 batch 13/66 (20%) running_loss=0.3802
+2026-09-18 21:05:35,607 INFO train epoch 153/200 batch 26/66 (39%) running_loss=0.3696
+2026-09-18 21:05:39,174 INFO train epoch 153/200 batch 39/66 (59%) running_loss=0.3631
+2026-09-18 21:05:42,715 INFO train epoch 153/200 batch 52/66 (79%) running_loss=0.3634
+2026-09-18 21:05:46,239 INFO train epoch 153/200 batch 65/66 (98%) running_loss=0.3629
+2026-09-18 21:05:46,460 INFO train epoch 153/200 batch 66/66 (100%) running_loss=0.3624
+2026-09-18 21:05:48,999 INFO epoch 153/200 done: train_loss=0.3624 val_loss=0.2077 val_accuracy=0.9508 val_macro_f1=0.9323 val_macro_auc=0.9912 (checkpoint_metric=macro_auc)
+2026-09-18 21:05:53,034 INFO train epoch 154/200 batch 13/66 (20%) running_loss=0.3463
+2026-09-18 21:05:56,573 INFO train epoch 154/200 batch 26/66 (39%) running_loss=0.3578
+2026-09-18 21:06:00,121 INFO train epoch 154/200 batch 39/66 (59%) running_loss=0.3611
+2026-09-18 21:06:03,665 INFO train epoch 154/200 batch 52/66 (79%) running_loss=0.3632
+2026-09-18 21:06:07,219 INFO train epoch 154/200 batch 65/66 (98%) running_loss=0.3629
+2026-09-18 21:06:07,440 INFO train epoch 154/200 batch 66/66 (100%) running_loss=0.3647
+2026-09-18 21:06:09,963 INFO epoch 154/200 done: train_loss=0.3647 val_loss=0.2354 val_accuracy=0.9426 val_macro_f1=0.9218 val_macro_auc=0.9899 (checkpoint_metric=macro_auc)
+2026-09-18 21:06:13,989 INFO train epoch 155/200 batch 13/66 (20%) running_loss=0.3756
+2026-09-18 21:06:17,538 INFO train epoch 155/200 batch 26/66 (39%) running_loss=0.3695
+2026-09-18 21:06:21,086 INFO train epoch 155/200 batch 39/66 (59%) running_loss=0.3670
+2026-09-18 21:06:24,633 INFO train epoch 155/200 batch 52/66 (79%) running_loss=0.3643
+2026-09-18 21:06:28,168 INFO train epoch 155/200 batch 65/66 (98%) running_loss=0.3678
+2026-09-18 21:06:28,388 INFO train epoch 155/200 batch 66/66 (100%) running_loss=0.3673
+2026-09-18 21:06:30,911 INFO epoch 155/200 done: train_loss=0.3673 val_loss=0.2464 val_accuracy=0.9303 val_macro_f1=0.9086 val_macro_auc=0.9883 (checkpoint_metric=macro_auc)
+2026-09-18 21:06:34,892 INFO train epoch 156/200 batch 13/66 (20%) running_loss=0.3917
+2026-09-18 21:06:38,604 INFO train epoch 156/200 batch 26/66 (39%) running_loss=0.3788
+2026-09-18 21:06:42,150 INFO train epoch 156/200 batch 39/66 (59%) running_loss=0.3737
+2026-09-18 21:06:45,692 INFO train epoch 156/200 batch 52/66 (79%) running_loss=0.3739
+2026-09-18 21:06:49,222 INFO train epoch 156/200 batch 65/66 (98%) running_loss=0.3718
+2026-09-18 21:06:49,445 INFO train epoch 156/200 batch 66/66 (100%) running_loss=0.3715
+2026-09-18 21:06:51,969 INFO epoch 156/200 done: train_loss=0.3715 val_loss=0.2576 val_accuracy=0.9365 val_macro_f1=0.9163 val_macro_auc=0.9882 (checkpoint_metric=macro_auc)
+2026-09-18 21:06:55,990 INFO train epoch 157/200 batch 13/66 (20%) running_loss=0.3750
+2026-09-18 21:06:59,537 INFO train epoch 157/200 batch 26/66 (39%) running_loss=0.3772
+2026-09-18 21:07:03,083 INFO train epoch 157/200 batch 39/66 (59%) running_loss=0.3708
+2026-09-18 21:07:06,632 INFO train epoch 157/200 batch 52/66 (79%) running_loss=0.3700
+2026-09-18 21:07:10,163 INFO train epoch 157/200 batch 65/66 (98%) running_loss=0.3684
+2026-09-18 21:07:10,384 INFO train epoch 157/200 batch 66/66 (100%) running_loss=0.3679
+2026-09-18 21:07:12,900 INFO epoch 157/200 done: train_loss=0.3679 val_loss=0.2375 val_accuracy=0.9385 val_macro_f1=0.9177 val_macro_auc=0.9903 (checkpoint_metric=macro_auc)
+2026-09-18 21:07:16,919 INFO train epoch 158/200 batch 13/66 (20%) running_loss=0.3412
+2026-09-18 21:07:20,467 INFO train epoch 158/200 batch 26/66 (39%) running_loss=0.3468
+2026-09-18 21:07:24,011 INFO train epoch 158/200 batch 39/66 (59%) running_loss=0.3511
+2026-09-18 21:07:27,556 INFO train epoch 158/200 batch 52/66 (79%) running_loss=0.3577
+2026-09-18 21:07:31,102 INFO train epoch 158/200 batch 65/66 (98%) running_loss=0.3648
+2026-09-18 21:07:31,492 INFO train epoch 158/200 batch 66/66 (100%) running_loss=0.3654
+2026-09-18 21:07:33,999 INFO epoch 158/200 done: train_loss=0.3654 val_loss=0.2158 val_accuracy=0.9447 val_macro_f1=0.9237 val_macro_auc=0.9922 (checkpoint_metric=macro_auc)
+2026-09-18 21:07:38,038 INFO train epoch 159/200 batch 13/66 (20%) running_loss=0.3531
+2026-09-18 21:07:41,612 INFO train epoch 159/200 batch 26/66 (39%) running_loss=0.3674
+2026-09-18 21:07:45,165 INFO train epoch 159/200 batch 39/66 (59%) running_loss=0.3659
+2026-09-18 21:07:48,715 INFO train epoch 159/200 batch 52/66 (79%) running_loss=0.3631
+2026-09-18 21:07:52,258 INFO train epoch 159/200 batch 65/66 (98%) running_loss=0.3643
+2026-09-18 21:07:52,481 INFO train epoch 159/200 batch 66/66 (100%) running_loss=0.3638
+2026-09-18 21:07:55,016 INFO epoch 159/200 done: train_loss=0.3638 val_loss=0.2636 val_accuracy=0.9324 val_macro_f1=0.9106 val_macro_auc=0.9890 (checkpoint_metric=macro_auc)
+2026-09-18 21:07:59,038 INFO train epoch 160/200 batch 13/66 (20%) running_loss=0.3630
+2026-09-18 21:08:02,607 INFO train epoch 160/200 batch 26/66 (39%) running_loss=0.3649
+2026-09-18 21:08:06,183 INFO train epoch 160/200 batch 39/66 (59%) running_loss=0.3614
+2026-09-18 21:08:09,781 INFO train epoch 160/200 batch 52/66 (79%) running_loss=0.3630
+2026-09-18 21:08:13,310 INFO train epoch 160/200 batch 65/66 (98%) running_loss=0.3599
+2026-09-18 21:08:13,531 INFO train epoch 160/200 batch 66/66 (100%) running_loss=0.3595
+2026-09-18 21:08:16,047 INFO epoch 160/200 done: train_loss=0.3595 val_loss=0.2471 val_accuracy=0.9426 val_macro_f1=0.9218 val_macro_auc=0.9892 (checkpoint_metric=macro_auc)
+2026-09-18 21:08:20,083 INFO train epoch 161/200 batch 13/66 (20%) running_loss=0.3739
+2026-09-18 21:08:23,620 INFO train epoch 161/200 batch 26/66 (39%) running_loss=0.3684
+2026-09-18 21:08:27,158 INFO train epoch 161/200 batch 39/66 (59%) running_loss=0.3620
+2026-09-18 21:08:30,692 INFO train epoch 161/200 batch 52/66 (79%) running_loss=0.3588
+2026-09-18 21:08:34,241 INFO train epoch 161/200 batch 65/66 (98%) running_loss=0.3592
+2026-09-18 21:08:34,464 INFO train epoch 161/200 batch 66/66 (100%) running_loss=0.3588
+2026-09-18 21:08:36,981 INFO epoch 161/200 done: train_loss=0.3588 val_loss=0.2302 val_accuracy=0.9426 val_macro_f1=0.9228 val_macro_auc=0.9920 (checkpoint_metric=macro_auc)
+2026-09-18 21:08:41,030 INFO train epoch 162/200 batch 13/66 (20%) running_loss=0.3491
+2026-09-18 21:08:44,725 INFO train epoch 162/200 batch 26/66 (39%) running_loss=0.3531
+2026-09-18 21:08:48,269 INFO train epoch 162/200 batch 39/66 (59%) running_loss=0.3562
+2026-09-18 21:08:51,812 INFO train epoch 162/200 batch 52/66 (79%) running_loss=0.3597
+2026-09-18 21:08:55,368 INFO train epoch 162/200 batch 65/66 (98%) running_loss=0.3624
+2026-09-18 21:08:55,589 INFO train epoch 162/200 batch 66/66 (100%) running_loss=0.3621
+2026-09-18 21:08:58,119 INFO epoch 162/200 done: train_loss=0.3621 val_loss=0.2127 val_accuracy=0.9508 val_macro_f1=0.9310 val_macro_auc=0.9919 (checkpoint_metric=macro_auc)
+2026-09-18 21:09:02,105 INFO train epoch 163/200 batch 13/66 (20%) running_loss=0.3670
+2026-09-18 21:09:05,667 INFO train epoch 163/200 batch 26/66 (39%) running_loss=0.3595
+2026-09-18 21:09:09,230 INFO train epoch 163/200 batch 39/66 (59%) running_loss=0.3584
+2026-09-18 21:09:12,784 INFO train epoch 163/200 batch 52/66 (79%) running_loss=0.3558
+2026-09-18 21:09:16,331 INFO train epoch 163/200 batch 65/66 (98%) running_loss=0.3599
+2026-09-18 21:09:16,553 INFO train epoch 163/200 batch 66/66 (100%) running_loss=0.3596
+2026-09-18 21:09:19,069 INFO epoch 163/200 done: train_loss=0.3596 val_loss=0.2325 val_accuracy=0.9406 val_macro_f1=0.9198 val_macro_auc=0.9905 (checkpoint_metric=macro_auc)
+2026-09-18 21:09:23,111 INFO train epoch 164/200 batch 13/66 (20%) running_loss=0.3692
+2026-09-18 21:09:26,677 INFO train epoch 164/200 batch 26/66 (39%) running_loss=0.3642
+2026-09-18 21:09:30,236 INFO train epoch 164/200 batch 39/66 (59%) running_loss=0.3588
+2026-09-18 21:09:33,788 INFO train epoch 164/200 batch 52/66 (79%) running_loss=0.3603
+2026-09-18 21:09:37,497 INFO train epoch 164/200 batch 65/66 (98%) running_loss=0.3613
+2026-09-18 21:09:37,715 INFO train epoch 164/200 batch 66/66 (100%) running_loss=0.3616
+2026-09-18 21:09:40,257 INFO epoch 164/200 done: train_loss=0.3616 val_loss=0.2261 val_accuracy=0.9508 val_macro_f1=0.9312 val_macro_auc=0.9891 (checkpoint_metric=macro_auc)
+2026-09-18 21:09:44,283 INFO train epoch 165/200 batch 13/66 (20%) running_loss=0.3704
+2026-09-18 21:09:47,821 INFO train epoch 165/200 batch 26/66 (39%) running_loss=0.3628
+2026-09-18 21:09:51,364 INFO train epoch 165/200 batch 39/66 (59%) running_loss=0.3603
+2026-09-18 21:09:54,914 INFO train epoch 165/200 batch 52/66 (79%) running_loss=0.3650
+2026-09-18 21:09:58,460 INFO train epoch 165/200 batch 65/66 (98%) running_loss=0.3663
+2026-09-18 21:09:58,683 INFO train epoch 165/200 batch 66/66 (100%) running_loss=0.3659
+2026-09-18 21:10:01,213 INFO epoch 165/200 done: train_loss=0.3659 val_loss=0.2020 val_accuracy=0.9508 val_macro_f1=0.9318 val_macro_auc=0.9923 (checkpoint_metric=macro_auc)
+2026-09-18 21:10:05,212 INFO train epoch 166/200 batch 13/66 (20%) running_loss=0.3562
+2026-09-18 21:10:08,757 INFO train epoch 166/200 batch 26/66 (39%) running_loss=0.3617
+2026-09-18 21:10:12,281 INFO train epoch 166/200 batch 39/66 (59%) running_loss=0.3585
+2026-09-18 21:10:15,836 INFO train epoch 166/200 batch 52/66 (79%) running_loss=0.3577
+2026-09-18 21:10:19,382 INFO train epoch 166/200 batch 65/66 (98%) running_loss=0.3584
+2026-09-18 21:10:19,602 INFO train epoch 166/200 batch 66/66 (100%) running_loss=0.3585
+2026-09-18 21:10:22,123 INFO epoch 166/200 done: train_loss=0.3585 val_loss=0.2451 val_accuracy=0.9303 val_macro_f1=0.9080 val_macro_auc=0.9899 (checkpoint_metric=macro_auc)
+2026-09-18 21:10:26,153 INFO train epoch 167/200 batch 13/66 (20%) running_loss=0.3497
+2026-09-18 21:10:29,699 INFO train epoch 167/200 batch 26/66 (39%) running_loss=0.3533
+2026-09-18 21:10:33,263 INFO train epoch 167/200 batch 39/66 (59%) running_loss=0.3522
+2026-09-18 21:10:36,887 INFO train epoch 167/200 batch 52/66 (79%) running_loss=0.3539
+2026-09-18 21:10:40,423 INFO train epoch 167/200 batch 65/66 (98%) running_loss=0.3561
+2026-09-18 21:10:40,644 INFO train epoch 167/200 batch 66/66 (100%) running_loss=0.3560
+2026-09-18 21:10:43,149 INFO epoch 167/200 done: train_loss=0.3560 val_loss=0.2231 val_accuracy=0.9467 val_macro_f1=0.9272 val_macro_auc=0.9900 (checkpoint_metric=macro_auc)
+2026-09-18 21:10:47,151 INFO train epoch 168/200 batch 13/66 (20%) running_loss=0.3535
+2026-09-18 21:10:50,690 INFO train epoch 168/200 batch 26/66 (39%) running_loss=0.3617
+2026-09-18 21:10:54,243 INFO train epoch 168/200 batch 39/66 (59%) running_loss=0.3597
+2026-09-18 21:10:57,784 INFO train epoch 168/200 batch 52/66 (79%) running_loss=0.3551
+2026-09-18 21:11:01,324 INFO train epoch 168/200 batch 65/66 (98%) running_loss=0.3572
+2026-09-18 21:11:01,546 INFO train epoch 168/200 batch 66/66 (100%) running_loss=0.3577
+2026-09-18 21:11:04,069 INFO epoch 168/200 done: train_loss=0.3577 val_loss=0.2156 val_accuracy=0.9426 val_macro_f1=0.9209 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:11:08,097 INFO train epoch 169/200 batch 13/66 (20%) running_loss=0.3522
+2026-09-18 21:11:11,654 INFO train epoch 169/200 batch 26/66 (39%) running_loss=0.3560
+2026-09-18 21:11:15,201 INFO train epoch 169/200 batch 39/66 (59%) running_loss=0.3611
+2026-09-18 21:11:18,758 INFO train epoch 169/200 batch 52/66 (79%) running_loss=0.3578
+2026-09-18 21:11:22,301 INFO train epoch 169/200 batch 65/66 (98%) running_loss=0.3582
+2026-09-18 21:11:22,522 INFO train epoch 169/200 batch 66/66 (100%) running_loss=0.3577
+2026-09-18 21:11:25,053 INFO epoch 169/200 done: train_loss=0.3577 val_loss=0.2349 val_accuracy=0.9406 val_macro_f1=0.9200 val_macro_auc=0.9901 (checkpoint_metric=macro_auc)
+2026-09-18 21:11:29,087 INFO train epoch 170/200 batch 13/66 (20%) running_loss=0.3560
+2026-09-18 21:11:32,625 INFO train epoch 170/200 batch 26/66 (39%) running_loss=0.3555
+2026-09-18 21:11:36,176 INFO train epoch 170/200 batch 39/66 (59%) running_loss=0.3511
+2026-09-18 21:11:39,733 INFO train epoch 170/200 batch 52/66 (79%) running_loss=0.3508
+2026-09-18 21:11:43,427 INFO train epoch 170/200 batch 65/66 (98%) running_loss=0.3523
+2026-09-18 21:11:43,649 INFO train epoch 170/200 batch 66/66 (100%) running_loss=0.3521
+2026-09-18 21:11:46,174 INFO epoch 170/200 done: train_loss=0.3521 val_loss=0.2328 val_accuracy=0.9385 val_macro_f1=0.9175 val_macro_auc=0.9917 (checkpoint_metric=macro_auc)
+2026-09-18 21:11:50,265 INFO train epoch 171/200 batch 13/66 (20%) running_loss=0.3625
+2026-09-18 21:11:53,845 INFO train epoch 171/200 batch 26/66 (39%) running_loss=0.3579
+2026-09-18 21:11:57,382 INFO train epoch 171/200 batch 39/66 (59%) running_loss=0.3612
+2026-09-18 21:12:00,930 INFO train epoch 171/200 batch 52/66 (79%) running_loss=0.3611
+2026-09-18 21:12:04,476 INFO train epoch 171/200 batch 65/66 (98%) running_loss=0.3603
+2026-09-18 21:12:04,699 INFO train epoch 171/200 batch 66/66 (100%) running_loss=0.3609
+2026-09-18 21:12:07,219 INFO epoch 171/200 done: train_loss=0.3609 val_loss=0.2137 val_accuracy=0.9447 val_macro_f1=0.9240 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:12:11,263 INFO train epoch 172/200 batch 13/66 (20%) running_loss=0.3414
+2026-09-18 21:12:14,805 INFO train epoch 172/200 batch 26/66 (39%) running_loss=0.3507
+2026-09-18 21:12:18,349 INFO train epoch 172/200 batch 39/66 (59%) running_loss=0.3526
+2026-09-18 21:12:21,891 INFO train epoch 172/200 batch 52/66 (79%) running_loss=0.3544
+2026-09-18 21:12:25,426 INFO train epoch 172/200 batch 65/66 (98%) running_loss=0.3561
+2026-09-18 21:12:25,649 INFO train epoch 172/200 batch 66/66 (100%) running_loss=0.3561
+2026-09-18 21:12:28,182 INFO epoch 172/200 done: train_loss=0.3561 val_loss=0.2061 val_accuracy=0.9467 val_macro_f1=0.9268 val_macro_auc=0.9920 (checkpoint_metric=macro_auc)
+2026-09-18 21:12:32,218 INFO train epoch 173/200 batch 13/66 (20%) running_loss=0.3695
+2026-09-18 21:12:35,776 INFO train epoch 173/200 batch 26/66 (39%) running_loss=0.3640
+2026-09-18 21:12:39,410 INFO train epoch 173/200 batch 39/66 (59%) running_loss=0.3637
+2026-09-18 21:12:42,963 INFO train epoch 173/200 batch 52/66 (79%) running_loss=0.3602
+2026-09-18 21:12:46,514 INFO train epoch 173/200 batch 65/66 (98%) running_loss=0.3604
+2026-09-18 21:12:46,736 INFO train epoch 173/200 batch 66/66 (100%) running_loss=0.3601
+2026-09-18 21:12:49,274 INFO epoch 173/200 done: train_loss=0.3601 val_loss=0.2345 val_accuracy=0.9447 val_macro_f1=0.9258 val_macro_auc=0.9913 (checkpoint_metric=macro_auc)
+2026-09-18 21:12:53,291 INFO train epoch 174/200 batch 13/66 (20%) running_loss=0.3594
+2026-09-18 21:12:56,819 INFO train epoch 174/200 batch 26/66 (39%) running_loss=0.3488
+2026-09-18 21:13:00,378 INFO train epoch 174/200 batch 39/66 (59%) running_loss=0.3536
+2026-09-18 21:13:03,928 INFO train epoch 174/200 batch 52/66 (79%) running_loss=0.3550
+2026-09-18 21:13:07,472 INFO train epoch 174/200 batch 65/66 (98%) running_loss=0.3547
+2026-09-18 21:13:07,707 INFO train epoch 174/200 batch 66/66 (100%) running_loss=0.3543
+2026-09-18 21:13:10,232 INFO epoch 174/200 done: train_loss=0.3543 val_loss=0.2146 val_accuracy=0.9508 val_macro_f1=0.9312 val_macro_auc=0.9924 (checkpoint_metric=macro_auc)
+2026-09-18 21:13:14,267 INFO train epoch 175/200 batch 13/66 (20%) running_loss=0.3550
+2026-09-18 21:13:17,822 INFO train epoch 175/200 batch 26/66 (39%) running_loss=0.3512
+2026-09-18 21:13:21,371 INFO train epoch 175/200 batch 39/66 (59%) running_loss=0.3515
+2026-09-18 21:13:24,922 INFO train epoch 175/200 batch 52/66 (79%) running_loss=0.3522
+2026-09-18 21:13:28,466 INFO train epoch 175/200 batch 65/66 (98%) running_loss=0.3564
+2026-09-18 21:13:28,690 INFO train epoch 175/200 batch 66/66 (100%) running_loss=0.3559
+2026-09-18 21:13:31,213 INFO epoch 175/200 done: train_loss=0.3559 val_loss=0.2161 val_accuracy=0.9467 val_macro_f1=0.9271 val_macro_auc=0.9921 (checkpoint_metric=macro_auc)
+2026-09-18 21:13:35,264 INFO train epoch 176/200 batch 13/66 (20%) running_loss=0.3374
+2026-09-18 21:13:38,838 INFO train epoch 176/200 batch 26/66 (39%) running_loss=0.3442
+2026-09-18 21:13:42,417 INFO train epoch 176/200 batch 39/66 (59%) running_loss=0.3443
+2026-09-18 21:13:45,973 INFO train epoch 176/200 batch 52/66 (79%) running_loss=0.3454
+2026-09-18 21:13:49,660 INFO train epoch 176/200 batch 65/66 (98%) running_loss=0.3456
+2026-09-18 21:13:49,882 INFO train epoch 176/200 batch 66/66 (100%) running_loss=0.3457
+2026-09-18 21:13:52,408 INFO epoch 176/200 done: train_loss=0.3457 val_loss=0.2166 val_accuracy=0.9447 val_macro_f1=0.9251 val_macro_auc=0.9913 (checkpoint_metric=macro_auc)
+2026-09-18 21:13:56,446 INFO train epoch 177/200 batch 13/66 (20%) running_loss=0.3569
+2026-09-18 21:14:00,001 INFO train epoch 177/200 batch 26/66 (39%) running_loss=0.3701
+2026-09-18 21:14:03,542 INFO train epoch 177/200 batch 39/66 (59%) running_loss=0.3620
+2026-09-18 21:14:07,110 INFO train epoch 177/200 batch 52/66 (79%) running_loss=0.3644
+2026-09-18 21:14:10,651 INFO train epoch 177/200 batch 65/66 (98%) running_loss=0.3654
+2026-09-18 21:14:10,874 INFO train epoch 177/200 batch 66/66 (100%) running_loss=0.3650
+2026-09-18 21:14:13,398 INFO epoch 177/200 done: train_loss=0.3650 val_loss=0.2315 val_accuracy=0.9447 val_macro_f1=0.9251 val_macro_auc=0.9910 (checkpoint_metric=macro_auc)
+2026-09-18 21:14:17,384 INFO train epoch 178/200 batch 13/66 (20%) running_loss=0.3485
+2026-09-18 21:14:20,932 INFO train epoch 178/200 batch 26/66 (39%) running_loss=0.3506
+2026-09-18 21:14:24,488 INFO train epoch 178/200 batch 39/66 (59%) running_loss=0.3489
+2026-09-18 21:14:28,041 INFO train epoch 178/200 batch 52/66 (79%) running_loss=0.3580
+2026-09-18 21:14:31,572 INFO train epoch 178/200 batch 65/66 (98%) running_loss=0.3563
+2026-09-18 21:14:31,793 INFO train epoch 178/200 batch 66/66 (100%) running_loss=0.3564
+2026-09-18 21:14:34,312 INFO epoch 178/200 done: train_loss=0.3564 val_loss=0.2359 val_accuracy=0.9426 val_macro_f1=0.9233 val_macro_auc=0.9899 (checkpoint_metric=macro_auc)
+2026-09-18 21:14:38,281 INFO train epoch 179/200 batch 13/66 (20%) running_loss=0.3397
+2026-09-18 21:14:41,840 INFO train epoch 179/200 batch 26/66 (39%) running_loss=0.3515
+2026-09-18 21:14:45,468 INFO train epoch 179/200 batch 39/66 (59%) running_loss=0.3506
+2026-09-18 21:14:49,006 INFO train epoch 179/200 batch 52/66 (79%) running_loss=0.3523
+2026-09-18 21:14:52,558 INFO train epoch 179/200 batch 65/66 (98%) running_loss=0.3536
+2026-09-18 21:14:52,780 INFO train epoch 179/200 batch 66/66 (100%) running_loss=0.3536
+2026-09-18 21:14:55,320 INFO epoch 179/200 done: train_loss=0.3536 val_loss=0.2140 val_accuracy=0.9488 val_macro_f1=0.9302 val_macro_auc=0.9907 (checkpoint_metric=macro_auc)
+2026-09-18 21:14:59,373 INFO train epoch 180/200 batch 13/66 (20%) running_loss=0.3441
+2026-09-18 21:15:02,945 INFO train epoch 180/200 batch 26/66 (39%) running_loss=0.3494
+2026-09-18 21:15:06,495 INFO train epoch 180/200 batch 39/66 (59%) running_loss=0.3507
+2026-09-18 21:15:10,045 INFO train epoch 180/200 batch 52/66 (79%) running_loss=0.3481
+2026-09-18 21:15:13,592 INFO train epoch 180/200 batch 65/66 (98%) running_loss=0.3522
+2026-09-18 21:15:13,815 INFO train epoch 180/200 batch 66/66 (100%) running_loss=0.3528
+2026-09-18 21:15:16,329 INFO epoch 180/200 done: train_loss=0.3528 val_loss=0.2263 val_accuracy=0.9447 val_macro_f1=0.9257 val_macro_auc=0.9905 (checkpoint_metric=macro_auc)
+2026-09-18 21:15:20,288 INFO train epoch 181/200 batch 13/66 (20%) running_loss=0.3492
+2026-09-18 21:15:23,826 INFO train epoch 181/200 batch 26/66 (39%) running_loss=0.3574
+2026-09-18 21:15:27,401 INFO train epoch 181/200 batch 39/66 (59%) running_loss=0.3551
+2026-09-18 21:15:30,957 INFO train epoch 181/200 batch 52/66 (79%) running_loss=0.3537
+2026-09-18 21:15:34,492 INFO train epoch 181/200 batch 65/66 (98%) running_loss=0.3527
+2026-09-18 21:15:34,714 INFO train epoch 181/200 batch 66/66 (100%) running_loss=0.3532
+2026-09-18 21:15:37,247 INFO epoch 181/200 done: train_loss=0.3532 val_loss=0.2220 val_accuracy=0.9426 val_macro_f1=0.9224 val_macro_auc=0.9917 (checkpoint_metric=macro_auc)
+2026-09-18 21:15:41,277 INFO train epoch 182/200 batch 13/66 (20%) running_loss=0.3544
+2026-09-18 21:15:44,824 INFO train epoch 182/200 batch 26/66 (39%) running_loss=0.3468
+2026-09-18 21:15:48,388 INFO train epoch 182/200 batch 39/66 (59%) running_loss=0.3494
+2026-09-18 21:15:51,952 INFO train epoch 182/200 batch 52/66 (79%) running_loss=0.3459
+2026-09-18 21:15:55,653 INFO train epoch 182/200 batch 65/66 (98%) running_loss=0.3461
+2026-09-18 21:15:55,874 INFO train epoch 182/200 batch 66/66 (100%) running_loss=0.3473
+2026-09-18 21:15:58,392 INFO epoch 182/200 done: train_loss=0.3473 val_loss=0.2214 val_accuracy=0.9426 val_macro_f1=0.9224 val_macro_auc=0.9914 (checkpoint_metric=macro_auc)
+2026-09-18 21:16:02,413 INFO train epoch 183/200 batch 13/66 (20%) running_loss=0.3348
+2026-09-18 21:16:05,960 INFO train epoch 183/200 batch 26/66 (39%) running_loss=0.3466
+2026-09-18 21:16:09,501 INFO train epoch 183/200 batch 39/66 (59%) running_loss=0.3501
+2026-09-18 21:16:13,047 INFO train epoch 183/200 batch 52/66 (79%) running_loss=0.3499
+2026-09-18 21:16:16,580 INFO train epoch 183/200 batch 65/66 (98%) running_loss=0.3494
+2026-09-18 21:16:16,803 INFO train epoch 183/200 batch 66/66 (100%) running_loss=0.3494
+2026-09-18 21:16:19,329 INFO epoch 183/200 done: train_loss=0.3494 val_loss=0.2279 val_accuracy=0.9406 val_macro_f1=0.9200 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:16:23,345 INFO train epoch 184/200 batch 13/66 (20%) running_loss=0.3355
+2026-09-18 21:16:26,872 INFO train epoch 184/200 batch 26/66 (39%) running_loss=0.3365
+2026-09-18 21:16:30,399 INFO train epoch 184/200 batch 39/66 (59%) running_loss=0.3419
+2026-09-18 21:16:33,955 INFO train epoch 184/200 batch 52/66 (79%) running_loss=0.3441
+2026-09-18 21:16:37,496 INFO train epoch 184/200 batch 65/66 (98%) running_loss=0.3466
+2026-09-18 21:16:37,722 INFO train epoch 184/200 batch 66/66 (100%) running_loss=0.3467
+2026-09-18 21:16:40,244 INFO epoch 184/200 done: train_loss=0.3467 val_loss=0.2315 val_accuracy=0.9406 val_macro_f1=0.9200 val_macro_auc=0.9907 (checkpoint_metric=macro_auc)
+2026-09-18 21:16:44,292 INFO train epoch 185/200 batch 13/66 (20%) running_loss=0.3399
+2026-09-18 21:16:47,862 INFO train epoch 185/200 batch 26/66 (39%) running_loss=0.3454
+2026-09-18 21:16:51,530 INFO train epoch 185/200 batch 39/66 (59%) running_loss=0.3495
+2026-09-18 21:16:55,087 INFO train epoch 185/200 batch 52/66 (79%) running_loss=0.3504
+2026-09-18 21:16:58,643 INFO train epoch 185/200 batch 65/66 (98%) running_loss=0.3502
+2026-09-18 21:16:58,866 INFO train epoch 185/200 batch 66/66 (100%) running_loss=0.3500
+2026-09-18 21:17:01,376 INFO epoch 185/200 done: train_loss=0.3500 val_loss=0.2335 val_accuracy=0.9406 val_macro_f1=0.9200 val_macro_auc=0.9908 (checkpoint_metric=macro_auc)
+2026-09-18 21:17:05,400 INFO train epoch 186/200 batch 13/66 (20%) running_loss=0.3535
+2026-09-18 21:17:08,938 INFO train epoch 186/200 batch 26/66 (39%) running_loss=0.3575
+2026-09-18 21:17:12,478 INFO train epoch 186/200 batch 39/66 (59%) running_loss=0.3568
+2026-09-18 21:17:16,021 INFO train epoch 186/200 batch 52/66 (79%) running_loss=0.3554
+2026-09-18 21:17:19,549 INFO train epoch 186/200 batch 65/66 (98%) running_loss=0.3533
+2026-09-18 21:17:19,770 INFO train epoch 186/200 batch 66/66 (100%) running_loss=0.3530
+2026-09-18 21:17:22,287 INFO epoch 186/200 done: train_loss=0.3530 val_loss=0.2204 val_accuracy=0.9447 val_macro_f1=0.9245 val_macro_auc=0.9922 (checkpoint_metric=macro_auc)
+2026-09-18 21:17:26,328 INFO train epoch 187/200 batch 13/66 (20%) running_loss=0.3501
+2026-09-18 21:17:29,874 INFO train epoch 187/200 batch 26/66 (39%) running_loss=0.3549
+2026-09-18 21:17:33,420 INFO train epoch 187/200 batch 39/66 (59%) running_loss=0.3550
+2026-09-18 21:17:36,973 INFO train epoch 187/200 batch 52/66 (79%) running_loss=0.3565
+2026-09-18 21:17:40,526 INFO train epoch 187/200 batch 65/66 (98%) running_loss=0.3521
+2026-09-18 21:17:40,748 INFO train epoch 187/200 batch 66/66 (100%) running_loss=0.3522
+2026-09-18 21:17:43,259 INFO epoch 187/200 done: train_loss=0.3522 val_loss=0.2261 val_accuracy=0.9406 val_macro_f1=0.9200 val_macro_auc=0.9911 (checkpoint_metric=macro_auc)
+2026-09-18 21:17:47,311 INFO train epoch 188/200 batch 13/66 (20%) running_loss=0.3519
+2026-09-18 21:17:50,869 INFO train epoch 188/200 batch 26/66 (39%) running_loss=0.3591
+2026-09-18 21:17:54,415 INFO train epoch 188/200 batch 39/66 (59%) running_loss=0.3573
+2026-09-18 21:17:57,957 INFO train epoch 188/200 batch 52/66 (79%) running_loss=0.3539
+2026-09-18 21:18:01,667 INFO train epoch 188/200 batch 65/66 (98%) running_loss=0.3523
+2026-09-18 21:18:01,887 INFO train epoch 188/200 batch 66/66 (100%) running_loss=0.3518
+2026-09-18 21:18:04,428 INFO epoch 188/200 done: train_loss=0.3518 val_loss=0.2280 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9912 (checkpoint_metric=macro_auc)
+2026-09-18 21:18:08,442 INFO train epoch 189/200 batch 13/66 (20%) running_loss=0.3448
+2026-09-18 21:18:12,000 INFO train epoch 189/200 batch 26/66 (39%) running_loss=0.3408
+2026-09-18 21:18:15,548 INFO train epoch 189/200 batch 39/66 (59%) running_loss=0.3407
+2026-09-18 21:18:19,090 INFO train epoch 189/200 batch 52/66 (79%) running_loss=0.3485
+2026-09-18 21:18:22,630 INFO train epoch 189/200 batch 65/66 (98%) running_loss=0.3453
+2026-09-18 21:18:22,854 INFO train epoch 189/200 batch 66/66 (100%) running_loss=0.3451
+2026-09-18 21:18:25,366 INFO epoch 189/200 done: train_loss=0.3451 val_loss=0.2294 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:18:29,387 INFO train epoch 190/200 batch 13/66 (20%) running_loss=0.3376
+2026-09-18 21:18:32,933 INFO train epoch 190/200 batch 26/66 (39%) running_loss=0.3502
+2026-09-18 21:18:36,481 INFO train epoch 190/200 batch 39/66 (59%) running_loss=0.3526
+2026-09-18 21:18:40,047 INFO train epoch 190/200 batch 52/66 (79%) running_loss=0.3526
+2026-09-18 21:18:43,596 INFO train epoch 190/200 batch 65/66 (98%) running_loss=0.3506
+2026-09-18 21:18:43,820 INFO train epoch 190/200 batch 66/66 (100%) running_loss=0.3514
+2026-09-18 21:18:46,328 INFO epoch 190/200 done: train_loss=0.3514 val_loss=0.2189 val_accuracy=0.9467 val_macro_f1=0.9278 val_macro_auc=0.9916 (checkpoint_metric=macro_auc)
+2026-09-18 21:18:50,345 INFO train epoch 191/200 batch 13/66 (20%) running_loss=0.3535
+2026-09-18 21:18:53,898 INFO train epoch 191/200 batch 26/66 (39%) running_loss=0.3570
+2026-09-18 21:18:57,531 INFO train epoch 191/200 batch 39/66 (59%) running_loss=0.3502
+2026-09-18 21:19:01,089 INFO train epoch 191/200 batch 52/66 (79%) running_loss=0.3509
+2026-09-18 21:19:04,626 INFO train epoch 191/200 batch 65/66 (98%) running_loss=0.3513
+2026-09-18 21:19:04,847 INFO train epoch 191/200 batch 66/66 (100%) running_loss=0.3512
+2026-09-18 21:19:07,378 INFO epoch 191/200 done: train_loss=0.3512 val_loss=0.2389 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9906 (checkpoint_metric=macro_auc)
+2026-09-18 21:19:11,454 INFO train epoch 192/200 batch 13/66 (20%) running_loss=0.3628
+2026-09-18 21:19:15,013 INFO train epoch 192/200 batch 26/66 (39%) running_loss=0.3574
+2026-09-18 21:19:18,561 INFO train epoch 192/200 batch 39/66 (59%) running_loss=0.3570
+2026-09-18 21:19:22,106 INFO train epoch 192/200 batch 52/66 (79%) running_loss=0.3523
+2026-09-18 21:19:25,639 INFO train epoch 192/200 batch 65/66 (98%) running_loss=0.3543
+2026-09-18 21:19:25,860 INFO train epoch 192/200 batch 66/66 (100%) running_loss=0.3545
+2026-09-18 21:19:28,398 INFO epoch 192/200 done: train_loss=0.3545 val_loss=0.2305 val_accuracy=0.9426 val_macro_f1=0.9233 val_macro_auc=0.9904 (checkpoint_metric=macro_auc)
+2026-09-18 21:19:32,439 INFO train epoch 193/200 batch 13/66 (20%) running_loss=0.3484
+2026-09-18 21:19:35,974 INFO train epoch 193/200 batch 26/66 (39%) running_loss=0.3511
+2026-09-18 21:19:39,518 INFO train epoch 193/200 batch 39/66 (59%) running_loss=0.3514
+2026-09-18 21:19:43,067 INFO train epoch 193/200 batch 52/66 (79%) running_loss=0.3469
+2026-09-18 21:19:46,598 INFO train epoch 193/200 batch 65/66 (98%) running_loss=0.3508
+2026-09-18 21:19:46,820 INFO train epoch 193/200 batch 66/66 (100%) running_loss=0.3515
+2026-09-18 21:19:49,344 INFO epoch 193/200 done: train_loss=0.3515 val_loss=0.2377 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9908 (checkpoint_metric=macro_auc)
+2026-09-18 21:19:53,379 INFO train epoch 194/200 batch 13/66 (20%) running_loss=0.3537
+2026-09-18 21:19:56,941 INFO train epoch 194/200 batch 26/66 (39%) running_loss=0.3582
+2026-09-18 21:20:00,500 INFO train epoch 194/200 batch 39/66 (59%) running_loss=0.3519
+2026-09-18 21:20:04,045 INFO train epoch 194/200 batch 52/66 (79%) running_loss=0.3499
+2026-09-18 21:20:07,742 INFO train epoch 194/200 batch 65/66 (98%) running_loss=0.3476
+2026-09-18 21:20:07,964 INFO train epoch 194/200 batch 66/66 (100%) running_loss=0.3475
+2026-09-18 21:20:10,472 INFO epoch 194/200 done: train_loss=0.3475 val_loss=0.2265 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:20:14,528 INFO train epoch 195/200 batch 13/66 (20%) running_loss=0.3525
+2026-09-18 21:20:18,063 INFO train epoch 195/200 batch 26/66 (39%) running_loss=0.3467
+2026-09-18 21:20:21,611 INFO train epoch 195/200 batch 39/66 (59%) running_loss=0.3470
+2026-09-18 21:20:25,162 INFO train epoch 195/200 batch 52/66 (79%) running_loss=0.3466
+2026-09-18 21:20:28,703 INFO train epoch 195/200 batch 65/66 (98%) running_loss=0.3476
+2026-09-18 21:20:28,924 INFO train epoch 195/200 batch 66/66 (100%) running_loss=0.3482
+2026-09-18 21:20:31,455 INFO epoch 195/200 done: train_loss=0.3482 val_loss=0.2272 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9913 (checkpoint_metric=macro_auc)
+2026-09-18 21:20:35,472 INFO train epoch 196/200 batch 13/66 (20%) running_loss=0.3481
+2026-09-18 21:20:39,030 INFO train epoch 196/200 batch 26/66 (39%) running_loss=0.3392
+2026-09-18 21:20:42,572 INFO train epoch 196/200 batch 39/66 (59%) running_loss=0.3456
+2026-09-18 21:20:46,125 INFO train epoch 196/200 batch 52/66 (79%) running_loss=0.3473
+2026-09-18 21:20:49,659 INFO train epoch 196/200 batch 65/66 (98%) running_loss=0.3470
+2026-09-18 21:20:49,894 INFO train epoch 196/200 batch 66/66 (100%) running_loss=0.3472
+2026-09-18 21:20:52,403 INFO epoch 196/200 done: train_loss=0.3472 val_loss=0.2166 val_accuracy=0.9488 val_macro_f1=0.9302 val_macro_auc=0.9915 (checkpoint_metric=macro_auc)
+2026-09-18 21:20:56,434 INFO train epoch 197/200 batch 13/66 (20%) running_loss=0.3473
+2026-09-18 21:20:59,984 INFO train epoch 197/200 batch 26/66 (39%) running_loss=0.3424
+2026-09-18 21:21:03,605 INFO train epoch 197/200 batch 39/66 (59%) running_loss=0.3430
+2026-09-18 21:21:07,147 INFO train epoch 197/200 batch 52/66 (79%) running_loss=0.3426
+2026-09-18 21:21:10,679 INFO train epoch 197/200 batch 65/66 (98%) running_loss=0.3426
+2026-09-18 21:21:10,899 INFO train epoch 197/200 batch 66/66 (100%) running_loss=0.3425
+2026-09-18 21:21:13,433 INFO epoch 197/200 done: train_loss=0.3425 val_loss=0.2315 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9907 (checkpoint_metric=macro_auc)
+2026-09-18 21:21:17,448 INFO train epoch 198/200 batch 13/66 (20%) running_loss=0.3437
+2026-09-18 21:21:21,000 INFO train epoch 198/200 batch 26/66 (39%) running_loss=0.3559
+2026-09-18 21:21:24,555 INFO train epoch 198/200 batch 39/66 (59%) running_loss=0.3480
+2026-09-18 21:21:28,093 INFO train epoch 198/200 batch 52/66 (79%) running_loss=0.3503
+2026-09-18 21:21:31,631 INFO train epoch 198/200 batch 65/66 (98%) running_loss=0.3492
+2026-09-18 21:21:31,853 INFO train epoch 198/200 batch 66/66 (100%) running_loss=0.3494
+2026-09-18 21:21:34,386 INFO epoch 198/200 done: train_loss=0.3494 val_loss=0.2215 val_accuracy=0.9447 val_macro_f1=0.9254 val_macro_auc=0.9917 (checkpoint_metric=macro_auc)
+2026-09-18 21:21:38,437 INFO train epoch 199/200 batch 13/66 (20%) running_loss=0.3438
+2026-09-18 21:21:42,011 INFO train epoch 199/200 batch 26/66 (39%) running_loss=0.3497
+2026-09-18 21:21:45,578 INFO train epoch 199/200 batch 39/66 (59%) running_loss=0.3490
+2026-09-18 21:21:49,192 INFO train epoch 199/200 batch 52/66 (79%) running_loss=0.3459
+2026-09-18 21:21:52,768 INFO train epoch 199/200 batch 65/66 (98%) running_loss=0.3473
+2026-09-18 21:21:52,993 INFO train epoch 199/200 batch 66/66 (100%) running_loss=0.3473
+2026-09-18 21:21:55,524 INFO epoch 199/200 done: train_loss=0.3473 val_loss=0.2271 val_accuracy=0.9426 val_macro_f1=0.9227 val_macro_auc=0.9909 (checkpoint_metric=macro_auc)
+2026-09-18 21:21:59,562 INFO train epoch 200/200 batch 13/66 (20%) running_loss=0.3460
+2026-09-18 21:22:03,097 INFO train epoch 200/200 batch 26/66 (39%) running_loss=0.3480
+2026-09-18 21:22:06,642 INFO train epoch 200/200 batch 39/66 (59%) running_loss=0.3515
+2026-09-18 21:22:10,270 INFO train epoch 200/200 batch 52/66 (79%) running_loss=0.3528
+2026-09-18 21:22:13,803 INFO train epoch 200/200 batch 65/66 (98%) running_loss=0.3540
+2026-09-18 21:22:14,023 INFO train epoch 200/200 batch 66/66 (100%) running_loss=0.3536
+2026-09-18 21:22:16,541 INFO epoch 200/200 done: train_loss=0.3536 val_loss=0.2141 val_accuracy=0.9488 val_macro_f1=0.9302 val_macro_auc=0.9917 (checkpoint_metric=macro_auc)
+2026-09-18 21:22:16,785 INFO Training finished. Best epoch=140, smoothed macro_auc=0.9920 (window=3)
+2026-09-18 21:22:19,364 INFO Test set evaluated once: accuracy=0.8692 macro_f1=0.8640 macro_auc=0.9745
