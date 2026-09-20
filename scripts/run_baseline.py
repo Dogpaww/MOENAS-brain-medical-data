@@ -43,6 +43,10 @@ Same baseline under the fixed 2-op policy from the searched architecture's
 fixed-augmentation ablation: swap the policy flag for
 --fixed-augmentation-policy outputs/fixedda_run/augmentation_run/selected_legacy_policy.json
 (and use e.g. outputs/baseline_resnet18_96_fixed as the output directory).
+
+Constant-strength control (the sample-adaptive policy's operators and
+probabilities, each at one rank-averaged strength for every sample):
+--constant-strength-policy outputs/main1/augmentation_run/selected_policy.json
 """
 
 from __future__ import annotations
@@ -118,9 +122,15 @@ def main() -> None:
         "under the same fixed 2-op augmentation the searched architecture's fixed-policy ablation "
         "used. Mutually exclusive with --augmentation-policy.",
     )
+    augmentation.add_argument(
+        "--constant-strength-policy",
+        default=None,
+        help="Path to a selected_policy.json to apply with each operator held at its rank-averaged "
+        "strength for every sample (no per-sample adaptation): the control for sample-adaptivity.",
+    )
     args = parser.parse_args()
 
-    for policy_arg in (args.augmentation_policy, args.fixed_augmentation_policy):
+    for policy_arg in (args.augmentation_policy, args.fixed_augmentation_policy, args.constant_strength_policy):
         if policy_arg is not None and not Path(policy_arg).exists():
             raise SystemExit(f"{policy_arg} does not exist.")
 
@@ -152,6 +162,7 @@ def main() -> None:
         seed=args.seed,
         selected_policy_path=args.augmentation_policy,
         selected_legacy_policy_path=args.fixed_augmentation_policy,
+        constant_strength_policy_path=args.constant_strength_policy,
     )
 
     print(f"\nBest epoch: {result['best_epoch']}")

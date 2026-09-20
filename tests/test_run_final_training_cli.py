@@ -96,3 +96,21 @@ def test_missing_policy_file_fails_before_training(cli, dirs, tmp_path):
     with pytest.raises(SystemExit, match="does not exist"):
         module.main(_base_args(dirs) + ["--legacy-augmentation-output-dir", str(empty)])
     assert not calls
+
+
+def test_constant_strength_flag_passes_the_selected_policy(cli, dirs):
+    module, calls = cli
+    module.main(_base_args(dirs) + ["--constant-strength-output-dir", str(dirs["adaptive"])])
+    assert calls[0]["constant_strength_policy_path"] == dirs["adaptive"] / "selected_policy.json"
+    assert calls[0]["selected_policy_path"] is None
+    assert calls[0]["selected_legacy_policy_path"] is None
+
+
+def test_constant_strength_flag_is_exclusive_with_the_adaptive_flag(cli, dirs):
+    module, calls = cli
+    with pytest.raises(SystemExit):
+        module.main(
+            _base_args(dirs)
+            + ["--constant-strength-output-dir", str(dirs["adaptive"]), "--augmentation-output-dir", str(dirs["adaptive"])]
+        )
+    assert not calls

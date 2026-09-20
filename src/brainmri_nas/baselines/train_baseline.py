@@ -32,7 +32,15 @@ LossCache. Passing the searched run's `selected_legacy_policy.json` gives a
 baseline exactly the fixed policy the searched architecture's own ablation
 used, via the same `build_legacy_transform` as `final_training.py`. So each
 baseline can be trained three ways (none / fixed / sample-adaptive) against
-the same split. The two policy arguments are mutually exclusive.
+the same split.
+
+`constant_strength_policy_path` is the control for sample-adaptivity: the
+same selected_policy.json as the adaptive arm (same operators, order and
+probabilities), but each operator held at its rank-averaged strength for
+every sample (`rank_averaged_strengths`), with no LossCache. It differs from
+the adaptive arm only in whether strength depends on the sample's loss rank.
+
+At most one of the three policy arguments may be passed.
 
 Deliberately fine-tunes pretrained weights rather than training from
 scratch, and uses far fewer epochs and a lower learning rate than the NAS
@@ -67,6 +75,8 @@ from torchvision import datasets
 from brainmri_nas.augment.genotype import AugmentationPolicy
 from brainmri_nas.augment.legacy_transform_builder import build_legacy_transform
 from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
+from brainmri_nas.augment.search_space import rank_averaged_strengths
+from brainmri_nas.augment.transform_builder import build_constant_strength_transform
 from brainmri_nas.baselines.checkpoint import load_checkpoint, rebuild_model_from_checkpoint, save_checkpoint
 from brainmri_nas.baselines.registry import build_baseline_model
 from brainmri_nas.data.loader import build_dataset_bundle, is_real_image_file
@@ -127,11 +137,13 @@ def run_baseline_training(
     seed: int = 1,
     selected_policy_path: str | Path | None = None,
     selected_legacy_policy_path: str | Path | None = None,
+    constant_strength_policy_path: str | Path | None = None,
 ) -> dict:
-    if selected_policy_path is not None and selected_legacy_policy_path is not None:
+    policy_arguments = (selected_policy_path, selected_legacy_policy_path, constant_strength_policy_path)
+    if sum(p is not None for p in policy_arguments) > 1:
         raise ValueError(
-            "selected_policy_path and selected_legacy_policy_path are mutually exclusive "
-            "-- pass at most one, so which augmentation applies is never ambiguous."
+            "selected_policy_path, selected_legacy_policy_path and constant_strength_policy_path are mutually "
+            "exclusive -- pass at most one, so which augmentation applies is never ambiguous."
         )
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -189,18 +201,45 @@ def run_baseline_training(
         op1, op2 = selected_legacy_policy_record["ops"]
         legacy_ops = (op1, op2)
 
+    constant_strength_record = None
+    if constant_strength_policy_path is not None:
+        source_policy = load_json(constant_strength_policy_path)["policy"]
+        strengths = rank_averaged_strengths(AugmentationPolicy.from_dict(source_policy), len(bundle.train_indices))
+        constant_strength_record = {
+            "source_policy_path": str(constant_strength_policy_path),
+            "strengths": strengths,
+            "policy": source_policy,
+        }
+
     if policy is not None:
         logger.info("Augmentation policy: sample-adaptive, from %s", selected_policy_path)
     elif legacy_ops is not None:
         logger.info("Augmentation policy: legacy fixed ops %s, from %s", legacy_ops, selected_legacy_policy_path)
+    elif constant_strength_record is not None:
+        logger.info(
+            "Augmentation policy: constant strength (rank-averaged), from %s; strengths %s",
+            constant_strength_policy_path,
+            {name: round(value, 4) for name, value in constant_strength_record["strengths"].items()},
+        )
     else:
         logger.info("Augmentation policy: none (identity)")
 
+    fixed_transform = None
     if legacy_ops is not None:
+        fixed_transform = build_legacy_transform(legacy_ops[0], legacy_ops[1], image_size)
+    elif constant_strength_record is not None:
+        fixed_transform = build_constant_strength_transform(
+            AugmentationPolicy.from_dict(constant_strength_record["policy"]),
+            image_size,
+            constant_strength_record["strengths"],
+        )
+
+    if fixed_transform is not None:
+        # Same transform for every sample, so a plain loader and no LossCache.
         loss_cache = None
         fixed_dataset = datasets.ImageFolder(
             str(Path(config.dataset.data_root) / "Training"),
-            transform=build_legacy_transform(legacy_ops[0], legacy_ops[1], image_size),
+            transform=fixed_transform,
             is_valid_file=is_real_image_file,
         )
         train_loader = DataLoader(
@@ -394,7 +433,18 @@ def run_baseline_training(
             "selected_legacy_policy_path": (
                 str(selected_legacy_policy_path) if selected_legacy_policy_path is not None else None
             ),
-            "augmentation": "sample_adaptive" if policy is not None else ("fixed" if legacy_ops else "none"),
+            "constant_strength_policy_path": (
+                str(constant_strength_policy_path) if constant_strength_policy_path is not None else None
+            ),
+            "augmentation": (
+                "sample_adaptive"
+                if policy is not None
+                else "fixed"
+                if legacy_ops
+                else "constant_strength"
+                if constant_strength_record is not None
+                else "none"
+            ),
         },
         output_dir / "baseline_config.json",
     )
@@ -402,6 +452,8 @@ def run_baseline_training(
         dump_json(selected_policy_record, output_dir / "selected_policy.json")
     if selected_legacy_policy_record is not None:
         dump_json(selected_legacy_policy_record, output_dir / "selected_legacy_policy.json")
+    if constant_strength_record is not None:
+        dump_json(constant_strength_record, output_dir / "constant_strength_policy.json")
     dump_json(get_run_manifest(), output_dir / "run_manifest.json")
 
     return {

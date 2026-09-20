@@ -39,6 +39,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+import numpy as np
 from scipy.special import betainc
 
 from brainmri_nas.augment.genotype import AugmentationPolicy, AugmentationStep, ResolvedAugmentationStep
@@ -170,7 +171,29 @@ def sap_strength(strength_s: float, strength_a: float, loss_rank: float) -> floa
 def resolve_step(step: AugmentationStep, loss_rank: float) -> ResolvedAugmentationStep:
     """Evaluate one policy step's curve at a specific sample's loss rank,
     producing a concrete magnitude/parameters for that sample right now."""
-    lam = sap_strength(step.strength_s, step.strength_a, loss_rank)
+    return resolve_step_at_strength(step, sap_strength(step.strength_s, step.strength_a, loss_rank))
+
+
+def rank_averaged_strengths(policy: AugmentationPolicy, num_samples: int) -> dict[str, float]:
+    """Each step's strength averaged over the loss ranks a LossCache actually
+    assigns: `i / (num_samples - 1)` for i = 0..num_samples-1, one per
+    training sample. Holding every sample at this value keeps the policy's
+    average strength per operator while removing the per-sample variation --
+    the constant-strength control for sample-adaptivity."""
+    if num_samples < 2:
+        raise ValueError(f"num_samples must be at least 2, got {num_samples}.")
+    ranks = np.arange(num_samples, dtype=np.float64) / (num_samples - 1)
+    strengths = {}
+    for step in policy.ordered_steps():
+        p = step.strength_s * (1.0 - step.strength_a)
+        q = step.strength_s * step.strength_a
+        strengths[step.name] = float(np.clip(1.0 - betainc(p, q, ranks), 0.0, 1.0).mean())
+    return strengths
+
+
+def resolve_step_at_strength(step: AugmentationStep, lam: float) -> ResolvedAugmentationStep:
+    """Concrete magnitude/parameters for one step at strength `lam` in [0, 1],
+    however `lam` was decided (a sample's loss rank, or a constant)."""
     lam = min(max(lam, 0.0), 1.0)
     low, high = MAGNITUDE_RANGES[step.name]
     magnitude = low + lam * (high - low)

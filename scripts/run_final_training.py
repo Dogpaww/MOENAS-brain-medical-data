@@ -4,7 +4,10 @@
 Requires a prior `run_search.py` output directory. Augmentation is one of:
   - `--augmentation-output-dir`: sample-adaptive policy (selected_policy.json)
   - `--legacy-augmentation-output-dir`: fixed 2-op policy (selected_legacy_policy.json)
-  - neither: no augmentation (identity transform only)
+  - `--constant-strength-output-dir`: the sample-adaptive policy's operators and
+    probabilities (selected_policy.json), each at one rank-averaged strength
+    for every sample -- the control for sample-adaptivity
+  - none of these: no augmentation (identity transform only)
 
 `--seed` overrides `training.seed` from the config, so repeated runs differ
 only in the seed. The seed used is recorded in the output's training_config.yaml.
@@ -48,6 +51,11 @@ def main(argv: list[str] | None = None) -> None:
         default=None,
         help="Directory containing selected_legacy_policy.json (fixed 2-op policy).",
     )
+    augmentation.add_argument(
+        "--constant-strength-output-dir",
+        default=None,
+        help="Directory containing selected_policy.json, applied at constant rank-averaged strength.",
+    )
     parser.add_argument("--seed", type=int, default=None, help="Overrides training.seed from the config.")
     parser.add_argument("--output-dir", default="outputs/training_run")
     args = parser.parse_args(argv)
@@ -63,7 +71,10 @@ def main(argv: list[str] | None = None) -> None:
     selected_legacy_policy_path = None
     if args.legacy_augmentation_output_dir:
         selected_legacy_policy_path = Path(args.legacy_augmentation_output_dir) / "selected_legacy_policy.json"
-    for policy_path in (selected_policy_path, selected_legacy_policy_path):
+    constant_strength_policy_path = None
+    if args.constant_strength_output_dir:
+        constant_strength_policy_path = Path(args.constant_strength_output_dir) / "selected_policy.json"
+    for policy_path in (selected_policy_path, selected_legacy_policy_path, constant_strength_policy_path):
         if policy_path is not None and not policy_path.exists():
             raise SystemExit(f"{policy_path} does not exist.")
 
@@ -73,6 +84,7 @@ def main(argv: list[str] | None = None) -> None:
         split_indices_path=search_output_dir / "split_indices.json",
         selected_policy_path=selected_policy_path,
         selected_legacy_policy_path=selected_legacy_policy_path,
+        constant_strength_policy_path=constant_strength_policy_path,
         output_dir=args.output_dir,
     )
     print(f"Best epoch: {result['best_epoch']}")

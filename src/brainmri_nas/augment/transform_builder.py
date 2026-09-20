@@ -15,7 +15,7 @@ from __future__ import annotations
 from torchvision import transforms
 
 from brainmri_nas.augment.genotype import AugmentationPolicy, ResolvedAugmentationStep
-from brainmri_nas.augment.search_space import TENSOR_SPACE_OPS, resolve_step
+from brainmri_nas.augment.search_space import TENSOR_SPACE_OPS, resolve_step, resolve_step_at_strength
 from brainmri_nas.data.transforms import build_train_transform
 
 
@@ -50,18 +50,31 @@ def build_transform_step(step: ResolvedAugmentationStep, image_size: int):
     return transforms.RandomApply([base_op], p=step.probability)
 
 
-def build_sample_adaptive_transform(
-    policy: AugmentationPolicy, image_size: int, loss_rank: float
-) -> transforms.Compose:
+def _assemble(resolved_steps: list[ResolvedAugmentationStep], image_size: int) -> transforms.Compose:
     pil_ops = []
     tensor_ops = []
-
-    for step in policy.ordered_steps():
-        resolved = resolve_step(step, loss_rank)
+    for resolved in resolved_steps:
         transform = build_transform_step(resolved, image_size)
         if resolved.name in TENSOR_SPACE_OPS:
             tensor_ops.append(transform)
         else:
             pil_ops.append(transform)
-
     return build_train_transform(image_size, pil_augmentation_ops=pil_ops, tensor_augmentation_ops=tensor_ops)
+
+
+def build_sample_adaptive_transform(
+    policy: AugmentationPolicy, image_size: int, loss_rank: float
+) -> transforms.Compose:
+    return _assemble([resolve_step(step, loss_rank) for step in policy.ordered_steps()], image_size)
+
+
+def build_constant_strength_transform(
+    policy: AugmentationPolicy, image_size: int, strengths: dict[str, float]
+) -> transforms.Compose:
+    """The same operators, order and probabilities as `policy`, each at one
+    fixed strength for every sample (`strengths[name]`, e.g. from
+    `rank_averaged_strengths`) instead of a strength read off the sample's
+    loss rank. One transform serves the whole dataset, so no LossCache."""
+    return _assemble(
+        [resolve_step_at_strength(step, strengths[step.name]) for step in policy.ordered_steps()], image_size
+    )
