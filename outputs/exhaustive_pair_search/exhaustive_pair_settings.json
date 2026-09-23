@@ -1,0 +1,98 @@
+{
+  "pairs": [
+    [
+      "rotation",
+      "affine_translation"
+    ],
+    [
+      "rotation",
+      "random_resized_crop"
+    ],
+    [
+      "rotation",
+      "brightness"
+    ],
+    [
+      "rotation",
+      "contrast"
+    ],
+    [
+      "rotation",
+      "horizontal_flip"
+    ],
+    [
+      "rotation",
+      "random_erasing"
+    ],
+    [
+      "affine_translation",
+      "random_resized_crop"
+    ],
+    [
+      "affine_translation",
+      "brightness"
+    ],
+    [
+      "affine_translation",
+      "contrast"
+    ],
+    [
+      "affine_translation",
+      "horizontal_flip"
+    ],
+    [
+      "affine_translation",
+      "random_erasing"
+    ],
+    [
+      "random_resized_crop",
+      "brightness"
+    ],
+    [
+      "random_resized_crop",
+      "contrast"
+    ],
+    [
+      "random_resized_crop",
+      "horizontal_flip"
+    ],
+    [
+      "random_resized_crop",
+      "random_erasing"
+    ],
+    [
+      "brightness",
+      "contrast"
+    ],
+    [
+      "brightness",
+      "horizontal_flip"
+    ],
+    [
+      "brightness",
+      "random_erasing"
+    ],
+    [
+      "contrast",
+      "horizontal_flip"
+    ],
+    [
+      "contrast",
+      "random_erasing"
+    ],
+    [
+      "horizontal_flip",
+      "random_erasing"
+    ]
+  ],
+  "repeats": 3,
+  "base_seed": 1,
+  "trial_epochs": 10,
+  "learning_rate": 0.025,
+  "weight_decay": 0.0003,
+  "momentum": 0.9,
+  "image_size": 96,
+  "batch_size": 32,
+  "selected_architecture_path": "outputs/main1/search_run/selected_architecture.json",
+  "split_indices_path": "outputs/main1/search_run/split_indices.json"
+}
