@@ -1,0 +1,18 @@
+{
+  "model_name": "efficientnet_v2_m",
+  "image_size": 96,
+  "epochs": 100,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0007,
+  "momentum": 0.9,
+  "optimizer_name": "sgd",
+  "label_smoothing": 0.1,
+  "grad_clip_norm": 5.0,
+  "checkpoint_metric": "macro_auc",
+  "seed": 1,
+  "split_indices_path": "outputs/baseline_efficientnet_v2_m_96_constant_ep100_s1/split_indices.json",
+  "selected_policy_path": null,
+  "selected_legacy_policy_path": null,
+  "constant_strength_policy_path": "outputs/main1/augmentation_run/selected_policy.json",
+  "augmentation": "constant_strength"
+}

@@ -1,0 +1,65 @@
+{
+  "source_policy_path": "outputs/main1/augmentation_run/selected_policy.json",
+  "strengths": {
+    "rotation": 0.06754511036099006,
+    "affine_translation": 0.2255812642856229,
+    "random_resized_crop": 0.5160012219702587,
+    "brightness": 0.41948646618455415,
+    "contrast": 0.1229996816677401,
+    "horizontal_flip": 0.5365802949193855,
+    "random_erasing": 0.18278143069893055
+  },
+  "policy": {
+    "steps": [
+      {
+        "name": "rotation",
+        "order": 0,
+        "probability": 0.2804087577056312,
+        "strength_s": 9.340754286713327,
+        "strength_a": 0.9326634789384513
+      },
+      {
+        "name": "affine_translation",
+        "order": 1,
+        "probability": 0.9616571927021296,
+        "strength_s": 28.15657853489706,
+        "strength_a": 0.7745493491059594
+      },
+      {
+        "name": "random_resized_crop",
+        "order": 2,
+        "probability": 0.9636708718813001,
+        "strength_s": 2.0000905621570784,
+        "strength_a": 0.4839911489454117
+      },
+      {
+        "name": "brightness",
+        "order": 3,
+        "probability": 0.8947158613014576,
+        "strength_s": 7.005414114514368,
+        "strength_a": 0.5805518553450915
+      },
+      {
+        "name": "contrast",
+        "order": 4,
+        "probability": 0.024490677468872523,
+        "strength_s": 22.22899217462534,
+        "strength_a": 0.8771797568432604
+      },
+      {
+        "name": "horizontal_flip",
+        "order": 5,
+        "probability": 0.8268253287298958,
+        "strength_s": 59.02561647751461,
+        "strength_a": 0.463402294183461
+      },
+      {
+        "name": "random_erasing",
+        "order": 6,
+        "probability": 0.06234957908752602,
+        "strength_s": 19.17151073113147,
+        "strength_a": 0.8173695538652215
+      }
+    ]
+  }
+}
