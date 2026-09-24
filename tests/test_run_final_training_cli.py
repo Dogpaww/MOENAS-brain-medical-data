@@ -114,3 +114,24 @@ def test_constant_strength_flag_is_exclusive_with_the_adaptive_flag(cli, dirs):
             + ["--constant-strength-output-dir", str(dirs["adaptive"]), "--augmentation-output-dir", str(dirs["adaptive"])]
         )
     assert not calls
+
+
+def test_magnitude_bounds_flag_is_passed_through(cli, dirs, tmp_path):
+    module, calls = cli
+    bounds = tmp_path / "bounds.json"
+    bounds.write_text(json.dumps({"rotation": [0.0, 45.0]}))
+    module.main(_base_args(dirs) + ["--magnitude-bounds", str(bounds)])
+    assert calls[0]["magnitude_bounds_path"] == str(bounds)
+
+
+def test_missing_magnitude_bounds_file_fails_before_training(cli, dirs, tmp_path):
+    module, calls = cli
+    with pytest.raises(SystemExit, match="does not exist"):
+        module.main(_base_args(dirs) + ["--magnitude-bounds", str(tmp_path / "nope.json")])
+    assert not calls
+
+
+def test_bounds_default_to_none_when_not_given(cli, dirs):
+    module, calls = cli
+    module.main(_base_args(dirs))
+    assert calls[0]["magnitude_bounds_path"] is None

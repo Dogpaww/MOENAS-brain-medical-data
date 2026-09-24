@@ -35,11 +35,13 @@ class SampleAdaptiveDataset(Dataset):
         image_size: int,
         policy: AugmentationPolicy,
         loss_cache: LossCache,
+        bounds: dict[str, tuple[float, float]] | None = None,
     ):
         self.base_dataset = base_dataset
         self.image_size = image_size
         self.policy = policy
         self.loss_cache = loss_cache
+        self.bounds = bounds
 
     def __len__(self) -> int:
         return len(self.base_dataset)
@@ -47,7 +49,7 @@ class SampleAdaptiveDataset(Dataset):
     def __getitem__(self, index: int):
         img, label = self.base_dataset[index]
         loss_rank = float(self.loss_cache.get_loss_ranks()[index])
-        transform = build_sample_adaptive_transform(self.policy, self.image_size, loss_rank)
+        transform = build_sample_adaptive_transform(self.policy, self.image_size, loss_rank, self.bounds)
         return transform(img), label, index
 
 
@@ -60,8 +62,11 @@ def build_sample_adaptive_loader(
     policy: AugmentationPolicy,
     loss_cache: LossCache,
     num_workers: int = 0,
+    bounds: dict[str, tuple[float, float]] | None = None,
 ) -> DataLoader:
     raw_dataset = datasets.ImageFolder(str(train_dir), transform=None, is_valid_file=is_real_image_file)
     subset = Subset(raw_dataset, train_indices)
-    adaptive_dataset = SampleAdaptiveDataset(subset, image_size=image_size, policy=policy, loss_cache=loss_cache)
+    adaptive_dataset = SampleAdaptiveDataset(
+        subset, image_size=image_size, policy=policy, loss_cache=loss_cache, bounds=bounds
+    )
     return DataLoader(adaptive_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)

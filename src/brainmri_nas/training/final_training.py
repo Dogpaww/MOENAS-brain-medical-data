@@ -37,7 +37,7 @@ from brainmri_nas.augment.genotype import AugmentationPolicy
 from brainmri_nas.augment.legacy_search_space import legacy_steps
 from brainmri_nas.augment.legacy_transform_builder import build_legacy_transform
 from brainmri_nas.augment.sample_adaptive_dataset import build_sample_adaptive_loader
-from brainmri_nas.augment.search_space import rank_averaged_strengths
+from brainmri_nas.augment.search_space import rank_averaged_strengths, resolve_bounds
 from brainmri_nas.augment.transform_builder import build_constant_strength_transform
 from brainmri_nas.data.loader import build_dataset_bundle, is_real_image_file
 from brainmri_nas.data.transforms import build_train_transform
@@ -95,6 +95,7 @@ def _build_train_loader(
     loss_cache: LossCache | None,
     num_workers: int,
     fixed_transform: transforms.Compose | None = None,
+    bounds: dict[str, tuple[float, float]] | None = None,
 ) -> DataLoader:
     if policy is not None:
         return build_sample_adaptive_loader(
@@ -105,6 +106,7 @@ def _build_train_loader(
             policy=policy,
             loss_cache=loss_cache,
             num_workers=num_workers,
+            bounds=bounds,
         )
     # fixed_transform (branch: fixed_da) is the legacy 2-op path: same plain
     # ImageFolder+DataLoader shape as the no-augmentation identity path below,
@@ -124,6 +126,7 @@ def run_final_training(
     selected_policy_path: str | Path | None = None,
     selected_legacy_policy_path: str | Path | None = None,
     constant_strength_policy_path: str | Path | None = None,
+    magnitude_bounds_path: str | Path | None = None,
 ) -> dict:
     policy_arguments = (selected_policy_path, selected_legacy_policy_path, constant_strength_policy_path)
     if sum(p is not None for p in policy_arguments) > 1:
@@ -217,6 +220,14 @@ def run_final_training(
         else None
     )
 
+    # Per-run operator bounds (defaults in MAGNITUDE_RANGES). Widening them
+    # widens the gap between what an easy and a hard sample receives, which is
+    # what a sample-adaptivity study varies.
+    bounds_overrides = load_json(magnitude_bounds_path) if magnitude_bounds_path is not None else None
+    bounds = resolve_bounds(bounds_overrides)
+    if bounds_overrides is not None:
+        logger.info("Magnitude bounds from %s: %s", magnitude_bounds_path, bounds_overrides)
+
     constant_strength_record = None
     if constant_strength_policy_path is not None:
         source_policy = load_json(constant_strength_policy_path)["policy"]
@@ -236,6 +247,7 @@ def run_final_training(
             AugmentationPolicy.from_dict(constant_strength_record["policy"]),
             config.dataset.image_size,
             constant_strength_record["strengths"],
+            bounds,
         )
 
     # Checkpoint metadata stays schema-compatible either way: legacy_steps()
@@ -262,6 +274,7 @@ def run_final_training(
         loss_cache=loss_cache,
         num_workers=config.dataset.num_workers,
         fixed_transform=fixed_transform,
+        bounds=bounds,
     )
 
     optimizer, scheduler = build_optimizer_and_scheduler(
@@ -424,6 +437,12 @@ def run_final_training(
         dump_json(selected_legacy_policy_record, output_dir / "selected_legacy_policy.json")
     if constant_strength_record is not None:
         dump_json(constant_strength_record, output_dir / "constant_strength_policy.json")
+    # Always recorded, defaults included, so a run says which bounds produced it.
+    dump_json(
+        {"source": str(magnitude_bounds_path) if magnitude_bounds_path is not None else "defaults",
+         "bounds": {name: list(value) for name, value in bounds.items()}},
+        output_dir / "magnitude_bounds.json",
+    )
     dump_json(get_run_manifest(), output_dir / "run_manifest.json")
 
     return {

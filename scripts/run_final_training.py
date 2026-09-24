@@ -57,6 +57,12 @@ def main(argv: list[str] | None = None) -> None:
         help="Directory containing selected_policy.json, applied at constant rank-averaged strength.",
     )
     parser.add_argument("--seed", type=int, default=None, help="Overrides training.seed from the config.")
+    parser.add_argument(
+        "--magnitude-bounds",
+        default=None,
+        help="JSON file of per-operator magnitude bounds, e.g. configs/bounds_wide.json. Omit for the MRI-safe "
+        "defaults in search_space.MAGNITUDE_RANGES. The bounds used are recorded in magnitude_bounds.json.",
+    )
     parser.add_argument("--output-dir", default="outputs/training_run")
     args = parser.parse_args(argv)
 
@@ -77,6 +83,8 @@ def main(argv: list[str] | None = None) -> None:
     for policy_path in (selected_policy_path, selected_legacy_policy_path, constant_strength_policy_path):
         if policy_path is not None and not policy_path.exists():
             raise SystemExit(f"{policy_path} does not exist.")
+    if args.magnitude_bounds is not None and not Path(args.magnitude_bounds).exists():
+        raise SystemExit(f"{args.magnitude_bounds} does not exist.")
 
     result = run_final_training(
         config,
@@ -85,6 +93,7 @@ def main(argv: list[str] | None = None) -> None:
         selected_policy_path=selected_policy_path,
         selected_legacy_policy_path=selected_legacy_policy_path,
         constant_strength_policy_path=constant_strength_policy_path,
+        magnitude_bounds_path=args.magnitude_bounds,
         output_dir=args.output_dir,
     )
     print(f"Best epoch: {result['best_epoch']}")

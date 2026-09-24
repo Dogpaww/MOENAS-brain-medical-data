@@ -168,10 +168,33 @@ def sap_strength(strength_s: float, strength_a: float, loss_rank: float) -> floa
     return float(1.0 - betainc(p, q, loss_rank))
 
 
-def resolve_step(step: AugmentationStep, loss_rank: float) -> ResolvedAugmentationStep:
+def resolve_bounds(overrides: dict[str, Sequence[float]] | None) -> dict[str, tuple[float, float]]:
+    """`MAGNITUDE_RANGES` with per-operator overrides applied.
+
+    The defaults are deliberately conservative for MRI. Widening them changes
+    how much the strength curve can actually vary between an easy and a hard
+    sample, which is what a sample-adaptivity study needs to vary, so bounds
+    are a per-run input rather than a constant. Validated here so a typo in a
+    bounds file fails before training rather than silently training on the
+    defaults.
+    """
+    bounds = dict(MAGNITUDE_RANGES)
+    for name, value in (overrides or {}).items():
+        if name not in MAGNITUDE_RANGES:
+            raise ValueError(f"Unknown augmentation operation {name!r}. Expected one of {sorted(MAGNITUDE_RANGES)}.")
+        low, high = (float(v) for v in value)
+        if low < 0.0 or high < low:
+            raise ValueError(f"Bounds for {name!r} must satisfy 0 <= low <= high, got ({low}, {high}).")
+        bounds[name] = (low, high)
+    return bounds
+
+
+def resolve_step(
+    step: AugmentationStep, loss_rank: float, bounds: dict[str, tuple[float, float]] | None = None
+) -> ResolvedAugmentationStep:
     """Evaluate one policy step's curve at a specific sample's loss rank,
     producing a concrete magnitude/parameters for that sample right now."""
-    return resolve_step_at_strength(step, sap_strength(step.strength_s, step.strength_a, loss_rank))
+    return resolve_step_at_strength(step, sap_strength(step.strength_s, step.strength_a, loss_rank), bounds)
 
 
 def rank_averaged_strengths(policy: AugmentationPolicy, num_samples: int) -> dict[str, float]:
@@ -191,11 +214,14 @@ def rank_averaged_strengths(policy: AugmentationPolicy, num_samples: int) -> dic
     return strengths
 
 
-def resolve_step_at_strength(step: AugmentationStep, lam: float) -> ResolvedAugmentationStep:
+def resolve_step_at_strength(
+    step: AugmentationStep, lam: float, bounds: dict[str, tuple[float, float]] | None = None
+) -> ResolvedAugmentationStep:
     """Concrete magnitude/parameters for one step at strength `lam` in [0, 1],
-    however `lam` was decided (a sample's loss rank, or a constant)."""
+    however `lam` was decided (a sample's loss rank, or a constant).
+    `bounds` defaults to `MAGNITUDE_RANGES`."""
     lam = min(max(lam, 0.0), 1.0)
-    low, high = MAGNITUDE_RANGES[step.name]
+    low, high = (bounds or MAGNITUDE_RANGES)[step.name]
     magnitude = low + lam * (high - low)
 
     return ResolvedAugmentationStep(

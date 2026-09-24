@@ -63,18 +63,24 @@ def _assemble(resolved_steps: list[ResolvedAugmentationStep], image_size: int) -
 
 
 def build_sample_adaptive_transform(
-    policy: AugmentationPolicy, image_size: int, loss_rank: float
+    policy: AugmentationPolicy,
+    image_size: int,
+    loss_rank: float,
+    bounds: dict[str, tuple[float, float]] | None = None,
 ) -> transforms.Compose:
-    return _assemble([resolve_step(step, loss_rank) for step in policy.ordered_steps()], image_size)
+    return _assemble([resolve_step(step, loss_rank, bounds) for step in policy.ordered_steps()], image_size)
 
 
 def build_constant_strength_transform(
-    policy: AugmentationPolicy, image_size: int, strengths: dict[str, float]
+    policy: AugmentationPolicy,
+    image_size: int,
+    strengths: dict[str, float],
+    bounds: dict[str, tuple[float, float]] | None = None,
 ) -> transforms.Compose:
     """The same operators, order and probabilities as `policy`, each at one
     fixed strength for every sample (`strengths[name]`, e.g. from
     `rank_averaged_strengths`) instead of a strength read off the sample's
     loss rank. One transform serves the whole dataset, so no LossCache."""
     return _assemble(
-        [resolve_step_at_strength(step, strengths[step.name]) for step in policy.ordered_steps()], image_size
+        [resolve_step_at_strength(step, strengths[step.name], bounds) for step in policy.ordered_steps()], image_size
     )
