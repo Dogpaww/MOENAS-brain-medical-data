@@ -1,0 +1,79 @@
+# FETAL_PLANES_DB under the dataset's own published train/test split
+# (DOI 10.5281/zenodo.3904280, CC BY 4.0). Build it with:
+#   python scripts/prepare_fetal_planes.py --source data/fetal_raw/extracted \
+#       --output data/fetal_planes_published --use-published-split
+#
+# Use this for a run meant to sit alongside published numbers on this
+# benchmark. It is NOT the counterpart to the figshare chapter: the published
+# column puts 42.5% of images in test against our 15%, so training sees about
+# a third less data. configs/fetal_planes.yaml is the protocol-matched one.
+dataset:
+  data_root: data/fetal_planes_published
+  image_size: 96
+  input_channels: 3
+  # Documentation only -- the pipeline counts the class folders it finds
+  # (data/loader.py), so this field is not read anywhere.
+  num_classes: 6
+  validation_fraction: 0.20
+  split_seed: 42
+  batch_size: 32
+  num_workers: 4
+  # 1792 patients, so validation is ~300 patients after prepare_fetal_planes.py
+  # holds 15% of patients out as Testing/. A patient contributes images to
+  # several planes here, so group-aware splitting is what keeps a patient's
+  # images from landing on both sides of the train/val boundary.
+  group_aware_split: true
+
+search_space:
+  num_intermediate_nodes: 4
+  edges_per_node: 2
+  number_of_cells_min: 3
+  number_of_cells_max: 11
+  initial_channels_min: 8
+  initial_channels_max: 48
+  drop_path_probability: 0.2
+  stem_type: cifar
+
+proxies:
+  zico_batch_size: 4
+  zico_num_batches: 4
+  proxy_sample_seed: 123
+
+nsga2:
+  population_size: 20
+  num_generations: 10
+  seed: 1
+  crossover_prob: 0.9
+  mutation_prob: null
+  device: cuda
+  # Matches the weights the reported figshare runs actually used.
+  topsis_weights: [0.35, 0.35, 0.30]
+
+augmentation:
+  population_size: 5
+  num_generations: 5
+  trial_epochs: 10
+  learning_rate: 0.025
+  weight_decay: 0.0003
+  momentum: 0.9
+  seed: 1
+  mutation_prob: null
+  device: cuda
+
+training:
+  physical_batch_size: 32
+  gradient_accumulation_steps: 1
+  # Kept at 200 for comparability with figshare, though an epoch here covers
+  # ~4x as many images. Let scripts/check_convergence.py decide whether that
+  # is more than needed, rather than guessing a smaller number up front.
+  final_epochs: 200
+  learning_rate: 0.025
+  weight_decay: 0.0007
+  momentum: 0.9
+  grad_clip_norm: 5.0
+  precision: amp
+  checkpoint_metric: macro_auc
+  classifier_dropout_probability: 0.3
+  label_smoothing: 0.1
+  seed: 1
+  device: auto
