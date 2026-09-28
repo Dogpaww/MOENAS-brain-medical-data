@@ -32,9 +32,15 @@ verify = _load("verify_fetal_planes")
 PLANES = ["Fetal abdomen", "Fetal brain", "Fetal femur", "Fetal thorax", "Maternal cervix", "Other"]
 
 
-def _write_dataset(source: Path, patients: int = 8, per_plane: int = 2, delimiter: str = ";") -> Path:
+def _write_dataset(source: Path, patients: int = 8, per_plane: int = 2, delimiter: str = ";",
+                   trailing_space: bool = True) -> Path:
     """A miniature archive: every patient contributes images to every plane,
-    which is what makes this dataset's split different from figshare's."""
+    which is what makes this dataset's split different from figshare's.
+
+    Mirrors two quirks of the published CSV: `Patient_num` is a bare integer
+    (the patient also appears in the image name), and the header ends
+    `US_Machine;Train ` with a trailing space that the values carry too.
+    """
     images = source / "Images"
     images.mkdir(parents=True)
     rng = np.random.default_rng(0)
@@ -46,15 +52,16 @@ def _write_dataset(source: Path, patients: int = 8, per_plane: int = 2, delimite
                 # Non-square on purpose: the prepare step must not assume shape.
                 Image.fromarray(rng.integers(0, 255, (40, 60), dtype=np.uint8), mode="L").save(images / f"{name}.png")
                 rows.append({
-                    "Image_name": name, "Patient_num": f"Patient{p:05d}", "Plane": plane,
+                    "Image_name": name, "Patient_num": str(p), "Plane": plane,
                     "Brain_plane": "Not A Brain", "Operator": "Op1", "US_Machine": "Voluson E6",
                     "Train": "1" if p <= patients - 2 else "0",
                 })
     csv_path = source / "FETAL_PLANES_DB_data.csv"
+    pad = " " if trailing_space else ""
     with open(csv_path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=list(rows[0]), delimiter=delimiter)
-        writer.writeheader()
-        writer.writerows(rows)
+        f.write(delimiter.join(list(rows[0])) + pad + "\n")
+        for row in rows:
+            f.write(delimiter.join(row.values()) + pad + "\n")
     return csv_path
 
 
@@ -72,11 +79,17 @@ def _run(source: Path, output: Path, monkeypatch, *extra: str) -> None:
 
 
 @pytest.mark.parametrize("delimiter", [";", ","])
-def test_metadata_is_read_whatever_the_delimiter(tmp_path: Path, delimiter: str):
-    csv_path = _write_dataset(tmp_path / "extracted", patients=2, per_plane=1, delimiter=delimiter)
+@pytest.mark.parametrize("trailing_space", [True, False])
+def test_metadata_is_read_whatever_the_delimiter(tmp_path: Path, delimiter: str, trailing_space: bool):
+    """The published file is ';'-separated and its last column is named
+    "Train " -- both of which defeated an earlier sniff-and-exact-match read."""
+    csv_path = _write_dataset(tmp_path / "extracted", patients=2, per_plane=1,
+                              delimiter=delimiter, trailing_space=trailing_space)
     rows = prepare.read_metadata(csv_path)
     assert len(rows) == 12
-    assert rows[0]["Patient_num"] == "Patient00001"
+    assert rows[0]["Patient_num"] == "1"
+    assert set(rows[0]) >= {"Image_name", "Patient_num", "Plane", "Train"}
+    assert rows[0]["Train"] in {"0", "1"}  # stripped: the raw value is "0 " / "1 "
 
 
 def test_metadata_without_the_needed_columns_is_rejected(tmp_path: Path):

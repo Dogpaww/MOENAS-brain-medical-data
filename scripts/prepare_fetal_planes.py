@@ -63,22 +63,30 @@ PLANE_TO_CLASS = {
 
 
 def read_metadata(path: Path) -> list[dict[str, str]]:
-    """Read the metadata CSV, sniffing the delimiter (the published file uses
-    ';', while ',' is the obvious guess)."""
-    with open(path, newline="", encoding="utf-8-sig") as f:
-        sample = f.read(8192)
-        f.seek(0)
-        try:
-            dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
-        except csv.Error:
-            dialect = csv.excel
-        rows = list(csv.DictReader(f, dialect=dialect))
-    if not rows:
-        raise ValueError(f"{path} has no rows.")
-    missing = REQUIRED_COLUMNS - set(rows[0])
-    if missing:
-        raise ValueError(f"{path} is missing column(s) {sorted(missing)}; found {sorted(rows[0])}.")
-    return rows
+    """Read the metadata CSV, choosing the delimiter by which one actually
+    yields the columns we need.
+
+    Two quirks of the published file, both of which silently break the obvious
+    implementation: it is ';'-separated (so `csv.Sniffer` can land on ','), and
+    its header ends `US_Machine;Train ` -- a trailing space that makes the last
+    column literally named "Train ", with the values carrying it too. Names and
+    values are therefore stripped.
+    """
+    seen: list[str] = []
+    for delimiter in (";", ",", "\t"):
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f, delimiter=delimiter)
+            fields = [name.strip() for name in (reader.fieldnames or [])]
+            if not REQUIRED_COLUMNS <= set(fields):
+                seen = fields or seen
+                continue
+            rows = [{k.strip(): (v or "").strip() for k, v in row.items() if k is not None} for row in reader]
+            if not rows:
+                raise ValueError(f"{path} has no rows.")
+            return rows
+    raise ValueError(
+        f"{path} is missing column(s) {sorted(REQUIRED_COLUMNS - set(seen))}; found {sorted(seen)}."
+    )
 
 
 def find_metadata_csv(source: Path) -> Path:

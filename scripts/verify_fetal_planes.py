@@ -89,18 +89,28 @@ def find_metadata_csv(source: Path) -> Path | None:
 
 
 def read_csv(path: Path) -> tuple[list[str], list[dict[str, str]]]:
-    """Read a CSV whose delimiter is sniffed, since the published file uses
-    ';' while ',' is the obvious guess."""
+    """Read the metadata CSV, choosing the delimiter by which one actually
+    yields the columns we need.
+
+    Two quirks of the published file, both of which silently break the obvious
+    implementation: it is ';'-separated (so `csv.Sniffer` can land on ','), and
+    its header ends `US_Machine;Train ` -- a trailing space that makes the last
+    column literally named "Train ", with the values carrying it too. Names and
+    values are therefore stripped.
+    """
+    for delimiter in (";", ",", "\t"):
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f, delimiter=delimiter)
+            fields = [name.strip() for name in (reader.fieldnames or [])]
+            if not REQUIRED_COLUMNS <= set(fields):
+                continue
+            rows = [{k.strip(): (v or "").strip() for k, v in row.items() if k is not None} for row in reader]
+            return fields, rows
+
+    # Nothing parsed usefully; return the raw header so the caller can say why.
     with open(path, newline="", encoding="utf-8-sig") as f:
-        sample = f.read(8192)
-        f.seek(0)
-        try:
-            dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
-        except csv.Error:
-            dialect = csv.excel
-        reader = csv.DictReader(f, dialect=dialect)
-        rows = [row for row in reader]
-        return list(reader.fieldnames or []), rows
+        header = (f.readline() or "").strip()
+    return [header], []
 
 
 def thumbnail(path: Path, size: int = 32) -> np.ndarray:
