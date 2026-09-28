@@ -41,7 +41,10 @@ nsga2:
   crossover_prob: 0.9
   mutation_prob: null
   device: cuda
-  topsis_weights: [0.375, 0.375, 0.25]
+  # The weights every reported run used, and the ones the paper states. An
+  # earlier edit set (0.375, 0.375, 0.25) here, which no run ever used and
+  # which selects a different architecture from the same Pareto front.
+  topsis_weights: [0.35, 0.35, 0.30]
 
 augmentation:
   population_size: 5
