@@ -196,3 +196,61 @@ def test_verify_flags_near_duplicates_that_span_patients():
     unrelated = rng.normal(size=(2, 1024))
     unrelated = (unrelated - unrelated.mean(axis=1, keepdims=True)) / unrelated.std(axis=1, keepdims=True)
     assert list(verify.near_duplicate_pairs(unrelated, threshold=0.95)) == []
+
+
+def _rewrite_csv(csv_path: Path, mutate) -> None:
+    lines = csv_path.read_text().splitlines()
+    header, rows = lines[0], [line.split(";") for line in lines[1:]]
+    mutate(rows)
+    csv_path.write_text("\n".join([header] + [";".join(r) for r in rows]) + "\n")
+
+
+def test_published_split_uses_the_train_column(source: Path, tmp_path: Path, monkeypatch):
+    output = tmp_path / "prepared"
+    _run(source, output, monkeypatch, "--use-published-split")
+
+    manifest = json.loads((output / "fetal_manifest.json").read_text())
+    assert manifest["published_train_column_used"] is True
+    assert manifest["split_method"] == "published Train column"
+    # Fraction and seed had no effect here, so the manifest must not imply they did.
+    assert manifest["test_fraction_of_patients"] is None and manifest["seed"] is None
+
+    # The fixture marks the last two of eight patients as Train=0.
+    assert set(manifest["patients"]["Testing"]) == {"7", "8"}
+    assert set(manifest["patients"]["Training"]) == {str(p) for p in range(1, 7)}
+    ids = json.loads((output / "patient_ids.json").read_text())
+    for relative, patient in ids.items():
+        assert relative.startswith(("Testing/" if patient in {"7", "8"} else "Training/"))
+
+
+def test_published_split_is_refused_when_a_patient_straddles_it(source: Path, tmp_path: Path, monkeypatch):
+    """The one property that makes the published column worth using at all."""
+    _rewrite_csv(source / "FETAL_PLANES_DB_data.csv",
+                 lambda rows: rows[0].__setitem__(-1, "0 "))  # patient 1 now has both flags
+
+    with pytest.raises(SystemExit, match="not patient-disjoint"):
+        _run(source, tmp_path / "prepared", monkeypatch, "--use-published-split")
+
+
+def test_published_split_rejects_unrecognised_flags(source: Path, tmp_path: Path, monkeypatch):
+    _rewrite_csv(source / "FETAL_PLANES_DB_data.csv",
+                 lambda rows: [row.__setitem__(-1, "maybe ") for row in rows])
+
+    with pytest.raises(SystemExit, match="unrecognised value"):
+        _run(source, tmp_path / "prepared", monkeypatch, "--use-published-split")
+
+
+def test_the_two_split_modes_disagree_about_where_patients_land(source: Path, tmp_path: Path, monkeypatch):
+    """A guard against the flag silently doing nothing."""
+    ours, published = tmp_path / "ours", tmp_path / "published"
+    _run(source, ours, monkeypatch)
+    _run(source, published, monkeypatch, "--use-published-split")
+
+    a = json.loads((ours / "fetal_manifest.json").read_text())["patients"]["Testing"]
+    b = json.loads((published / "fetal_manifest.json").read_text())["patients"]["Testing"]
+    assert set(a) != set(b)
+    # Both remain patient-disjoint and cover every image.
+    for directory in (ours, published):
+        manifest = json.loads((directory / "fetal_manifest.json").read_text())
+        assert set(manifest["patients"]["Training"]).isdisjoint(manifest["patients"]["Testing"])
+        assert manifest["num_images"] == 96
