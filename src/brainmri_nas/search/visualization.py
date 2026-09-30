@@ -46,6 +46,21 @@ def _setup_figure():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
+    # Both plots are typically shown scaled down substantially (e.g. to a
+    # single column of a two-column paper), so default matplotlib font
+    # sizes (~10pt) become unreadable after that downscale -- bump every
+    # text element up front rather than leaving it to whoever embeds these
+    # later to notice and compensate.
+    plt.rcParams.update(
+        {
+            "font.size": 15,
+            "axes.titlesize": 16,
+            "axes.labelsize": 15,
+            "xtick.labelsize": 13,
+            "ytick.labelsize": 13,
+            "legend.fontsize": 12,
+        }
+    )
     return plt
 
 
@@ -123,15 +138,16 @@ def save_pareto_front_3d_plot(
         marker="*", s=340, c="red", edgecolors="black", linewidths=1.2,
         label="TOPSIS selected", zorder=20,
     )
-    ax.text(sel_x, sel_y, sel_z, "  selected", fontsize=9)
+    ax.text(sel_x, sel_y, sel_z, "  selected", fontsize=12)
 
-    ax.set_xlabel("FLOPs (B) -- lower is better")
-    ax.set_ylabel("-log10(SynFlow) -- lower is better")
-    ax.set_zlabel("-ZiCO -- lower is better")
+    ax.set_xlabel("FLOPs (B) -- lower is better", labelpad=12)
+    ax.set_ylabel("-log10(SynFlow) -- lower is better", labelpad=12)
+    ax.set_zlabel("-ZiCO -- lower is better", labelpad=12)
     ax.set_title("NSGA-II nondominated fronts (all axes: lower is better)")
     ax.view_init(elev=22, azim=-60)
     ax.grid(True)
-    ax.legend(loc="best", fontsize=8)
+    ax.tick_params(labelsize=11)
+    ax.legend(loc="best")
 
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -171,7 +187,14 @@ def save_pareto_front_2d_plot(
     neg_synflow = np.array([-r["log_synflow"] for r in valid], dtype=float)
     neg_zico = np.array([-r["zico"] for r in valid], dtype=float)
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    # Stacked (2 rows, 1 column) rather than side by side: this plot is
+    # typically shown next to the 3D plot above, whose figure is roughly
+    # square. Two wide-short panels side by side left a tall, mostly-empty
+    # gap beneath them at that width; stacking makes this figure's own
+    # aspect ratio close enough to the 3D one that the pair sits together
+    # without wasted space, and each panel individually gets more height
+    # to render its (larger, per _setup_figure) text into.
+    fig, axes = plt.subplots(2, 1, figsize=(6.5, 9.5))
 
     panels = [
         (axes[0], neg_synflow, "-log10(SynFlow) -- lower is better", -selected_architecture["log_synflow"]),
@@ -194,7 +217,7 @@ def save_pareto_front_2d_plot(
         ax.set_xlabel("FLOPs (B) -- lower is better")
         ax.set_ylabel(y_label)
         ax.grid(True, alpha=0.3)
-        ax.legend(loc="best", fontsize=8)
+        ax.legend(loc="best")
 
     fig.suptitle("2-objective Pareto fronts (each pair, lower-left is better)")
 
