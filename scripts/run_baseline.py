@@ -96,11 +96,10 @@ def main() -> None:
         "--optimizer",
         choices=["sgd", "adamw"],
         default="sgd",
-        help="Defaults to sgd, matching every other baseline and the NAS pipeline itself "
-        "(see utils/optim.py for why). Pass adamw only for transformer baselines (e.g. "
-        "deit_small) -- SGD is a documented mismatch for fine-tuning ViTs and produces a "
-        "training loss that freezes rather than converges. Always run the sgd version "
-        "first; only fall back to adamw if that run shows the freeze/degrade signature.",
+        help="Defaults to sgd, used by every baseline including deit_small. The DeiT paper "
+        "reports SGD and AdamW performing similarly for fine-tuning (see utils/optim.py). "
+        "adamw is an explicit opt-in; a train loss sitting near 0.291 is the label-smoothing "
+        "floor (model has fit the training set), not an optimizer failure.",
     )
     parser.add_argument("--label-smoothing", type=float, default=0.1)
     parser.add_argument("--grad-clip-norm", type=float, default=5.0)

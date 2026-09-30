@@ -16,18 +16,21 @@ adaptive step normalization) both favor generalization over Adam's faster
 but often sharper convergence. Centralized here, instead of duplicated in
 both training loops, so they can't silently drift apart on this again.
 
-`optimizer_name="sgd"` is the default and the only option every caller above
-actually uses -- it keeps this reasoning intact for the DARTS-style searched
-architecture and every CNN baseline (branch: benchmark), which are all
-well-served by SGD's generalization behavior. "adamw" exists only for
-transformer baselines (e.g. DeiT), where SGD is a documented mismatch: a
-real DeiT-Small fine-tuning run on this dataset showed train_loss freeze bit-
-for-bit at the 4th decimal for 40 straight epochs while validation accuracy
-quietly degraded from its early peak -- the classic signature of SGD getting
-stuck in a transformer's loss landscape rather than genuinely converging
-(the original ViT/DeiT papers use AdamW for exactly this reason). Passing
-"adamw" is an explicit, labeled opt-in per run (see run_baseline.py's
---optimizer flag), never a silent default swap.
+`optimizer_name="sgd"` is the default and what every baseline uses, including
+the DeiT-Small transformer baseline. "adamw" is kept only as an explicit,
+labeled opt-in (run_baseline.py's --optimizer flag).
+
+A correction, since this docstring previously argued the opposite for DeiT.
+It claimed SGD is a documented mismatch for fine-tuning vision transformers,
+citing a DeiT-Small run whose train_loss "froze" around 0.2916. That was a
+misreading on two counts. First, 0.2916 is the label-smoothing floor: with
+smoothing 0.1 over 3 classes the lowest achievable cross-entropy is 0.2911,
+and the CNN baselines settle at the same value -- the model had fit the
+training set, not stalled. Second, the DeiT paper does not support the claim:
+it fine-tunes "with either AdamW or SGD. These optimizers have a similar
+performance for the fine-tuning stage" (Touvron et al. 2021, Sec. 6; Table 8
+shows SGD fine-tuning matching AdamW, 83.1 vs 83.1). SGD only hurts DeiT
+during pre-training from scratch, which no baseline here does.
 """
 
 from __future__ import annotations
